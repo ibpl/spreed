@@ -148,6 +148,9 @@ class CapabilitiesTest extends TestCase {
 					'previews' => [
 						'max-gif-size' => 200000,
 					],
+					'signaling' => [
+						'session-ping-limit' => 200,
+					],
 				],
 			],
 		], $capabilities->getCapabilities());
@@ -232,6 +235,9 @@ class CapabilitiesTest extends TestCase {
 					],
 					'previews' => [
 						'max-gif-size' => 200000,
+					],
+					'signaling' => [
+						'session-ping-limit' => 50,
 					],
 				],
 			],
