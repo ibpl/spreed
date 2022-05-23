@@ -129,7 +129,7 @@ class Capabilities implements IPublicCapability {
 			],
 		];
 
-		if ($this->serverConfig->getAppValue('core', 'backgroundjobs_mode', '') === 'cron') {
+		if ($this->serverConfig->getAppValue('core', 'backgroundjobs_mode', 'ajax') === 'cron') {
 			$capabilities['features'][] = 'time-to-live';
 		}
 
