@@ -399,7 +399,7 @@ class RoomController extends AEnvironmentAwareController {
 			'lastCommonReadMessage' => 0,
 			'listable' => Room::LISTABLE_NONE,
 			'callFlag' => Participant::FLAG_DISCONNECTED,
-			'timeToLive' => 0,
+			'messageExpire' => 0,
 		];
 
 		$lastActivity = $room->getLastActivity();
@@ -466,7 +466,7 @@ class RoomController extends AEnvironmentAwareController {
 			'defaultPermissions' => $room->getDefaultPermissions(),
 			'description' => $room->getDescription(),
 			'listable' => $room->getListable(),
-			'timeToLive' => $room->getTimeToLive(),
+			'messageExpire' => $this->roomService->getMessageExpire($room),
 		]);
 
 		if ($currentParticipant->getAttendee()->getReadPrivacy() === Participant::PRIVACY_PUBLIC) {
