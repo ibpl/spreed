@@ -44,7 +44,6 @@ use OCP\EventDispatcher\IEventDispatcher;
 use OCP\IDBConnection;
 use OCP\IUser;
 use OCP\Security\IHasher;
-use OCP\Server;
 use OCP\Share\IManager as IShareManager;
 
 class RoomService {
