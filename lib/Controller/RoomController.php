@@ -259,6 +259,7 @@ class RoomController extends AEnvironmentAwareController {
 
 	/**
 	 * @PublicPage
+	 * @BruteForceProtection(action=sipBridgeSecret)
 	 *
 	 * @param string $token
 	 * @return DataResponse
@@ -267,7 +268,9 @@ class RoomController extends AEnvironmentAwareController {
 		try {
 			$isSIPBridgeRequest = $this->validateSIPBridgeRequest($token);
 		} catch (UnauthorizedException $e) {
-			return new DataResponse([], Http::STATUS_UNAUTHORIZED);
+			$response = new DataResponse([], Http::STATUS_UNAUTHORIZED);
+			$response->throttle();
+			return $response;
 		}
 
 		// The SIP bridge only needs room details (public, sip enabled, lobby state, etc)
@@ -1322,6 +1325,7 @@ class RoomController extends AEnvironmentAwareController {
 	/**
 	 * @PublicPage
 	 * @UseSession
+	 * @BruteForceProtection(action=talkRoomPassword)
 	 *
 	 * @param string $token
 	 * @param string $password
@@ -1381,9 +1385,13 @@ class RoomController extends AEnvironmentAwareController {
 				$participant = $this->participantService->joinRoomAsNewGuest($this->roomService, $room, $password, $result['result'], $previousParticipant);
 			}
 		} catch (InvalidPasswordException $e) {
-			return new DataResponse([], Http::STATUS_FORBIDDEN);
+			$response = new DataResponse([], Http::STATUS_FORBIDDEN);
+			$response->throttle();
+			return $response;
 		} catch (UnauthorizedException $e) {
-			return new DataResponse([], Http::STATUS_NOT_FOUND);
+			$response = new DataResponse([], Http::STATUS_NOT_FOUND);
+			$response->throttle();
+			return $response;
 		}
 
 		$this->session->removePasswordForRoom($token);
@@ -1399,6 +1407,7 @@ class RoomController extends AEnvironmentAwareController {
 	/**
 	 * @PublicPage
 	 * @RequireRoom
+	 * @BruteForceProtection(action=sipBridgeSecret)
 	 *
 	 * @param string $pin
 	 * @return DataResponse
@@ -1406,10 +1415,14 @@ class RoomController extends AEnvironmentAwareController {
 	public function getParticipantByDialInPin(string $pin): DataResponse {
 		try {
 			if (!$this->validateSIPBridgeRequest($this->room->getToken())) {
-				return new DataResponse([], Http::STATUS_UNAUTHORIZED);
+				$response = new DataResponse([], Http::STATUS_UNAUTHORIZED);
+				$response->throttle();
+				return $response;
 			}
 		} catch (UnauthorizedException $e) {
-			return new DataResponse([], Http::STATUS_UNAUTHORIZED);
+			$response = new DataResponse([], Http::STATUS_UNAUTHORIZED);
+			$response->throttle();
+			return $response;
 		}
 
 		try {
