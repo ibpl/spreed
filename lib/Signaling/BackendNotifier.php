@@ -454,4 +454,12 @@ class BackendNotifier {
 			'app' => 'spreed-hpb',
 		]);
 	}
+
+	public function switchToRoom(Room $room, array $sessionIdsByTargetRooms): void {
+		$message = [
+			'type' => 'switchto',
+			'switchto' => $sessionIdsByTargetRooms,
+		];
+		$this->sendRoomMessage($room, $message);
+	}
 }

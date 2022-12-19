@@ -315,8 +315,6 @@ class BreakoutRoomService {
 		}
 
 		$this->roomService->setBreakoutRoomStatus($parent, BreakoutRoom::STATUS_STARTED);
-
-		// FIXME missing to send the signaling messages so participants are moved
 	}
 
 	public function stopBreakoutRooms(Room $parent): void {
@@ -334,8 +332,6 @@ class BreakoutRoomService {
 		}
 
 		$this->roomService->setBreakoutRoomStatus($parent, BreakoutRoom::STATUS_STOPPED);
-
-		// FIXME missing to send the signaling messages so participants are moved back
 	}
 
 	public function switchBreakoutRoom(Room $parent, Participant $participant, string $targetToken): void {
