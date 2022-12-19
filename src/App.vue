@@ -262,6 +262,27 @@ export default {
 			}
 		})
 
+		EventBus.$on('switch-to-conversation', (params) => {
+			if (this.isInCall) {
+				this.$store.dispatch('setForceCallView', true)
+
+				EventBus.$once('joined-conversation', async (token) => {
+					if (params.token !== token) {
+						return
+					}
+
+					await this.$store.dispatch('joinCall', {
+						token: params.token,
+						participantIdentifier: this.$store.getters.getParticipantIdentifier(),
+					})
+
+					this.$store.dispatch('setForceCallView', false)
+				})
+			}
+
+			this.$router.push({ name: 'conversation', params: { token: params.token, skipLeaveWarning: true } })
+		})
+
 		EventBus.$on('conversations-received', (params) => {
 			if (this.$route.name === 'conversation'
 				&& !this.$store.getters.conversation(this.token)) {

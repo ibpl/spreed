@@ -1290,6 +1290,22 @@ Signaling.Standalone.prototype.processRoomMessageEvent = function(data) {
 		// FIXME this is not listened to
 		EventBus.$emit('should-refresh-chat-messages')
 		break
+	case 'switchto':
+		const sessionIdsByTargetRooms = data.switchto
+
+		const targetRooms = Object.keys(sessionIdsByTargetRooms)
+		for (const targetRoom of targetRooms) {
+			// The signaling server does not provide any special handling for
+			// the "switchto" message, so unlike in other messages it does not
+			// automatically translate the Nextcloud session ID to the signaling
+			// session ID.
+			if (sessionIdsByTargetRooms[targetRoom].includes(this.nextcloudSessionId)) {
+				EventBus.$emit('switch-to-conversation', { token: targetRoom })
+
+				return
+			}
+		}
+		break
 	default:
 		console.error('Unknown room message event', data)
 	}
