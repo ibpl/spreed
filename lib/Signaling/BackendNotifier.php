@@ -455,10 +455,10 @@ class BackendNotifier {
 		]);
 	}
 
-	public function switchToRoom(Room $room, array $sessionIdsByTargetRooms): void {
+	public function switchToRoom(Room $room, array $switchToData): void {
 		$message = [
 			'type' => 'switchto',
-			'switchto' => $sessionIdsByTargetRooms,
+			'switchto' => $switchToData,
 		];
 		$this->sendRoomMessage($room, $message);
 	}

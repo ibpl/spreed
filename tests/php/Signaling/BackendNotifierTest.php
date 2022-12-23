@@ -1281,8 +1281,18 @@ class BackendNotifierTest extends TestCase {
 				'data' => [
 					'type' => 'switchto',
 					'switchto' => [
-						$breakoutRooms[0]->getToken() => [ $sessionId1, $sessionId3, $sessionId3b ],
-						$breakoutRooms[1]->getToken() => [ $sessionId2 ],
+						$sessionId1 => [
+							'token' => $breakoutRooms[0]->getToken(),
+						],
+						$sessionId3 => [
+							'token' => $breakoutRooms[0]->getToken(),
+						],
+						$sessionId3b => [
+							'token' => $breakoutRooms[0]->getToken(),
+						],
+						$sessionId2 => [
+							'token' => $breakoutRooms[1]->getToken(),
+						],
 					],
 				],
 			],
@@ -1391,7 +1401,18 @@ class BackendNotifierTest extends TestCase {
 				'data' => [
 					'type' => 'switchto',
 					'switchto' => [
-						$room->getToken() => [ $sessionId1, $sessionId3, $sessionId3b, $sessionIdModerator1 ],
+						$sessionId1 => [
+							'token' => $room->getToken(),
+						],
+						$sessionId3 => [
+							'token' => $room->getToken(),
+						],
+						$sessionId3b => [
+							'token' => $room->getToken(),
+						],
+						$sessionIdModerator1 => [
+							'token' => $room->getToken(),
+						],
 					],
 				],
 			],
@@ -1403,7 +1424,9 @@ class BackendNotifierTest extends TestCase {
 				'data' => [
 					'type' => 'switchto',
 					'switchto' => [
-						$room->getToken() => [ $sessionId2 ],
+						$sessionId2 => [
+							'token' => $room->getToken(),
+						],
 					],
 				],
 			],

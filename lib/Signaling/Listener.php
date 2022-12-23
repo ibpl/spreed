@@ -344,25 +344,25 @@ class Listener {
 		$manager = Server::get(Manager::class);
 		$breakoutRooms = $manager->getMultipleRoomsByObject(BreakoutRoom::PARENT_OBJECT_TYPE, $room->getToken());
 
-		$sessionIdsByBreakoutRooms = [];
+		$switchToData = [];
 
 		$participantService = Server::get(ParticipantService::class);
 		$parentRoomParticipants = $participantService->getSessionsAndParticipantsForRoom($room);
 
 		foreach ($breakoutRooms as $breakoutRoom) {
-			$sessionIds = [];
-
 			$breakoutRoomParticipants = $participantService->getParticipantsForRoom($breakoutRoom);
 			foreach ($breakoutRoomParticipants as $breakoutRoomParticipant) {
-				$sessionIds = array_merge($sessionIds, self::getSessionIdsForNonModeratorsMatchingParticipant($breakoutRoomParticipant, $parentRoomParticipants));
+				foreach (self::getSessionIdsForNonModeratorsMatchingParticipant($breakoutRoomParticipant, $parentRoomParticipants) as $sessionId) {
+					$switchToData[$sessionId] = [
+						'token' => $breakoutRoom->getToken(),
+					];
+				}
 			}
-
-			$sessionIdsByBreakoutRooms[$breakoutRoom->getToken()] = $sessionIds;
 		}
 
 		$notifier = Server::get(BackendNotifier::class);
 
-		$notifier->switchToRoom($room, $sessionIdsByBreakoutRooms);
+		$notifier->switchToRoom($room, $switchToData);
 	}
 
 	private static function getSessionIdsForNonModeratorsMatchingParticipant(Participant $targetParticipant, array $participants) {
@@ -391,19 +391,19 @@ class Listener {
 		$notifier = Server::get(BackendNotifier::class);
 
 		foreach ($breakoutRooms as $breakoutRoom) {
-			$sessionIds = [];
+			$switchToData = [];
 
 			$participants = $participantService->getSessionsAndParticipantsForRoom($breakoutRoom);
 			foreach ($participants as $participant) {
 				$session = $participant->getSession();
 				if ($session) {
-					$sessionIds[] = $session->getSessionId();
+					$switchToData[$session->getSessionId()] = [
+						'token' => $room->getToken(),
+					];
 				}
 			}
 
-			$sessionIdsByParentRoom = [$room->getToken() => $sessionIds];
-
-			$notifier->switchToRoom($breakoutRoom, $sessionIdsByParentRoom);
+			$notifier->switchToRoom($breakoutRoom, $switchToData);
 		}
 	}
 
