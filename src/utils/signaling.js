@@ -1285,15 +1285,17 @@ Signaling.Standalone.prototype.processRoomEvent = function(data) {
 }
 
 Signaling.Standalone.prototype.processRoomMessageEvent = function(data) {
+	let sessionIdsByTargetRooms
+	let targetRooms
 	switch (data.type) {
 	case 'chat':
 		// FIXME this is not listened to
 		EventBus.$emit('should-refresh-chat-messages')
 		break
 	case 'switchto':
-		const sessionIdsByTargetRooms = data.switchto
+		sessionIdsByTargetRooms = data.switchto
 
-		const targetRooms = Object.keys(sessionIdsByTargetRooms)
+		targetRooms = Object.keys(sessionIdsByTargetRooms)
 		for (const targetRoom of targetRooms) {
 			// The signaling server does not provide any special handling for
 			// the "switchto" message, so unlike in other messages it does not
