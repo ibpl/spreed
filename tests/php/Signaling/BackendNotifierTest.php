@@ -177,7 +177,7 @@ class BackendNotifierTest extends TestCase {
 		$l->expects($this->any())
 			->method('t')
 			->willReturnCallback(function ($text, $parameters = []) {
-					return vsprintf($text, $parameters);
+				return vsprintf($text, $parameters);
 			});
 
 		$this->breakoutRoomService = new BreakoutRoomService(
@@ -1194,22 +1194,24 @@ class BackendNotifierTest extends TestCase {
 
 	public function testBreakoutRoomStart() {
 		$room = $this->manager->createRoom(Room::TYPE_GROUP);
-		$this->participantService->addUsers($room, [[
-			'actorType' => 'users',
-			'actorId' => 'userId1',
-		],
-		[
-			'actorType' => 'users',
-			'actorId' => 'userId2',
-		],
-		[
-			'actorType' => 'users',
-			'actorId' => 'userId3',
-		],
-		[
-			'actorType' => 'users',
-			'actorId' => 'userIdModerator1',
-		]]);
+		$this->participantService->addUsers($room, [
+			[
+				'actorType' => 'users',
+				'actorId' => 'userId1',
+			],
+			[
+				'actorType' => 'users',
+				'actorId' => 'userId2',
+			],
+			[
+				'actorType' => 'users',
+				'actorId' => 'userId3',
+			],
+			[
+				'actorType' => 'users',
+				'actorId' => 'userIdModerator1',
+			],
+		]);
 
 		/** @var IUser|MockObject $user1 */
 		$user1 = $this->createMock(IUser::class);
@@ -1224,7 +1226,7 @@ class BackendNotifierTest extends TestCase {
 			->willReturn('userId2');
 
 		/** @var IUser|MockObject $user3 */
-		$user3= $this->createMock(IUser::class);
+		$user3 = $this->createMock(IUser::class);
 		$user3->expects($this->any())
 			->method('getUID')
 			->willReturn('userId3');
@@ -1289,22 +1291,24 @@ class BackendNotifierTest extends TestCase {
 
 	public function testBreakoutRoomStop() {
 		$room = $this->manager->createRoom(Room::TYPE_GROUP);
-		$this->participantService->addUsers($room, [[
-			'actorType' => 'users',
-			'actorId' => 'userId1',
-		],
-		[
-			'actorType' => 'users',
-			'actorId' => 'userId2',
-		],
-		[
-			'actorType' => 'users',
-			'actorId' => 'userId3',
-		],
-		[
-			'actorType' => 'users',
-			'actorId' => 'userIdModerator1',
-		]]);
+		$this->participantService->addUsers($room, [
+			[
+				'actorType' => 'users',
+				'actorId' => 'userId1',
+			],
+			[
+				'actorType' => 'users',
+				'actorId' => 'userId2',
+			],
+			[
+				'actorType' => 'users',
+				'actorId' => 'userId3',
+			],
+			[
+				'actorType' => 'users',
+				'actorId' => 'userIdModerator1',
+			],
+		]);
 
 		/** @var IUser|MockObject $user1 */
 		$user1 = $this->createMock(IUser::class);
@@ -1319,7 +1323,7 @@ class BackendNotifierTest extends TestCase {
 			->willReturn('userId2');
 
 		/** @var IUser|MockObject $user3 */
-		$user3= $this->createMock(IUser::class);
+		$user3 = $this->createMock(IUser::class);
 		$user3->expects($this->any())
 			->method('getUID')
 			->willReturn('userId3');
