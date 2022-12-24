@@ -1285,27 +1285,25 @@ Signaling.Standalone.prototype.processRoomEvent = function(data) {
 }
 
 Signaling.Standalone.prototype.processRoomMessageEvent = function(data) {
-	let sessionIdsByTargetRooms
-	let targetRooms
+	let switchToDataBySessionIds
+	let switchToData
 	switch (data.type) {
 	case 'chat':
 		// FIXME this is not listened to
 		EventBus.$emit('should-refresh-chat-messages')
 		break
 	case 'switchto':
-		sessionIdsByTargetRooms = data.switchto
+		switchToDataBySessionIds = data.switchto
 
-		targetRooms = Object.keys(sessionIdsByTargetRooms)
-		for (const targetRoom of targetRooms) {
-			// The signaling server does not provide any special handling for
-			// the "switchto" message, so unlike in other messages it does not
-			// automatically translate the Nextcloud session ID to the signaling
-			// session ID.
-			if (sessionIdsByTargetRooms[targetRoom].includes(this.nextcloudSessionId)) {
-				EventBus.$emit('switch-to-conversation', { token: targetRoom })
-
-				return
-			}
+		// The signaling server does not provide any special handling for the
+		// "switchto" message, so unlike in other messages it does not
+		// automatically translate the Nextcloud session ID to the signaling
+		// session ID.
+		switchToData = switchToDataBySessionIds[this.nextcloudSessionId]
+		if (switchToData) {
+			EventBus.$emit('switch-to-conversation', {
+				token: switchToData.token,
+			})
 		}
 		break
 	default:
