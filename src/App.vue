@@ -266,7 +266,7 @@ export default {
 			if (this.isInCall) {
 				this.$store.dispatch('setForceCallView', true)
 
-				EventBus.$once('joined-conversation', async (token) => {
+				EventBus.$once('joined-conversation', async ({ token }) => {
 					if (params.token !== token) {
 						return
 					}
