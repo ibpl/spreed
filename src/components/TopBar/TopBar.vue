@@ -136,7 +136,6 @@ import BrowserStorage from '../../services/BrowserStorage.js'
 import AccountMultiple from 'vue-material-design-icons/AccountMultiple.vue'
 import MessageText from 'vue-material-design-icons/MessageText.vue'
 import { CONVERSATION } from '../../constants.js'
-import { generateUrl } from '@nextcloud/router'
 import { localCallParticipantModel, localMediaModel } from '../../utils/webrtc/index.js'
 import { emit } from '@nextcloud/event-bus'
 import ConversationIcon from '../ConversationIcon.vue'
@@ -237,14 +236,6 @@ export default {
 		},
 		hasUnreadMentions() {
 			return this.conversation.unreadMention
-		},
-
-		linkToConversation() {
-			if (this.token !== '') {
-				return window.location.protocol + '//' + window.location.host + generateUrl('/call/' + this.token)
-			} else {
-				return ''
-			}
 		},
 
 		renderedDescription() {

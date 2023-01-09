@@ -96,7 +96,6 @@ import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadi
 import NcPasswordField from '@nextcloud/vue/dist/Components/NcPasswordField.js'
 import { showError, showSuccess } from '@nextcloud/dialogs'
 import { CONVERSATION } from '../../constants.js'
-import { generateUrl } from '@nextcloud/router'
 import ArrowRight from 'vue-material-design-icons/ArrowRight.vue'
 import ClipboardTextOutline from 'vue-material-design-icons/ClipboardTextOutline.vue'
 import Email from 'vue-material-design-icons/Email.vue'
@@ -114,6 +113,8 @@ export default {
 		Email,
 		Fragment,
 	},
+
+	inject: ['copyLinkToConversation'],
 
 	data() {
 		return {
@@ -137,10 +138,6 @@ export default {
 
 		conversation() {
 			return this.$store.getters.conversation(this.token) || this.$store.getters.dummyConversation
-		},
-
-		linkToConversation() {
-			return window.location.protocol + '//' + window.location.host + generateUrl('/call/' + this.token)
 		},
 	},
 
@@ -232,12 +229,7 @@ export default {
 		},
 
 		async handleCopyLink() {
-			try {
-				await navigator.clipboard.writeText(this.linkToConversation)
-				showSuccess(t('spreed', 'Conversation link copied to clipboard.'))
-			} catch (error) {
-				showError(t('spreed', 'The link could not be copied.'))
-			}
+			await this.copyLinkToConversation(this.token)
 		},
 
 		async handleResendInvitations() {

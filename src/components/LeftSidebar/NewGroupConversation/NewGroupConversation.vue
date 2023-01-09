@@ -138,12 +138,12 @@ import {
 	createPrivateConversation,
 	setConversationPassword,
 } from '../../../services/conversationsService.js'
-import { generateUrl } from '@nextcloud/router'
 import ListableSettings from '../../ConversationSettings/ListableSettings.vue'
 import isInCall from '../../../mixins/isInCall.js'
 import participant from '../../../mixins/participant.js'
 import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip.js'
 import { EventBus } from '../../../services/EventBus.js'
+import { generateFullConversationLink } from '../../../services/urlService.js'
 
 export default {
 
@@ -196,9 +196,7 @@ export default {
 		},
 		// Generates the link to the current conversation
 		linkToConversation() {
-			if (this.token !== '') {
-				return window.location.protocol + '//' + window.location.host + generateUrl('/call/' + this.token)
-			} else return ''
+			return this.token && generateFullConversationLink(this.token)
 		},
 		// Controls the disabled/enabled state of the first page's button.
 		disabled() {

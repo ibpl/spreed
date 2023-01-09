@@ -132,10 +132,10 @@ import isInCall from '../../mixins/isInCall.js'
 import Blur from 'vue-material-design-icons/Blur.vue'
 import BlurOff from 'vue-material-design-icons/BlurOff.vue'
 import { callParticipantCollection } from '../../utils/webrtc/index.js'
-import { generateUrl } from '@nextcloud/router'
 import { CONVERSATION, PARTICIPANT } from '../../constants.js'
 import VideoIcon from 'vue-material-design-icons/Video.vue'
 import MicrophoneOff from 'vue-material-design-icons/MicrophoneOff.vue'
+import { generateAbsoluteUrl } from '../../services/urlService.js'
 
 export default {
 	name: 'TopBarMenu',
@@ -234,7 +234,8 @@ export default {
 
 		linkToFile() {
 			if (this.isFileConversation) {
-				return window.location.protocol + '//' + window.location.host + generateUrl('/f/' + this.conversation.objectId)
+				// TODO: test it
+				return generateAbsoluteUrl('/f/{objectId}', { objectId: this.conversation.objectId });
 			} else {
 				return ''
 			}

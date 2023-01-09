@@ -41,12 +41,14 @@
 import debounce from 'debounce'
 import NcAppContent from '@nextcloud/vue/dist/Components/NcAppContent.js'
 import NcContent from '@nextcloud/vue/dist/Components/NcContent.js'
+import { showError, showSuccess } from '@nextcloud/dialogs'
 import LeftSidebar from './components/LeftSidebar/LeftSidebar.vue'
 import PreventUnload from 'vue-prevent-unload'
 import Router from './router/router.js'
 import RightSidebar from './components/RightSidebar/RightSidebar.vue'
 import { EventBus } from './services/EventBus.js'
 import BrowserStorage from './services/BrowserStorage.js'
+import { generateFullConversationLink } from './services/urlService.js'
 import { getCurrentUser } from '@nextcloud/auth'
 import {
 	leaveConversationSync,
@@ -91,6 +93,12 @@ export default {
 		participant,
 		isMobile,
 	],
+
+	provide() {
+		return {
+			copyLinkToConversation: this.copyLinkToConversation,
+		}
+	},
 
 	data() {
 		return {
@@ -507,6 +515,22 @@ export default {
 			})
 			document.querySelector('.conversations-search')[0].focus()
 		},
+
+		/**
+		 * Copy conversation link to a clipboard and show message via dialogs
+		 * Provided to all components
+		 * @param {string} token - conversation token
+		 * @param {string} [messageId] - messageId for message in conversation link
+		 * @return {Promise<void>}
+		 */
+		async copyLinkToConversation(token, messageId) {
+			try {
+				await navigator.clipboard.writeText(generateFullConversationLink(token, messageId))
+				showSuccess(t('spreed', 'Conversation link copied to clipboard'))
+			} catch (error) {
+				showError(t('spreed', 'The link could not be copied'))
+			}
+		}
 	},
 }
 </script>

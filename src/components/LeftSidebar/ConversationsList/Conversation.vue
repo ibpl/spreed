@@ -58,7 +58,7 @@
 				{{ labelFavorite }}
 			</NcActionButton>
 			<NcActionButton icon="icon-clippy"
-				@click.stop.prevent="copyLinkToConversation">
+				@click.stop.prevent="handleCopyLink">
 				{{ t('spreed', 'Copy link') }}
 			</NcActionButton>
 			<NcActionButton :close-after-click="true"
@@ -94,20 +94,20 @@
 </template>
 
 <script>
-import { showError, showSuccess } from '@nextcloud/dialogs'
+import { showError } from '@nextcloud/dialogs'
 import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
 import Cog from 'vue-material-design-icons/Cog.vue'
 import Delete from 'vue-material-design-icons/Delete.vue'
 import EyeOutline from 'vue-material-design-icons/EyeOutline.vue'
 import Star from 'vue-material-design-icons/Star.vue'
 import ConversationIcon from './../../ConversationIcon.vue'
-import { generateUrl } from '@nextcloud/router'
 import { emit } from '@nextcloud/event-bus'
 import { CONVERSATION, PARTICIPANT, ATTENDEE } from '../../../constants.js'
 import NcListItem from '@nextcloud/vue/dist/Components/NcListItem.js'
 
 export default {
 	name: 'Conversation',
+
 	components: {
 		NcActionButton,
 		NcListItem,
@@ -117,6 +117,9 @@ export default {
 		EyeOutline,
 		Star,
 	},
+
+	inject: ['copyLinkToConversation'],
+
 	props: {
 		isSearchResult: {
 			type: Boolean,
@@ -143,7 +146,6 @@ export default {
 	},
 
 	computed: {
-
 		counterType() {
 			if (this.item.unreadMentionDirect || (this.item.unreadMessages !== 0 && this.item.type === CONVERSATION.TYPE.ONE_TO_ONE)) {
 				return 'highlighted'
@@ -152,10 +154,6 @@ export default {
 			} else {
 				return ''
 			}
-		},
-
-		linkToConversation() {
-			return window.location.protocol + '//' + window.location.host + generateUrl('/call/' + this.item.token)
 		},
 
 		canFavorite() {
@@ -300,15 +298,10 @@ export default {
 			}
 		},
 	},
+
 	methods: {
-		async copyLinkToConversation() {
-			try {
-				await navigator.clipboard.writeText(this.linkToConversation)
-				showSuccess(t('spreed', 'Conversation link copied to clipboard'))
-			} catch (error) {
-				console.error('Error copying link: ', error)
-				showError(t('spreed', 'The link could not be copied'))
-			}
+		async handleCopyLink() {
+			await this.copyLinkToConversation(this.item.token)
 		},
 
 		markConversationAsRead() {
