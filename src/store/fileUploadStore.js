@@ -427,11 +427,12 @@ const actions = {
 
 	async getFileTemplates({ commit }) {
 		try {
-			const response = await getFileTemplates()
+			// TODO: desktop
+			/* const response = await getFileTemplates()
 
 			response.data.ocs.data.forEach(template => {
 				commit('storeFilesTemplates', { template })
-			})
+			}) */
 		} catch (error) {
 			console.error('An error happened when trying to load the templates', error)
 		}
