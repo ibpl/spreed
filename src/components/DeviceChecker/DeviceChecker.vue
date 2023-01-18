@@ -67,12 +67,10 @@
 					:disabled="!audioPreviewAvailable"
 					@click="toggleAudio">
 					<template #icon>
-						<VolumeIndicator
-						:audio-preview-available="audioPreviewAvailable"
-						:audio-enabled="audioOn"
-						:current-volume="currentVolume"
-						:volume-threshold="volumeThreshold"
-						:overlay-color="'#999999'" />
+						<VolumeIndicator :audio-preview-available="audioPreviewAvailable"
+							:audio-enabled="audioOn"
+							:current-volume="currentVolume"
+							:volume-threshold="volumeThreshold" />
 					</template>
 				</NcButton>
 
