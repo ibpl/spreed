@@ -57,8 +57,7 @@
 		<!-- Call time -->
 		<CallTime v-if="isInCall"
 			:start="conversation.callStartTime"
-			:is-recording="isRecording"
-			@stop-recording="isRecording = false" />
+			:is-recording="isRecording" />
 
 		<!-- Local media controls -->
 		<LocalMediaControls v-if="isInCall"
@@ -135,7 +134,7 @@ import CallButton from './CallButton.vue'
 import BrowserStorage from '../../services/BrowserStorage.js'
 import AccountMultiple from 'vue-material-design-icons/AccountMultiple.vue'
 import MessageText from 'vue-material-design-icons/MessageText.vue'
-import { CONVERSATION } from '../../constants.js'
+import { CALL, CONVERSATION } from '../../constants.js'
 import { generateUrl } from '@nextcloud/router'
 import { localCallParticipantModel, localMediaModel } from '../../utils/webrtc/index.js'
 import { emit } from '@nextcloud/event-bus'
@@ -198,8 +197,6 @@ export default {
 			unreadNotificationHandle: null,
 			localCallParticipantModel,
 			localMediaModel,
-			// TODO: real value
-			isRecording: true,
 		}
 	},
 
@@ -237,6 +234,9 @@ export default {
 		},
 		hasUnreadMentions() {
 			return this.conversation.unreadMention
+		},
+		isRecording() {
+			return this.conversation.callRecording !== CALL.RECORDING.OFF
 		},
 
 		linkToConversation() {

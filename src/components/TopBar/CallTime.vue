@@ -56,6 +56,7 @@ import RecordCircle from 'vue-material-design-icons/RecordCircle.vue'
 import StopIcon from 'vue-material-design-icons/Stop.vue'
 import NcPopover from '@nextcloud/vue/dist/Components/NcPopover.js'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
+import { CALL } from '../../constants.js'
 import isInLobby from '../../mixins/isInLobby.js'
 
 export default {
@@ -155,6 +156,10 @@ export default {
 
 	methods: {
 		stopRecording() {
+			this.$store.dispatch('setCallRecording', {
+				token: this.token,
+				callRecording: CALL.RECORDING.OFF,
+			})
 			this.$emit('stop-recording')
 			this.showPopover = false
 		},
