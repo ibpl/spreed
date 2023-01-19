@@ -70,13 +70,14 @@ echo '#'
 ${ROOT_DIR}/occ config:system:set auth.bruteforce.protection.enabled --value false --type bool
 # Allow local remote urls otherwise we can not share
 ${ROOT_DIR}/occ config:system:set allow_local_remote_servers --value true --type bool
-
+# Temporarily opt-out of storing crypted passwords, as they have a bug and make our tests time out
+${ROOT_DIR}/occ config:system:set auth.storeCryptedPassword --value false --type bool
 
 echo ''
 echo '#'
 echo '# Running tests'
 echo '#'
-${APP_INTEGRATION_DIR}/vendor/bin/behat -f junit -f pretty $1 $2
+${APP_INTEGRATION_DIR}/vendor/bin/behat --colors -f junit -f pretty $1 $2
 RESULT=$?
 
 echo ''
