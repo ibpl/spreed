@@ -265,7 +265,11 @@ import { ATTENDEE, CONVERSATION, PARTICIPANT } from '../../../../constants.js'
 import participant from '../../../../mixins/participant.js'
 import { EventBus } from '../../../../services/EventBus.js'
 
-const isTranslationAvailable = getCapabilities()?.spreed?.config?.chat?.translations?.length > 0
+let isTranslationAvailable = getCapabilities()?.spreed?.config?.['has-translation-providers']
+if (isTranslationAvailable === undefined) {
+	// Fallback for the desktop client when connecting to Talk 17
+	isTranslationAvailable = getCapabilities()?.spreed?.config?.chat?.translations?.length > 0
+}
 
 /**
  * @property {object} scrollerBoundingClientRect provided by MessageList.vue
