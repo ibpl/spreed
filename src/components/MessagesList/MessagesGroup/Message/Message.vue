@@ -214,7 +214,7 @@ the main body of the message as well as a quote.
 			</div>
 		</div>
 
-		<MessageTranslateDialog v-if="isTranslateDialogOpen"
+		<MessageTranslateDialog v-if="isTranslationAvailable && isTranslateDialogOpen"
 			:message="message"
 			:rich-parameters="richParameters"
 			@close="isTranslateDialogOpen = false" />
@@ -265,11 +265,9 @@ import { ATTENDEE, CONVERSATION, PARTICIPANT } from '../../../../constants.js'
 import participant from '../../../../mixins/participant.js'
 import { EventBus } from '../../../../services/EventBus.js'
 
-let isTranslationAvailable = getCapabilities()?.spreed?.config?.['has-translation-providers']
-if (isTranslationAvailable === undefined) {
+const isTranslationAvailable = getCapabilities()?.spreed?.config?.chat?.['has-translation-providers']
 	// Fallback for the desktop client when connecting to Talk 17
-	isTranslationAvailable = getCapabilities()?.spreed?.config?.chat?.translations?.length > 0
-}
+	?? getCapabilities()?.spreed?.config?.chat?.translations?.length > 0
 
 /**
  * @property {object} scrollerBoundingClientRect provided by MessageList.vue
