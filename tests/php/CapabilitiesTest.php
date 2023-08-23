@@ -38,7 +38,6 @@ use OCP\IConfig;
 use OCP\IUser;
 use OCP\IUserSession;
 use OCP\Translation\ITranslationManager;
-use OCP\Translation\LanguageTuple;
 use PHPUnit\Framework\MockObject\MockObject;
 use Test\TestCase;
 
