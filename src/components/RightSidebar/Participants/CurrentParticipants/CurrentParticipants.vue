@@ -35,8 +35,8 @@ import { subscribe, unsubscribe } from '@nextcloud/event-bus'
 import Hint from '../../../Hint.vue'
 import ParticipantsList from '../ParticipantsList/ParticipantsList.vue'
 
+import { useUserStatus } from '../../../../composables/useUserStatus.js'
 import { ATTENDEE, PARTICIPANT } from '../../../../constants.js'
-import UserStatus from '../../../../mixins/userStatus.js'
 
 export default {
 	name: 'CurrentParticipants',
@@ -45,10 +45,6 @@ export default {
 		ParticipantsList,
 		Hint,
 	},
-
-	mixins: [
-		UserStatus,
-	],
 
 	props: {
 		searchText: {
@@ -59,6 +55,14 @@ export default {
 			type: Boolean,
 			default: true,
 		},
+	},
+
+	setup() {
+		const { isDoNotDisturb } = useUserStatus()
+
+		return {
+			isDoNotDisturb,
+		}
 	},
 
 	computed: {
@@ -227,8 +231,8 @@ export default {
 					return participant1.attendeePermissions < participant2.attendeePermissions ? 1 : -1
 				}
 			}
-			const participant1Away = this.isNotAvailable(participant1)
-			const participant2Away = this.isNotAvailable(participant2)
+			const participant1Away = this.isDoNotDisturb(participant1)
+			const participant2Away = this.isDoNotDisturb(participant2)
 			if (participant1Away !== participant2Away) {
 				return participant1Away ? 1 : -1
 			}

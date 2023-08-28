@@ -163,9 +163,9 @@ import ReactionMenu from './ReactionMenu.vue'
 import TopBarMediaControls from './TopBarMediaControls.vue'
 import TopBarMenu from './TopBarMenu.vue'
 
+import { useUserStatus } from '../../composables/useUserStatus.js'
 import { CONVERSATION } from '../../constants.js'
 import getParticipants from '../../mixins/getParticipants.js'
-import userStatus from '../../mixins/userStatus.js'
 import BrowserStorage from '../../services/BrowserStorage.js'
 import { localCallParticipantModel, localMediaModel } from '../../utils/webrtc/index.js'
 
@@ -195,7 +195,6 @@ export default {
 
 	mixins: [
 		richEditor,
-		userStatus,
 		getParticipants,
 	],
 
@@ -212,6 +211,14 @@ export default {
 			type: Boolean,
 			default: false,
 		},
+	},
+
+	setup() {
+		const { getStatusMessage } = useUserStatus()
+
+		return {
+			getStatusMessage,
+		}
 	},
 
 	data: () => {

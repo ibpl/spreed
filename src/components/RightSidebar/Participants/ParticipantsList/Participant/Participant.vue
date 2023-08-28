@@ -234,9 +234,9 @@ import AvatarWrapper from '../../../../AvatarWrapper/AvatarWrapper.vue'
 import ParticipantPermissionsEditor from './ParticipantPermissionsEditor/ParticipantPermissionsEditor.vue'
 
 import { useIsInCall } from '../../../../../composables/useIsInCall.js'
+import { useUserStatus } from '../../../../../composables/useUserStatus.js'
 import { CONVERSATION, PARTICIPANT, ATTENDEE } from '../../../../../constants.js'
 import readableNumber from '../../../../../mixins/readableNumber.js'
-import UserStatus from '../../../../../mixins/userStatus.js'
 import { formattedTime } from '../../../../../utils/formattedTime.js'
 
 export default {
@@ -271,7 +271,6 @@ export default {
 	},
 
 	mixins: [
-		UserStatus,
 		readableNumber,
 	],
 
@@ -303,7 +302,12 @@ export default {
 
 	setup() {
 		const isInCall = useIsInCall()
-		return { isInCall }
+		const { getStatusMessage } = useUserStatus()
+
+		return {
+			isInCall,
+			getStatusMessage,
+		}
 	},
 
 	data() {
