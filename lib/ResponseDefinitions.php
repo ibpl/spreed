@@ -248,6 +248,7 @@ namespace OCA\Talk;
  * @psalm-type SpreedAdminBot = array{
  *     description: ?string,
  *     error_count: int,
+ *     features: int,
  *     id: int,
  *     last_error_date: int,
  *     last_error_message: string,
