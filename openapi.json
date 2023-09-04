@@ -25,6 +25,7 @@
                 "required": [
                     "description",
                     "error_count",
+                    "features",
                     "id",
                     "last_error_date",
                     "last_error_message",
@@ -39,6 +40,10 @@
                         "nullable": true
                     },
                     "error_count": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "features": {
                         "type": "integer",
                         "format": "int64"
                     },
@@ -7576,81 +7581,8 @@
                                                 },
                                                 "data": {
                                                     "type": "object",
-                                                    "required": [
-                                                        "created",
-                                                        "expires",
-                                                        "limits",
-                                                        "owner",
-                                                        "status",
-                                                        "signaling"
-                                                    ],
-                                                    "properties": {
-                                                        "created": {
-                                                            "type": "integer",
-                                                            "format": "int64"
-                                                        },
-                                                        "expires": {
-                                                            "type": "integer",
-                                                            "format": "int64"
-                                                        },
-                                                        "limits": {
-                                                            "type": "object",
-                                                            "nullable": true,
-                                                            "required": [
-                                                                "users"
-                                                            ],
-                                                            "properties": {
-                                                                "users": {
-                                                                    "type": "integer",
-                                                                    "format": "int64"
-                                                                }
-                                                            }
-                                                        },
-                                                        "owner": {
-                                                            "type": "object",
-                                                            "required": [
-                                                                "url",
-                                                                "name",
-                                                                "email",
-                                                                "language",
-                                                                "country"
-                                                            ],
-                                                            "properties": {
-                                                                "url": {
-                                                                    "type": "string"
-                                                                },
-                                                                "name": {
-                                                                    "type": "string"
-                                                                },
-                                                                "email": {
-                                                                    "type": "string"
-                                                                },
-                                                                "language": {
-                                                                    "type": "string"
-                                                                },
-                                                                "country": {
-                                                                    "type": "string"
-                                                                }
-                                                            }
-                                                        },
-                                                        "status": {
-                                                            "type": "string"
-                                                        },
-                                                        "signaling": {
-                                                            "type": "object",
-                                                            "required": [
-                                                                "url",
-                                                                "secret"
-                                                            ],
-                                                            "properties": {
-                                                                "url": {
-                                                                    "type": "string"
-                                                                },
-                                                                "secret": {
-                                                                    "type": "string"
-                                                                }
-                                                            }
-                                                        }
+                                                    "additionalProperties": {
+                                                        "type": "object"
                                                     }
                                                 }
                                             }
