@@ -86,7 +86,7 @@ class HostedSignalingServerController extends OCSController {
 	 * @param string $email Email of the user
 	 * @param string $language Language of the user
 	 * @param string $country Country of the user
-	 * @return DataResponse<Http::STATUS_OK, array{created: int, expires: int, limits: ?array{users: int}, owner: array{url: string, name: string, email: string, language: string, country: string}, status: string, signaling: array{url: string, secret: string}}, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_INTERNAL_SERVER_ERROR, array{message: string}, array{}>
+	 * @return DataResponse<Http::STATUS_OK, array<string, mixed>, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_INTERNAL_SERVER_ERROR, array{message: string}, array{}>
 	 *
 	 * 200: Trial requested successfully
 	 * 400: Requesting trial is not possible
