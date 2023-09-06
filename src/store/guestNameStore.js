@@ -21,6 +21,8 @@
  */
 import Vue from 'vue'
 
+import { setGuestUserName } from '../services/participantsService.js'
+
 const state = {
 	guestNames: {
 	},
@@ -69,7 +71,7 @@ const mutations = {
 		} else if (noUpdate) {
 			return
 		}
-		state.guestNames[token][actorId] = actorDisplayName
+		Vue.set(state.guestNames[token], actorId, actorDisplayName)
 	},
 }
 
@@ -100,6 +102,45 @@ const actions = {
 	forceGuestName(context, { token, actorId, actorDisplayName }) {
 		context.commit('addGuestName', { noUpdate: false, token, actorId, actorDisplayName })
 	},
+
+	/**
+	 * Add the submitted guest name by the user to the store
+	 *
+	 * @param {object} context default store context
+	 * @param {object} data the wrapping object;
+	 * @param {string} data.token the token of the conversation
+	 * @param {string} data.name the new guest name
+	 */
+	async SubmitUserName(context, { token, name }) {
+		const actorId = context.getters.getActorId()
+		const previousName = getters.getGuestName(token, actorId)
+
+		try {
+			context.dispatch('setDisplayName', name)
+			context.dispatch('forceGuestName', {
+				token,
+				actorId: context.getters.getActorId(),
+				actorDisplayName: name,
+			})
+
+			await setGuestUserName(token, name)
+
+			if (name !== '') {
+				localStorage.setItem('nick', name)
+			} else {
+				localStorage.removeItem('nick')
+			}
+
+		} catch (error) {
+			context.dispatch('setDisplayName', previousName)
+			context.dispatch('forceGuestName', {
+				token,
+				actorId: context.getters.getActorId(),
+				actorDisplayName: previousName,
+			})
+			console.debug(error)
+		}
+	  },
 }
 
 export default { state, mutations, getters, actions }

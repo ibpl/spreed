@@ -22,9 +22,9 @@
 <template>
 	<div class="username-form">
 		<!-- eslint-disable-next-line vue/no-v-html -->
-		<h3 v-if="!firstWelcome" class="display-name__label" v-html="displayNameLabel" />
+		<h3 class="display-name__label" v-html="displayNameLabel" />
 
-		<NcButton v-if="!isEditingUsername && !firstWelcome"
+		<NcButton v-if="!isEditingUsername"
 			@click="handleEditUsername">
 			{{ t('spreed', 'Edit') }}
 			<template #icon>
@@ -37,11 +37,9 @@
 			:value.sync="guestUserName"
 			:placeholder="t('spreed', 'Guest')"
 			class="username-form__input"
-			v-bind="$attrs"
-			:show-trailing-button="!!guestUserName && !firstWelcome"
+			:show-trailing-button="!!guestUserName"
 			trailing-button-icon="arrowRight"
 			:trailing-button-label="t('spreed', 'Save name')"
-			v-on="$listeners"
 			@trailing-button-click="handleChooseUserName"
 			@keydown.enter="handleChooseUserName"
 			@keydown.esc="handleEditUsername" />
@@ -56,8 +54,6 @@ import Pencil from 'vue-material-design-icons/Pencil.vue'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcTextField from '@nextcloud/vue/dist/Components/NcTextField.js'
 
-import { setGuestUserName } from '../services/participantsService.js'
-
 export default {
 	name: 'SetGuestUsername',
 
@@ -65,15 +61,6 @@ export default {
 		NcButton,
 		NcTextField,
 		Pencil,
-	},
-
-	inheritAttrs: false,
-
-	props: {
-		firstWelcome: {
-			type: Boolean,
-			default: false,
-		},
 	},
 
 	data() {
@@ -132,34 +119,13 @@ export default {
 		}
 	},
 
-	expose: ['handleChooseUserName'],
-
 	methods: {
-		async handleChooseUserName() {
-			const previousName = this.$store.getters.getDisplayName()
-			try {
-				this.$store.dispatch('setDisplayName', this.guestUserName)
-				this.$store.dispatch('forceGuestName', {
-					token: this.token,
-					actorId: this.$store.getters.getActorId(),
-					actorDisplayName: this.guestUserName,
-				})
-				await setGuestUserName(this.token, this.guestUserName)
-				if (this.guestUserName !== '') {
-					localStorage.setItem('nick', this.guestUserName)
-				} else {
-					localStorage.removeItem('nick')
-				}
-				this.isEditingUsername = false
-			} catch (exception) {
-				this.$store.dispatch('setDisplayName', previousName)
-				this.$store.dispatch('forceGuestName', {
-					token: this.token,
-					actorId: this.$store.getters.getActorId(),
-					actorDisplayName: previousName,
-				})
-				console.debug(exception)
-			}
+		handleChooseUserName() {
+			this.$store.dispatch('SubmitUserName', {
+				token: this.token,
+				name: this.guestUserName,
+			})
+			this.isEditingUsername = false
 		},
 
 		handleEditUsername() {
