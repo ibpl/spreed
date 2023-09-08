@@ -28,17 +28,25 @@ export const useGuestNameStore = defineStore('guestName', {
 	}),
 
 	actions: {
-	/**
-	 * Gets the participant display name
-	 *
-	 * @param {string} token the conversation's token
-	 * @param {string} actorId the participant actorId
-	 * @return {string} the participant name
-	 */
+		/**
+		 * Gets the participant display name
+		 *
+		 * @param {string} token the conversation's token
+		 * @param {string} actorId the participant actorId
+		 * @return {string} the participant name
+		 */
 		getGuestName(token, actorId) {
 			return this.guestNames[token]?.[actorId] ?? t('spreed', 'Guest')
 		},
 
+		/**
+		 * Gets the participant display name with suffix
+		 * if the display name is not default translatable Guest
+		 *
+		 * @param {string} token the conversation's token
+		 * @param {string} actorId the participant actorId
+		 * @return {string} the participant name with/without suffix
+		 */
 		getGuestNameWithGuestSuffix(token, actorId) {
 			const displayName = this.getGuestName(token, actorId)
 			if (displayName === t('spreed', 'Guest')) {
@@ -57,9 +65,9 @@ export const useGuestNameStore = defineStore('guestName', {
 		 * @param {string} data.actorId the guest
 		 * @param {string} data.actorDisplayName the display name to set
 		 * @param {object} options options
-		 * @param {boolean} [options.noUpdate = false] Override the display name or set it if it is empty
+		 * @param {boolean} [options.noUpdate] Override the display name or set it if it is empty
 		 */
-		addGuestName({ token, actorId, actorDisplayName }, { noUpdate = false }) {
+		addGuestName({ token, actorId, actorDisplayName }, { noUpdate }) {
 			if (!this.guestNames[token]) {
 				Vue.set(this.guestNames, token, {})
 

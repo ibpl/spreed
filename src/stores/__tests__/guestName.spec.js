@@ -3,7 +3,7 @@ import { createPinia, setActivePinia } from 'pinia'
 import { useGuestNameStore } from '../guestName.js'
 
 describe('guestNameStore', () => {
-	let store = null
+	let store
 
 	beforeEach(() => {
 		setActivePinia(createPinia())
