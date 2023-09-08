@@ -52,13 +52,14 @@ export const useGuestNameStore = defineStore('guestName', {
 		/**
 		 * Adds a guest name to the store
 		 *
-		 * @param {object} data the wrapping object;
-		 * @param {boolean} data.noUpdate Only set the guest name if it was not set before
+		 * @param {object} data the wrapping object
 		 * @param {string} data.token the token of the conversation
 		 * @param {string} data.actorId the guest
 		 * @param {string} data.actorDisplayName the display name to set
+		 * @param {object} options options
+		 * @param {boolean} [options.noUpdate = false] Override the display name or set it if it is empty
 		 */
-		addGuestName({ noUpdate, token, actorId, actorDisplayName }) {
+		addGuestName({ token, actorId, actorDisplayName }, { noUpdate = false }) {
 			if (!this.guestNames[token]) {
 				Vue.set(this.guestNames, token, {})
 
@@ -72,30 +73,6 @@ export const useGuestNameStore = defineStore('guestName', {
 			if (actorDisplayName) {
 				Vue.set(this.guestNames[token], actorId, actorDisplayName)
 			}
-		},
-
-		/**
-		 * Add guest name of a chat message to the store
-		 *
-		 * @param {object} data the wrapping object;
-		 * @param {string} data.token the token of the conversation
-		 * @param {string} data.actorId the guest
-		 * @param {string} data.actorDisplayName the display name to set
-		 */
-		setGuestNameIfEmpty({ token, actorId, actorDisplayName }) {
-			this.addGuestName({ noUpdate: true, token, actorId, actorDisplayName })
-		},
-
-		/**
-		 * Add guest name of a chat message to the store
-		 *
-		 * @param {object} data the wrapping object;
-		 * @param {string} data.token the token of the conversation
-		 * @param {string} data.actorId the guest
-		 * @param {string} data.actorDisplayName the display name to set
-		 */
-		forceGuestName({ token, actorId, actorDisplayName }) {
-			this.addGuestName({ noUpdate: false, token, actorId, actorDisplayName })
 		},
 	},
 })
