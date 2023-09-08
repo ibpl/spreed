@@ -38,7 +38,7 @@
 				{{ t('spreed', 'Join conversation') }}
 			</NcButton>
 		</div>
-		<FilesSidebarChatViewTabApp v-else />
+		<FilesSidebarChatView v-else />
 	</div>
 </template>
 
@@ -70,9 +70,11 @@ export default {
 	name: 'FilesSidebarTabApp',
 
 	components: {
-		FilesSidebarChatViewTabApp: () => ({
-			component: import(/* webpackChunkName: "files-sidebar-tab-chunk" */'./FilesSidebarChatViewTabApp.vue'),
-			loading: LoadingComponent,
+		FilesSidebarChatView: () => ({
+			component: import(/* webpackChunkName: "files-sidebar-tab-chunk" */'./views/FilesSidebarChatView.vue'),
+			loading: {
+				render: (h) => h(LoadingComponent, { class: 'tab-loading' }),
+			},
 		}),
 		NcButton,
 	},
@@ -419,5 +421,9 @@ export default {
 	flex-direction: column;
 	align-items: center;
 	justify-content: center;
+}
+
+.tab-loading {
+	height: 100%;
 }
 </style>

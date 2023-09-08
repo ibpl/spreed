@@ -28,13 +28,13 @@
 </template>
 <script>
 
-import ChatView from './components/ChatView.vue'
-import MediaSettings from './components/MediaSettings/MediaSettings.vue'
-import CallButton from './components/TopBar/CallButton.vue'
+import ChatView from '../components/ChatView.vue'
+import MediaSettings from '../components/MediaSettings/MediaSettings.vue'
+import CallButton from '../components/TopBar/CallButton.vue'
 
 export default {
 
-	name: 'FilesSidebarChatViewTabApp',
+	name: 'FilesSidebarChatView',
 
 	components: {
 		CallButton,
@@ -48,7 +48,7 @@ export default {
 
 <style scoped>
 .talk-tab__wrapper{
-  height: 100%;
+	height: 100%;
 }
 
 .call-button {
@@ -62,7 +62,7 @@ export default {
 
 .chatView {
 	overflow: hidden;
-  /* Considering the call button height (44px + 10px * 2) */
-  height: calc(100% - 64px);
+	/* Considering the call button height (44px + 10px * 2) */
+	height: calc(100% - 64px);
 }
 </style>

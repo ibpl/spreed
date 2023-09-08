@@ -20,7 +20,7 @@
 -->
 
 <template>
-	<span class="icon-loading spinner" />
+	<div class="icon-loading spinner" />
 </template>
 <script>
 export default {
@@ -29,8 +29,3 @@ export default {
 
 }
 </script>
-<style scoped>
-.icon-loading {
-	margin-top: 20px;
-}
-</style>
