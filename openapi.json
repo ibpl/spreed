@@ -20,377 +20,6 @@
             }
         },
         "schemas": {
-            "Bot": {
-                "type": "object",
-                "required": [
-                    "description",
-                    "id",
-                    "name",
-                    "state"
-                ],
-                "properties": {
-                    "description": {
-                        "type": "string",
-                        "nullable": true
-                    },
-                    "id": {
-                        "type": "integer",
-                        "format": "int64"
-                    },
-                    "name": {
-                        "type": "string"
-                    },
-                    "state": {
-                        "type": "integer",
-                        "format": "int64"
-                    }
-                }
-            },
-            "BotWithDetails": {
-                "allOf": [
-                    {
-                        "$ref": "#/components/schemas/Bot"
-                    },
-                    {
-                        "type": "object",
-                        "required": [
-                            "error_count",
-                            "features",
-                            "last_error_date",
-                            "last_error_message",
-                            "url",
-                            "url_hash"
-                        ],
-                        "properties": {
-                            "error_count": {
-                                "type": "integer",
-                                "format": "int64"
-                            },
-                            "features": {
-                                "type": "integer",
-                                "format": "int64"
-                            },
-                            "last_error_date": {
-                                "type": "integer",
-                                "format": "int64"
-                            },
-                            "last_error_message": {
-                                "type": "string"
-                            },
-                            "url": {
-                                "type": "string"
-                            },
-                            "url_hash": {
-                                "type": "string"
-                            }
-                        }
-                    }
-                ]
-            },
-            "BotWithDetailsAndSecret": {
-                "allOf": [
-                    {
-                        "$ref": "#/components/schemas/BotWithDetails"
-                    },
-                    {
-                        "type": "object",
-                        "required": [
-                            "secret"
-                        ],
-                        "properties": {
-                            "secret": {
-                                "type": "string"
-                            }
-                        }
-                    }
-                ]
-            },
-            "CallPeer": {
-                "type": "object",
-                "required": [
-                    "actorId",
-                    "actorType",
-                    "displayName",
-                    "lastPing",
-                    "sessionId",
-                    "token"
-                ],
-                "properties": {
-                    "actorId": {
-                        "type": "string"
-                    },
-                    "actorType": {
-                        "type": "string"
-                    },
-                    "displayName": {
-                        "type": "string"
-                    },
-                    "lastPing": {
-                        "type": "integer",
-                        "format": "int64"
-                    },
-                    "sessionId": {
-                        "type": "string"
-                    },
-                    "token": {
-                        "type": "string"
-                    }
-                }
-            },
-            "ChatMentionSuggestion": {
-                "type": "object",
-                "required": [
-                    "id",
-                    "label",
-                    "source",
-                    "status",
-                    "statusClearAt",
-                    "statusIcon",
-                    "statusMessage"
-                ],
-                "properties": {
-                    "id": {
-                        "type": "string"
-                    },
-                    "label": {
-                        "type": "string"
-                    },
-                    "source": {
-                        "type": "string"
-                    },
-                    "status": {
-                        "type": "string",
-                        "nullable": true
-                    },
-                    "statusClearAt": {
-                        "type": "integer",
-                        "format": "int64",
-                        "nullable": true
-                    },
-                    "statusIcon": {
-                        "type": "string",
-                        "nullable": true
-                    },
-                    "statusMessage": {
-                        "type": "string",
-                        "nullable": true
-                    }
-                }
-            },
-            "ChatMessage": {
-                "type": "object",
-                "required": [
-                    "actorDisplayName",
-                    "actorId",
-                    "actorType",
-                    "expirationTimestamp",
-                    "id",
-                    "isReplyable",
-                    "markdown",
-                    "message",
-                    "messageParameters",
-                    "messageType",
-                    "reactions",
-                    "referenceId",
-                    "systemMessage",
-                    "timestamp",
-                    "token"
-                ],
-                "properties": {
-                    "actorDisplayName": {
-                        "type": "string"
-                    },
-                    "actorId": {
-                        "type": "string"
-                    },
-                    "actorType": {
-                        "type": "string"
-                    },
-                    "deleted": {
-                        "type": "boolean"
-                    },
-                    "expirationTimestamp": {
-                        "type": "integer",
-                        "format": "int64"
-                    },
-                    "id": {
-                        "type": "integer",
-                        "format": "int64"
-                    },
-                    "isReplyable": {
-                        "type": "boolean"
-                    },
-                    "markdown": {
-                        "type": "boolean"
-                    },
-                    "message": {
-                        "type": "string"
-                    },
-                    "messageParameters": {
-                        "type": "object",
-                        "additionalProperties": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "object"
-                            }
-                        }
-                    },
-                    "messageType": {
-                        "type": "string"
-                    },
-                    "reactions": {
-                        "type": "object",
-                        "additionalProperties": {
-                            "type": "integer",
-                            "format": "int64"
-                        }
-                    },
-                    "referenceId": {
-                        "type": "string"
-                    },
-                    "systemMessage": {
-                        "type": "string"
-                    },
-                    "timestamp": {
-                        "type": "integer",
-                        "format": "int64"
-                    },
-                    "token": {
-                        "type": "string"
-                    }
-                }
-            },
-            "ChatMessageWithParent": {
-                "allOf": [
-                    {
-                        "$ref": "#/components/schemas/ChatMessage"
-                    },
-                    {
-                        "type": "object",
-                        "properties": {
-                            "parent": {
-                                "$ref": "#/components/schemas/ChatMessage"
-                            }
-                        }
-                    }
-                ]
-            },
-            "ChatReminder": {
-                "type": "object",
-                "required": [
-                    "messageId",
-                    "timestamp",
-                    "token",
-                    "userId"
-                ],
-                "properties": {
-                    "messageId": {
-                        "type": "integer",
-                        "format": "int64"
-                    },
-                    "timestamp": {
-                        "type": "integer",
-                        "format": "int64"
-                    },
-                    "token": {
-                        "type": "string"
-                    },
-                    "userId": {
-                        "type": "string"
-                    }
-                }
-            },
-            "FederationInvite": {
-                "type": "object",
-                "required": [
-                    "access_token",
-                    "id",
-                    "local_room_id",
-                    "remote_attendee_id",
-                    "remote_server_url",
-                    "remote_token",
-                    "user_id"
-                ],
-                "properties": {
-                    "access_token": {
-                        "type": "string"
-                    },
-                    "id": {
-                        "type": "integer",
-                        "format": "int64"
-                    },
-                    "local_room_id": {
-                        "type": "integer",
-                        "format": "int64"
-                    },
-                    "remote_attendee_id": {
-                        "type": "string"
-                    },
-                    "remote_server_url": {
-                        "type": "string"
-                    },
-                    "remote_token": {
-                        "type": "string"
-                    },
-                    "user_id": {
-                        "type": "string"
-                    }
-                }
-            },
-            "Matterbridge": {
-                "type": "object",
-                "required": [
-                    "enabled",
-                    "parts",
-                    "pid"
-                ],
-                "properties": {
-                    "enabled": {
-                        "type": "boolean"
-                    },
-                    "parts": {
-                        "$ref": "#/components/schemas/MatterbridgeConfigFields"
-                    },
-                    "pid": {
-                        "type": "integer",
-                        "format": "int64"
-                    }
-                }
-            },
-            "MatterbridgeConfigFields": {
-                "type": "array",
-                "items": {
-                    "type": "object",
-                    "additionalProperties": {
-                        "type": "object"
-                    }
-                }
-            },
-            "MatterbridgeProcessState": {
-                "type": "object",
-                "required": [
-                    "log",
-                    "running"
-                ],
-                "properties": {
-                    "log": {
-                        "type": "string"
-                    },
-                    "running": {
-                        "type": "boolean"
-                    }
-                }
-            },
-            "MatterbridgeWithProcessState": {
-                "allOf": [
-                    {
-                        "$ref": "#/components/schemas/Matterbridge"
-                    },
-                    {
-                        "$ref": "#/components/schemas/MatterbridgeProcessState"
-                    }
-                ]
-            },
             "OCSMeta": {
                 "type": "object",
                 "required": [
@@ -412,396 +41,6 @@
                     },
                     "itemsperpage": {
                         "type": "string"
-                    }
-                }
-            },
-            "Participant": {
-                "type": "object",
-                "required": [
-                    "actorId",
-                    "actorType",
-                    "attendeeId",
-                    "attendeePermissions",
-                    "attendeePin",
-                    "displayName",
-                    "inCall",
-                    "lastPing",
-                    "participantType",
-                    "permissions",
-                    "roomToken",
-                    "sessionIds"
-                ],
-                "properties": {
-                    "actorId": {
-                        "type": "string"
-                    },
-                    "actorType": {
-                        "type": "string"
-                    },
-                    "attendeeId": {
-                        "type": "integer",
-                        "format": "int64"
-                    },
-                    "attendeePermissions": {
-                        "type": "integer",
-                        "format": "int64"
-                    },
-                    "attendeePin": {
-                        "type": "string"
-                    },
-                    "displayName": {
-                        "type": "string"
-                    },
-                    "inCall": {
-                        "type": "integer",
-                        "format": "int64"
-                    },
-                    "lastPing": {
-                        "type": "integer",
-                        "format": "int64"
-                    },
-                    "participantType": {
-                        "type": "integer",
-                        "format": "int64"
-                    },
-                    "permissions": {
-                        "type": "integer",
-                        "format": "int64"
-                    },
-                    "roomToken": {
-                        "type": "string"
-                    },
-                    "sessionIds": {
-                        "type": "array",
-                        "items": {
-                            "type": "string"
-                        }
-                    },
-                    "status": {
-                        "type": "string"
-                    },
-                    "statusClearAt": {
-                        "type": "integer",
-                        "format": "int64",
-                        "nullable": true
-                    },
-                    "statusIcon": {
-                        "type": "string",
-                        "nullable": true
-                    },
-                    "statusMessage": {
-                        "type": "string",
-                        "nullable": true
-                    },
-                    "phoneNumber": {
-                        "type": "string",
-                        "nullable": true
-                    },
-                    "callId": {
-                        "type": "string",
-                        "nullable": true
-                    }
-                }
-            },
-            "Poll": {
-                "type": "object",
-                "required": [
-                    "actorDisplayName",
-                    "actorId",
-                    "actorType",
-                    "id",
-                    "maxVotes",
-                    "options",
-                    "question",
-                    "resultMode",
-                    "status"
-                ],
-                "properties": {
-                    "actorDisplayName": {
-                        "type": "string"
-                    },
-                    "actorId": {
-                        "type": "string"
-                    },
-                    "actorType": {
-                        "type": "string"
-                    },
-                    "details": {
-                        "type": "array",
-                        "items": {
-                            "$ref": "#/components/schemas/PollVote"
-                        }
-                    },
-                    "id": {
-                        "type": "integer",
-                        "format": "int64"
-                    },
-                    "maxVotes": {
-                        "type": "integer",
-                        "format": "int64"
-                    },
-                    "numVoters": {
-                        "type": "integer",
-                        "format": "int64"
-                    },
-                    "options": {
-                        "type": "array",
-                        "items": {
-                            "type": "string"
-                        }
-                    },
-                    "question": {
-                        "type": "string"
-                    },
-                    "resultMode": {
-                        "type": "integer",
-                        "format": "int64"
-                    },
-                    "status": {
-                        "type": "integer",
-                        "format": "int64"
-                    },
-                    "votedSelf": {
-                        "type": "array",
-                        "items": {
-                            "type": "integer",
-                            "format": "int64"
-                        }
-                    },
-                    "votes": {
-                        "type": "object",
-                        "additionalProperties": {
-                            "type": "integer",
-                            "format": "int64"
-                        }
-                    }
-                }
-            },
-            "PollVote": {
-                "type": "object",
-                "required": [
-                    "actorDisplayName",
-                    "actorId",
-                    "actorType",
-                    "optionId"
-                ],
-                "properties": {
-                    "actorDisplayName": {
-                        "type": "string"
-                    },
-                    "actorId": {
-                        "type": "string"
-                    },
-                    "actorType": {
-                        "type": "string"
-                    },
-                    "optionId": {
-                        "type": "integer",
-                        "format": "int64"
-                    }
-                }
-            },
-            "PublicCapabilities": {
-                "oneOf": [
-                    {
-                        "type": "object",
-                        "required": [
-                            "spreed"
-                        ],
-                        "properties": {
-                            "spreed": {
-                                "type": "object",
-                                "required": [
-                                    "features",
-                                    "config",
-                                    "version"
-                                ],
-                                "properties": {
-                                    "features": {
-                                        "type": "array",
-                                        "items": {
-                                            "type": "string"
-                                        }
-                                    },
-                                    "config": {
-                                        "type": "object",
-                                        "required": [
-                                            "attachments",
-                                            "call",
-                                            "chat",
-                                            "conversations",
-                                            "previews",
-                                            "signaling"
-                                        ],
-                                        "properties": {
-                                            "attachments": {
-                                                "type": "object",
-                                                "required": [
-                                                    "allowed"
-                                                ],
-                                                "properties": {
-                                                    "allowed": {
-                                                        "type": "boolean"
-                                                    },
-                                                    "folder": {
-                                                        "type": "string"
-                                                    }
-                                                }
-                                            },
-                                            "call": {
-                                                "type": "object",
-                                                "required": [
-                                                    "enabled",
-                                                    "breakout-rooms",
-                                                    "recording",
-                                                    "recording-consent",
-                                                    "supported-reactions",
-                                                    "predefined-backgrounds",
-                                                    "can-upload-background",
-                                                    "sip-enabled",
-                                                    "sip-dialout-enabled",
-                                                    "can-enable-sip"
-                                                ],
-                                                "properties": {
-                                                    "enabled": {
-                                                        "type": "boolean"
-                                                    },
-                                                    "breakout-rooms": {
-                                                        "type": "boolean"
-                                                    },
-                                                    "recording": {
-                                                        "type": "boolean"
-                                                    },
-                                                    "recording-consent": {
-                                                        "type": "integer",
-                                                        "format": "int64"
-                                                    },
-                                                    "supported-reactions": {
-                                                        "type": "array",
-                                                        "items": {
-                                                            "type": "string"
-                                                        }
-                                                    },
-                                                    "predefined-backgrounds": {
-                                                        "type": "array",
-                                                        "items": {
-                                                            "type": "string"
-                                                        }
-                                                    },
-                                                    "can-upload-background": {
-                                                        "type": "boolean"
-                                                    },
-                                                    "sip-enabled": {
-                                                        "type": "boolean"
-                                                    },
-                                                    "sip-dialout-enabled": {
-                                                        "type": "boolean"
-                                                    },
-                                                    "can-enable-sip": {
-                                                        "type": "boolean"
-                                                    }
-                                                }
-                                            },
-                                            "chat": {
-                                                "type": "object",
-                                                "required": [
-                                                    "max-length",
-                                                    "read-privacy",
-                                                    "has-translation-providers",
-                                                    "typing-privacy"
-                                                ],
-                                                "properties": {
-                                                    "max-length": {
-                                                        "type": "integer",
-                                                        "format": "int64"
-                                                    },
-                                                    "read-privacy": {
-                                                        "type": "integer",
-                                                        "format": "int64"
-                                                    },
-                                                    "has-translation-providers": {
-                                                        "type": "boolean"
-                                                    },
-                                                    "typing-privacy": {
-                                                        "type": "integer",
-                                                        "format": "int64"
-                                                    }
-                                                }
-                                            },
-                                            "conversations": {
-                                                "type": "object",
-                                                "required": [
-                                                    "can-create"
-                                                ],
-                                                "properties": {
-                                                    "can-create": {
-                                                        "type": "boolean"
-                                                    }
-                                                }
-                                            },
-                                            "previews": {
-                                                "type": "object",
-                                                "required": [
-                                                    "max-gif-size"
-                                                ],
-                                                "properties": {
-                                                    "max-gif-size": {
-                                                        "type": "integer",
-                                                        "format": "int64"
-                                                    }
-                                                }
-                                            },
-                                            "signaling": {
-                                                "type": "object",
-                                                "required": [
-                                                    "session-ping-limit"
-                                                ],
-                                                "properties": {
-                                                    "session-ping-limit": {
-                                                        "type": "integer",
-                                                        "format": "int64"
-                                                    },
-                                                    "hello-v2-token-key": {
-                                                        "type": "string"
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    },
-                                    "version": {
-                                        "type": "string"
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    {
-                        "type": "array",
-                        "maxLength": 0
-                    }
-                ]
-            },
-            "Reaction": {
-                "type": "object",
-                "required": [
-                    "actorDisplayName",
-                    "actorId",
-                    "actorType",
-                    "timestamp"
-                ],
-                "properties": {
-                    "actorDisplayName": {
-                        "type": "string"
-                    },
-                    "actorId": {
-                        "type": "string"
-                    },
-                    "actorType": {
-                        "type": "string"
-                    },
-                    "timestamp": {
-                        "type": "integer",
-                        "format": "int64"
                     }
                 }
             },
@@ -1065,38 +304,251 @@
                     }
                 }
             },
-            "SignalingSession": {
+            "Bot": {
                 "type": "object",
                 "required": [
-                    "inCall",
-                    "lastPing",
-                    "participantPermissions",
-                    "roomId",
-                    "sessionId",
+                    "description",
+                    "id",
+                    "name",
+                    "state"
+                ],
+                "properties": {
+                    "description": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "id": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "name": {
+                        "type": "string"
+                    },
+                    "state": {
+                        "type": "integer",
+                        "format": "int64"
+                    }
+                }
+            },
+            "ChatMessageWithParent": {
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/ChatMessage"
+                    },
+                    {
+                        "type": "object",
+                        "properties": {
+                            "parent": {
+                                "$ref": "#/components/schemas/ChatMessage"
+                            }
+                        }
+                    }
+                ]
+            },
+            "ChatMessage": {
+                "type": "object",
+                "required": [
+                    "actorDisplayName",
+                    "actorId",
+                    "actorType",
+                    "expirationTimestamp",
+                    "id",
+                    "isReplyable",
+                    "markdown",
+                    "message",
+                    "messageParameters",
+                    "messageType",
+                    "reactions",
+                    "referenceId",
+                    "systemMessage",
+                    "timestamp",
+                    "token"
+                ],
+                "properties": {
+                    "actorDisplayName": {
+                        "type": "string"
+                    },
+                    "actorId": {
+                        "type": "string"
+                    },
+                    "actorType": {
+                        "type": "string"
+                    },
+                    "deleted": {
+                        "type": "boolean"
+                    },
+                    "expirationTimestamp": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "id": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "isReplyable": {
+                        "type": "boolean"
+                    },
+                    "markdown": {
+                        "type": "boolean"
+                    },
+                    "message": {
+                        "type": "string"
+                    },
+                    "messageParameters": {
+                        "type": "object",
+                        "additionalProperties": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "object"
+                            }
+                        }
+                    },
+                    "messageType": {
+                        "type": "string"
+                    },
+                    "reactions": {
+                        "type": "object",
+                        "additionalProperties": {
+                            "type": "integer",
+                            "format": "int64"
+                        }
+                    },
+                    "referenceId": {
+                        "type": "string"
+                    },
+                    "systemMessage": {
+                        "type": "string"
+                    },
+                    "timestamp": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "token": {
+                        "type": "string"
+                    }
+                }
+            },
+            "ChatReminder": {
+                "type": "object",
+                "required": [
+                    "messageId",
+                    "timestamp",
+                    "token",
                     "userId"
                 ],
                 "properties": {
-                    "inCall": {
+                    "messageId": {
                         "type": "integer",
                         "format": "int64"
                     },
-                    "lastPing": {
+                    "timestamp": {
                         "type": "integer",
                         "format": "int64"
                     },
-                    "participantPermissions": {
-                        "type": "integer",
-                        "format": "int64"
-                    },
-                    "roomId": {
-                        "type": "integer",
-                        "format": "int64"
-                    },
-                    "sessionId": {
+                    "token": {
                         "type": "string"
                     },
                     "userId": {
                         "type": "string"
+                    }
+                }
+            },
+            "MatterbridgeWithProcessState": {
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/Matterbridge"
+                    },
+                    {
+                        "$ref": "#/components/schemas/MatterbridgeProcessState"
+                    }
+                ]
+            },
+            "MatterbridgeProcessState": {
+                "type": "object",
+                "required": [
+                    "log",
+                    "running"
+                ],
+                "properties": {
+                    "log": {
+                        "type": "string"
+                    },
+                    "running": {
+                        "type": "boolean"
+                    }
+                }
+            },
+            "Poll": {
+                "type": "object",
+                "required": [
+                    "actorDisplayName",
+                    "actorId",
+                    "actorType",
+                    "id",
+                    "maxVotes",
+                    "options",
+                    "question",
+                    "resultMode",
+                    "status"
+                ],
+                "properties": {
+                    "actorDisplayName": {
+                        "type": "string"
+                    },
+                    "actorId": {
+                        "type": "string"
+                    },
+                    "actorType": {
+                        "type": "string"
+                    },
+                    "details": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/PollVote"
+                        }
+                    },
+                    "id": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "maxVotes": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "numVoters": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "options": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "question": {
+                        "type": "string"
+                    },
+                    "resultMode": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "status": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "votedSelf": {
+                        "type": "array",
+                        "items": {
+                            "type": "integer",
+                            "format": "int64"
+                        }
+                    },
+                    "votes": {
+                        "type": "object",
+                        "additionalProperties": {
+                            "type": "integer",
+                            "format": "int64"
+                        }
                     }
                 }
             },
@@ -1212,6 +664,186 @@
                         "nullable": true
                     }
                 }
+            },
+            "PublicCapabilities": {
+                "oneOf": [
+                    {
+                        "type": "object",
+                        "required": [
+                            "spreed"
+                        ],
+                        "properties": {
+                            "spreed": {
+                                "type": "object",
+                                "required": [
+                                    "features",
+                                    "config",
+                                    "version"
+                                ],
+                                "properties": {
+                                    "features": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "config": {
+                                        "type": "object",
+                                        "required": [
+                                            "attachments",
+                                            "call",
+                                            "chat",
+                                            "conversations",
+                                            "previews",
+                                            "signaling"
+                                        ],
+                                        "properties": {
+                                            "attachments": {
+                                                "type": "object",
+                                                "required": [
+                                                    "allowed"
+                                                ],
+                                                "properties": {
+                                                    "allowed": {
+                                                        "type": "boolean"
+                                                    },
+                                                    "folder": {
+                                                        "type": "string"
+                                                    }
+                                                }
+                                            },
+                                            "call": {
+                                                "type": "object",
+                                                "required": [
+                                                    "enabled",
+                                                    "breakout-rooms",
+                                                    "recording",
+                                                    "recording-consent",
+                                                    "supported-reactions",
+                                                    "predefined-backgrounds",
+                                                    "can-upload-background",
+                                                    "sip-enabled",
+                                                    "sip-dialout-enabled",
+                                                    "can-enable-sip"
+                                                ],
+                                                "properties": {
+                                                    "enabled": {
+                                                        "type": "boolean"
+                                                    },
+                                                    "breakout-rooms": {
+                                                        "type": "boolean"
+                                                    },
+                                                    "recording": {
+                                                        "type": "boolean"
+                                                    },
+                                                    "recording-consent": {
+                                                        "type": "integer",
+                                                        "format": "int64"
+                                                    },
+                                                    "supported-reactions": {
+                                                        "type": "array",
+                                                        "items": {
+                                                            "type": "string"
+                                                        }
+                                                    },
+                                                    "predefined-backgrounds": {
+                                                        "type": "array",
+                                                        "items": {
+                                                            "type": "string"
+                                                        }
+                                                    },
+                                                    "can-upload-background": {
+                                                        "type": "boolean"
+                                                    },
+                                                    "sip-enabled": {
+                                                        "type": "boolean"
+                                                    },
+                                                    "sip-dialout-enabled": {
+                                                        "type": "boolean"
+                                                    },
+                                                    "can-enable-sip": {
+                                                        "type": "boolean"
+                                                    }
+                                                }
+                                            },
+                                            "chat": {
+                                                "type": "object",
+                                                "required": [
+                                                    "max-length",
+                                                    "read-privacy",
+                                                    "has-translation-providers",
+                                                    "typing-privacy"
+                                                ],
+                                                "properties": {
+                                                    "max-length": {
+                                                        "type": "integer",
+                                                        "format": "int64"
+                                                    },
+                                                    "read-privacy": {
+                                                        "type": "integer",
+                                                        "format": "int64"
+                                                    },
+                                                    "has-translation-providers": {
+                                                        "type": "boolean"
+                                                    },
+                                                    "typing-privacy": {
+                                                        "type": "integer",
+                                                        "format": "int64"
+                                                    }
+                                                }
+                                            },
+                                            "conversations": {
+                                                "type": "object",
+                                                "required": [
+                                                    "can-create"
+                                                ],
+                                                "properties": {
+                                                    "can-create": {
+                                                        "type": "boolean"
+                                                    }
+                                                }
+                                            },
+                                            "previews": {
+                                                "type": "object",
+                                                "required": [
+                                                    "max-gif-size"
+                                                ],
+                                                "properties": {
+                                                    "max-gif-size": {
+                                                        "type": "integer",
+                                                        "format": "int64"
+                                                    }
+                                                }
+                                            },
+                                            "signaling": {
+                                                "type": "object",
+                                                "required": [
+                                                    "session-ping-limit"
+                                                ],
+                                                "properties": {
+                                                    "session-ping-limit": {
+                                                        "type": "integer",
+                                                        "format": "int64"
+                                                    },
+                                                    "hello-v2-token-key": {
+                                                        "type": "string"
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    },
+                                    "version": {
+                                        "type": "string"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    {
+                        "type": "array",
+                        "maxLength": 0
+                    }
+                ]
             }
         }
     },
@@ -1685,683 +1317,6 @@
                                 "schema": {
                                     "type": "string",
                                     "format": "binary"
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/ocs/v2.php/apps/spreed/api/{apiVersion}/bot/{token}/message": {
-            "post": {
-                "operationId": "bot-send-message",
-                "summary": "Sends a new chat message to the given room",
-                "description": "The author and timestamp are automatically set to the current user/guest and time.",
-                "tags": [
-                    "bot"
-                ],
-                "security": [
-                    {},
-                    {
-                        "bearer_auth": []
-                    },
-                    {
-                        "basic_auth": []
-                    }
-                ],
-                "parameters": [
-                    {
-                        "name": "message",
-                        "in": "query",
-                        "description": "The message to send",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "name": "referenceId",
-                        "in": "query",
-                        "description": "For the message to be able to later identify it again",
-                        "schema": {
-                            "type": "string",
-                            "default": ""
-                        }
-                    },
-                    {
-                        "name": "replyTo",
-                        "in": "query",
-                        "description": "Parent id which this message is a reply to",
-                        "schema": {
-                            "type": "integer",
-                            "format": "int64",
-                            "default": 0
-                        }
-                    },
-                    {
-                        "name": "silent",
-                        "in": "query",
-                        "description": "If sent silent the chat message will not create any notifications",
-                        "schema": {
-                            "type": "integer",
-                            "default": 0
-                        }
-                    },
-                    {
-                        "name": "apiVersion",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "type": "string",
-                            "enum": [
-                                "v1"
-                            ],
-                            "default": "v1"
-                        }
-                    },
-                    {
-                        "name": "token",
-                        "in": "path",
-                        "description": "Conversation token",
-                        "required": true,
-                        "schema": {
-                            "type": "string",
-                            "pattern": "^[a-z0-9]{4,30}$"
-                        }
-                    },
-                    {
-                        "name": "OCS-APIRequest",
-                        "in": "header",
-                        "description": "Required to be true for the API request to pass",
-                        "required": true,
-                        "schema": {
-                            "type": "boolean",
-                            "default": true
-                        }
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "Message sent successfully",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "required": [
-                                        "ocs"
-                                    ],
-                                    "properties": {
-                                        "ocs": {
-                                            "type": "object",
-                                            "required": [
-                                                "meta",
-                                                "data"
-                                            ],
-                                            "properties": {
-                                                "meta": {
-                                                    "$ref": "#/components/schemas/OCSMeta"
-                                                },
-                                                "data": {}
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Sending message is not possible",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "required": [
-                                        "ocs"
-                                    ],
-                                    "properties": {
-                                        "ocs": {
-                                            "type": "object",
-                                            "required": [
-                                                "meta",
-                                                "data"
-                                            ],
-                                            "properties": {
-                                                "meta": {
-                                                    "$ref": "#/components/schemas/OCSMeta"
-                                                },
-                                                "data": {}
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Sending message is not allowed",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "required": [
-                                        "ocs"
-                                    ],
-                                    "properties": {
-                                        "ocs": {
-                                            "type": "object",
-                                            "required": [
-                                                "meta",
-                                                "data"
-                                            ],
-                                            "properties": {
-                                                "meta": {
-                                                    "$ref": "#/components/schemas/OCSMeta"
-                                                },
-                                                "data": {}
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    "413": {
-                        "description": "Message too long",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "required": [
-                                        "ocs"
-                                    ],
-                                    "properties": {
-                                        "ocs": {
-                                            "type": "object",
-                                            "required": [
-                                                "meta",
-                                                "data"
-                                            ],
-                                            "properties": {
-                                                "meta": {
-                                                    "$ref": "#/components/schemas/OCSMeta"
-                                                },
-                                                "data": {}
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/ocs/v2.php/apps/spreed/api/{apiVersion}/bot/{token}/reaction/{messageId}": {
-            "post": {
-                "operationId": "bot-react",
-                "summary": "Adds a reaction to a chat message",
-                "tags": [
-                    "bot"
-                ],
-                "security": [
-                    {},
-                    {
-                        "bearer_auth": []
-                    },
-                    {
-                        "basic_auth": []
-                    }
-                ],
-                "parameters": [
-                    {
-                        "name": "reaction",
-                        "in": "query",
-                        "description": "Reaction to add",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "name": "apiVersion",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "type": "string",
-                            "enum": [
-                                "v1"
-                            ],
-                            "default": "v1"
-                        }
-                    },
-                    {
-                        "name": "token",
-                        "in": "path",
-                        "description": "Conversation token",
-                        "required": true,
-                        "schema": {
-                            "type": "string",
-                            "pattern": "^[a-z0-9]{4,30}$"
-                        }
-                    },
-                    {
-                        "name": "messageId",
-                        "in": "path",
-                        "description": "ID of the message",
-                        "required": true,
-                        "schema": {
-                            "type": "integer",
-                            "format": "int64"
-                        }
-                    },
-                    {
-                        "name": "OCS-APIRequest",
-                        "in": "header",
-                        "description": "Required to be true for the API request to pass",
-                        "required": true,
-                        "schema": {
-                            "type": "boolean",
-                            "default": true
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Reaction already exists",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "required": [
-                                        "ocs"
-                                    ],
-                                    "properties": {
-                                        "ocs": {
-                                            "type": "object",
-                                            "required": [
-                                                "meta",
-                                                "data"
-                                            ],
-                                            "properties": {
-                                                "meta": {
-                                                    "$ref": "#/components/schemas/OCSMeta"
-                                                },
-                                                "data": {}
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    "201": {
-                        "description": "Reacted successfully",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "required": [
-                                        "ocs"
-                                    ],
-                                    "properties": {
-                                        "ocs": {
-                                            "type": "object",
-                                            "required": [
-                                                "meta",
-                                                "data"
-                                            ],
-                                            "properties": {
-                                                "meta": {
-                                                    "$ref": "#/components/schemas/OCSMeta"
-                                                },
-                                                "data": {}
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Reacting is not possible",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "required": [
-                                        "ocs"
-                                    ],
-                                    "properties": {
-                                        "ocs": {
-                                            "type": "object",
-                                            "required": [
-                                                "meta",
-                                                "data"
-                                            ],
-                                            "properties": {
-                                                "meta": {
-                                                    "$ref": "#/components/schemas/OCSMeta"
-                                                },
-                                                "data": {}
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Reacting is not allowed",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "required": [
-                                        "ocs"
-                                    ],
-                                    "properties": {
-                                        "ocs": {
-                                            "type": "object",
-                                            "required": [
-                                                "meta",
-                                                "data"
-                                            ],
-                                            "properties": {
-                                                "meta": {
-                                                    "$ref": "#/components/schemas/OCSMeta"
-                                                },
-                                                "data": {}
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    "404": {
-                        "description": "Reaction not found",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "required": [
-                                        "ocs"
-                                    ],
-                                    "properties": {
-                                        "ocs": {
-                                            "type": "object",
-                                            "required": [
-                                                "meta",
-                                                "data"
-                                            ],
-                                            "properties": {
-                                                "meta": {
-                                                    "$ref": "#/components/schemas/OCSMeta"
-                                                },
-                                                "data": {}
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            },
-            "delete": {
-                "operationId": "bot-delete-reaction",
-                "summary": "Deletes a reaction from a chat message",
-                "tags": [
-                    "bot"
-                ],
-                "security": [
-                    {},
-                    {
-                        "bearer_auth": []
-                    },
-                    {
-                        "basic_auth": []
-                    }
-                ],
-                "parameters": [
-                    {
-                        "name": "reaction",
-                        "in": "query",
-                        "description": "Reaction to delete",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "name": "apiVersion",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "type": "string",
-                            "enum": [
-                                "v1"
-                            ],
-                            "default": "v1"
-                        }
-                    },
-                    {
-                        "name": "token",
-                        "in": "path",
-                        "description": "Conversation token",
-                        "required": true,
-                        "schema": {
-                            "type": "string",
-                            "pattern": "^[a-z0-9]{4,30}$"
-                        }
-                    },
-                    {
-                        "name": "messageId",
-                        "in": "path",
-                        "description": "ID of the message",
-                        "required": true,
-                        "schema": {
-                            "type": "integer",
-                            "format": "int64"
-                        }
-                    },
-                    {
-                        "name": "OCS-APIRequest",
-                        "in": "header",
-                        "description": "Required to be true for the API request to pass",
-                        "required": true,
-                        "schema": {
-                            "type": "boolean",
-                            "default": true
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Reaction deleted successfully",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "required": [
-                                        "ocs"
-                                    ],
-                                    "properties": {
-                                        "ocs": {
-                                            "type": "object",
-                                            "required": [
-                                                "meta",
-                                                "data"
-                                            ],
-                                            "properties": {
-                                                "meta": {
-                                                    "$ref": "#/components/schemas/OCSMeta"
-                                                },
-                                                "data": {}
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Reacting is not possible",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "required": [
-                                        "ocs"
-                                    ],
-                                    "properties": {
-                                        "ocs": {
-                                            "type": "object",
-                                            "required": [
-                                                "meta",
-                                                "data"
-                                            ],
-                                            "properties": {
-                                                "meta": {
-                                                    "$ref": "#/components/schemas/OCSMeta"
-                                                },
-                                                "data": {}
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    "404": {
-                        "description": "Reaction not found",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "required": [
-                                        "ocs"
-                                    ],
-                                    "properties": {
-                                        "ocs": {
-                                            "type": "object",
-                                            "required": [
-                                                "meta",
-                                                "data"
-                                            ],
-                                            "properties": {
-                                                "meta": {
-                                                    "$ref": "#/components/schemas/OCSMeta"
-                                                },
-                                                "data": {}
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Reacting is not allowed",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "required": [
-                                        "ocs"
-                                    ],
-                                    "properties": {
-                                        "ocs": {
-                                            "type": "object",
-                                            "required": [
-                                                "meta",
-                                                "data"
-                                            ],
-                                            "properties": {
-                                                "meta": {
-                                                    "$ref": "#/components/schemas/OCSMeta"
-                                                },
-                                                "data": {}
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/ocs/v2.php/apps/spreed/api/{apiVersion}/bot/admin": {
-            "get": {
-                "operationId": "bot-admin-list-bots",
-                "summary": "List admin bots",
-                "description": "This endpoint requires admin access",
-                "tags": [
-                    "bot"
-                ],
-                "security": [
-                    {
-                        "bearer_auth": []
-                    },
-                    {
-                        "basic_auth": []
-                    }
-                ],
-                "parameters": [
-                    {
-                        "name": "apiVersion",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "type": "string",
-                            "enum": [
-                                "v1"
-                            ],
-                            "default": "v1"
-                        }
-                    },
-                    {
-                        "name": "OCS-APIRequest",
-                        "in": "header",
-                        "description": "Required to be true for the API request to pass",
-                        "required": true,
-                        "schema": {
-                            "type": "boolean",
-                            "default": true
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Bot list returned",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "required": [
-                                        "ocs"
-                                    ],
-                                    "properties": {
-                                        "ocs": {
-                                            "type": "object",
-                                            "required": [
-                                                "meta",
-                                                "data"
-                                            ],
-                                            "properties": {
-                                                "meta": {
-                                                    "$ref": "#/components/schemas/OCSMeta"
-                                                },
-                                                "data": {
-                                                    "type": "array",
-                                                    "items": {
-                                                        "$ref": "#/components/schemas/BotWithDetails"
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
                                 }
                             }
                         }
@@ -4751,137 +3706,6 @@
                 }
             }
         },
-        "/ocs/v2.php/apps/spreed/api/{apiVersion}/certificate/expiration": {
-            "get": {
-                "operationId": "certificate-get-certificate-expiration",
-                "summary": "Get the certificate expiration for a host",
-                "description": "This endpoint requires admin access",
-                "tags": [
-                    "certificate"
-                ],
-                "security": [
-                    {
-                        "bearer_auth": []
-                    },
-                    {
-                        "basic_auth": []
-                    }
-                ],
-                "parameters": [
-                    {
-                        "name": "host",
-                        "in": "query",
-                        "description": "Host to check",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "name": "apiVersion",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "type": "string",
-                            "enum": [
-                                "v1"
-                            ],
-                            "default": "v1"
-                        }
-                    },
-                    {
-                        "name": "OCS-APIRequest",
-                        "in": "header",
-                        "description": "Required to be true for the API request to pass",
-                        "required": true,
-                        "schema": {
-                            "type": "boolean",
-                            "default": true
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Certificate expiration returned",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "required": [
-                                        "ocs"
-                                    ],
-                                    "properties": {
-                                        "ocs": {
-                                            "type": "object",
-                                            "required": [
-                                                "meta",
-                                                "data"
-                                            ],
-                                            "properties": {
-                                                "meta": {
-                                                    "$ref": "#/components/schemas/OCSMeta"
-                                                },
-                                                "data": {
-                                                    "type": "object",
-                                                    "required": [
-                                                        "expiration_in_days"
-                                                    ],
-                                                    "properties": {
-                                                        "expiration_in_days": {
-                                                            "type": "integer",
-                                                            "format": "int64",
-                                                            "nullable": true
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Getting certificate expiration is not possible",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "required": [
-                                        "ocs"
-                                    ],
-                                    "properties": {
-                                        "ocs": {
-                                            "type": "object",
-                                            "required": [
-                                                "meta",
-                                                "data"
-                                            ],
-                                            "properties": {
-                                                "meta": {
-                                                    "$ref": "#/components/schemas/OCSMeta"
-                                                },
-                                                "data": {
-                                                    "type": "object",
-                                                    "required": [
-                                                        "message"
-                                                    ],
-                                                    "properties": {
-                                                        "message": {
-                                                            "type": "string"
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
         "/ocs/v2.php/apps/spreed/api/{apiVersion}/chat/{token}": {
             "get": {
                 "operationId": "chat-receive-messages",
@@ -6999,262 +5823,6 @@
                 }
             }
         },
-        "/ocs/v2.php/apps/spreed/api/{apiVersion}/federation/invitation/{id}": {
-            "post": {
-                "operationId": "federation-accept-share",
-                "summary": "Accept a federation invites",
-                "tags": [
-                    "federation"
-                ],
-                "security": [
-                    {
-                        "bearer_auth": []
-                    },
-                    {
-                        "basic_auth": []
-                    }
-                ],
-                "parameters": [
-                    {
-                        "name": "apiVersion",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "type": "string",
-                            "enum": [
-                                "v1"
-                            ],
-                            "default": "v1"
-                        }
-                    },
-                    {
-                        "name": "id",
-                        "in": "path",
-                        "description": "ID of the share",
-                        "required": true,
-                        "schema": {
-                            "type": "integer",
-                            "format": "int64"
-                        }
-                    },
-                    {
-                        "name": "OCS-APIRequest",
-                        "in": "header",
-                        "description": "Required to be true for the API request to pass",
-                        "required": true,
-                        "schema": {
-                            "type": "boolean",
-                            "default": true
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Invite accepted successfully",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "required": [
-                                        "ocs"
-                                    ],
-                                    "properties": {
-                                        "ocs": {
-                                            "type": "object",
-                                            "required": [
-                                                "meta",
-                                                "data"
-                                            ],
-                                            "properties": {
-                                                "meta": {
-                                                    "$ref": "#/components/schemas/OCSMeta"
-                                                },
-                                                "data": {}
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    "500": {
-                        "description": "",
-                        "content": {
-                            "text/plain": {
-                                "schema": {
-                                    "type": "string"
-                                }
-                            }
-                        }
-                    }
-                }
-            },
-            "delete": {
-                "operationId": "federation-reject-share",
-                "summary": "Decline a federation invites",
-                "tags": [
-                    "federation"
-                ],
-                "security": [
-                    {
-                        "bearer_auth": []
-                    },
-                    {
-                        "basic_auth": []
-                    }
-                ],
-                "parameters": [
-                    {
-                        "name": "apiVersion",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "type": "string",
-                            "enum": [
-                                "v1"
-                            ],
-                            "default": "v1"
-                        }
-                    },
-                    {
-                        "name": "id",
-                        "in": "path",
-                        "description": "ID of the share",
-                        "required": true,
-                        "schema": {
-                            "type": "integer",
-                            "format": "int64"
-                        }
-                    },
-                    {
-                        "name": "OCS-APIRequest",
-                        "in": "header",
-                        "description": "Required to be true for the API request to pass",
-                        "required": true,
-                        "schema": {
-                            "type": "boolean",
-                            "default": true
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Invite declined successfully",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "required": [
-                                        "ocs"
-                                    ],
-                                    "properties": {
-                                        "ocs": {
-                                            "type": "object",
-                                            "required": [
-                                                "meta",
-                                                "data"
-                                            ],
-                                            "properties": {
-                                                "meta": {
-                                                    "$ref": "#/components/schemas/OCSMeta"
-                                                },
-                                                "data": {}
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    "500": {
-                        "description": "",
-                        "content": {
-                            "text/plain": {
-                                "schema": {
-                                    "type": "string"
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/ocs/v2.php/apps/spreed/api/{apiVersion}/federation/invitation": {
-            "get": {
-                "operationId": "federation-get-shares",
-                "summary": "Get a list of federation invites",
-                "tags": [
-                    "federation"
-                ],
-                "security": [
-                    {
-                        "bearer_auth": []
-                    },
-                    {
-                        "basic_auth": []
-                    }
-                ],
-                "parameters": [
-                    {
-                        "name": "apiVersion",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "type": "string",
-                            "enum": [
-                                "v1"
-                            ],
-                            "default": "v1"
-                        }
-                    },
-                    {
-                        "name": "OCS-APIRequest",
-                        "in": "header",
-                        "description": "Required to be true for the API request to pass",
-                        "required": true,
-                        "schema": {
-                            "type": "boolean",
-                            "default": true
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Get list of received federation invites successfully",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "required": [
-                                        "ocs"
-                                    ],
-                                    "properties": {
-                                        "ocs": {
-                                            "type": "object",
-                                            "required": [
-                                                "meta",
-                                                "data"
-                                            ],
-                                            "properties": {
-                                                "meta": {
-                                                    "$ref": "#/components/schemas/OCSMeta"
-                                                },
-                                                "data": {
-                                                    "type": "array",
-                                                    "items": {
-                                                        "$ref": "#/components/schemas/FederationInvite"
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
         "/ocs/v2.php/apps/spreed/api/{apiVersion}/file/{fileId}": {
             "get": {
                 "operationId": "files_integration-get-room-by-file-id",
@@ -7388,7 +5956,7 @@
         "/ocs/v2.php/apps/spreed/api/{apiVersion}/publicshare/{shareToken}": {
             "get": {
                 "operationId": "files_integration-get-room-by-share-token",
-                "summary": "Returns the token of the room associated to the file id of the given share token",
+                "summary": "Returns the token of the room associated to the file of the given share token",
                 "description": "This is the counterpart of self::getRoomByFileId() for share tokens instead of file ids, although both return the same room token if the given file id and share token refer to the same file.\nIf there is no room associated to the file id of the given share token a new room is created; the new room is a public room associated with a \"file\" object with the file id of the given share token. Unlike normal rooms in which the owner is the user that created the room these are special rooms without owner (although self joined users with direct access to the file become persistent participants automatically when they join until they explicitly leave or no longer have access to the file).\nIn any case, to create or even get the token of the room, the file must be publicly shared (like a link share, for example); an error is returned otherwise.\nBesides the token of the room this also returns the current user ID and display name, if any; this is needed by the Talk sidebar to know the actual current user, as the public share page uses the incognito mode and thus logged-in users as seen as guests.",
                 "tags": [
                     "files_integration"
@@ -7678,352 +6246,6 @@
                                                     "$ref": "#/components/schemas/OCSMeta"
                                                 },
                                                 "data": {}
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/ocs/v2.php/apps/spreed/api/{apiVersion}/hostedsignalingserver/requesttrial": {
-            "post": {
-                "operationId": "hosted_signaling_server-request-trial",
-                "summary": "Request a trial account",
-                "description": "This endpoint requires admin access",
-                "tags": [
-                    "hosted_signaling_server"
-                ],
-                "security": [
-                    {
-                        "bearer_auth": []
-                    },
-                    {
-                        "basic_auth": []
-                    }
-                ],
-                "parameters": [
-                    {
-                        "name": "url",
-                        "in": "query",
-                        "description": "Server URL",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "name": "name",
-                        "in": "query",
-                        "description": "Display name of the user",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "name": "email",
-                        "in": "query",
-                        "description": "Email of the user",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "name": "language",
-                        "in": "query",
-                        "description": "Language of the user",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "name": "country",
-                        "in": "query",
-                        "description": "Country of the user",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "name": "apiVersion",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "type": "string",
-                            "enum": [
-                                "v1"
-                            ],
-                            "default": "v1"
-                        }
-                    },
-                    {
-                        "name": "OCS-APIRequest",
-                        "in": "header",
-                        "description": "Required to be true for the API request to pass",
-                        "required": true,
-                        "schema": {
-                            "type": "boolean",
-                            "default": true
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Trial requested successfully",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "required": [
-                                        "ocs"
-                                    ],
-                                    "properties": {
-                                        "ocs": {
-                                            "type": "object",
-                                            "required": [
-                                                "meta",
-                                                "data"
-                                            ],
-                                            "properties": {
-                                                "meta": {
-                                                    "$ref": "#/components/schemas/OCSMeta"
-                                                },
-                                                "data": {
-                                                    "type": "object",
-                                                    "additionalProperties": {
-                                                        "type": "object"
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Requesting trial is not possible",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "required": [
-                                        "ocs"
-                                    ],
-                                    "properties": {
-                                        "ocs": {
-                                            "type": "object",
-                                            "required": [
-                                                "meta",
-                                                "data"
-                                            ],
-                                            "properties": {
-                                                "meta": {
-                                                    "$ref": "#/components/schemas/OCSMeta"
-                                                },
-                                                "data": {
-                                                    "type": "object",
-                                                    "required": [
-                                                        "message"
-                                                    ],
-                                                    "properties": {
-                                                        "message": {
-                                                            "type": "string"
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    "500": {
-                        "description": "",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "required": [
-                                        "ocs"
-                                    ],
-                                    "properties": {
-                                        "ocs": {
-                                            "type": "object",
-                                            "required": [
-                                                "meta",
-                                                "data"
-                                            ],
-                                            "properties": {
-                                                "meta": {
-                                                    "$ref": "#/components/schemas/OCSMeta"
-                                                },
-                                                "data": {
-                                                    "type": "object",
-                                                    "required": [
-                                                        "message"
-                                                    ],
-                                                    "properties": {
-                                                        "message": {
-                                                            "type": "string"
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/ocs/v2.php/apps/spreed/api/{apiVersion}/hostedsignalingserver/delete": {
-            "delete": {
-                "operationId": "hosted_signaling_server-delete-account",
-                "summary": "Delete the account",
-                "description": "This endpoint requires admin access",
-                "tags": [
-                    "hosted_signaling_server"
-                ],
-                "security": [
-                    {
-                        "bearer_auth": []
-                    },
-                    {
-                        "basic_auth": []
-                    }
-                ],
-                "parameters": [
-                    {
-                        "name": "apiVersion",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "type": "string",
-                            "enum": [
-                                "v1"
-                            ],
-                            "default": "v1"
-                        }
-                    },
-                    {
-                        "name": "OCS-APIRequest",
-                        "in": "header",
-                        "description": "Required to be true for the API request to pass",
-                        "required": true,
-                        "schema": {
-                            "type": "boolean",
-                            "default": true
-                        }
-                    }
-                ],
-                "responses": {
-                    "204": {
-                        "description": "Account deleted successfully",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "required": [
-                                        "ocs"
-                                    ],
-                                    "properties": {
-                                        "ocs": {
-                                            "type": "object",
-                                            "required": [
-                                                "meta",
-                                                "data"
-                                            ],
-                                            "properties": {
-                                                "meta": {
-                                                    "$ref": "#/components/schemas/OCSMeta"
-                                                },
-                                                "data": {}
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Deleting account is not possible",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "required": [
-                                        "ocs"
-                                    ],
-                                    "properties": {
-                                        "ocs": {
-                                            "type": "object",
-                                            "required": [
-                                                "meta",
-                                                "data"
-                                            ],
-                                            "properties": {
-                                                "meta": {
-                                                    "$ref": "#/components/schemas/OCSMeta"
-                                                },
-                                                "data": {
-                                                    "type": "object",
-                                                    "required": [
-                                                        "message"
-                                                    ],
-                                                    "properties": {
-                                                        "message": {
-                                                            "type": "string"
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    "500": {
-                        "description": "",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "required": [
-                                        "ocs"
-                                    ],
-                                    "properties": {
-                                        "ocs": {
-                                            "type": "object",
-                                            "required": [
-                                                "meta",
-                                                "data"
-                                            ],
-                                            "properties": {
-                                                "meta": {
-                                                    "$ref": "#/components/schemas/OCSMeta"
-                                                },
-                                                "data": {
-                                                    "type": "object",
-                                                    "required": [
-                                                        "message"
-                                                    ],
-                                                    "properties": {
-                                                        "message": {
-                                                            "type": "string"
-                                                        }
-                                                    }
-                                                }
                                             }
                                         }
                                     }
@@ -8440,238 +6662,6 @@
                                                 },
                                                 "data": {
                                                     "$ref": "#/components/schemas/MatterbridgeProcessState"
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/ocs/v2.php/apps/spreed/api/{apiVersion}/bridge": {
-            "delete": {
-                "operationId": "matterbridge_settings-stop-all-bridges",
-                "summary": "Stop all bridges",
-                "description": "This endpoint requires admin access",
-                "tags": [
-                    "matterbridge_settings"
-                ],
-                "security": [
-                    {
-                        "bearer_auth": []
-                    },
-                    {
-                        "basic_auth": []
-                    }
-                ],
-                "parameters": [
-                    {
-                        "name": "apiVersion",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "type": "string",
-                            "enum": [
-                                "v1"
-                            ],
-                            "default": "v1"
-                        }
-                    },
-                    {
-                        "name": "OCS-APIRequest",
-                        "in": "header",
-                        "description": "Required to be true for the API request to pass",
-                        "required": true,
-                        "schema": {
-                            "type": "boolean",
-                            "default": true
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "All bridges stopped successfully",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "required": [
-                                        "ocs"
-                                    ],
-                                    "properties": {
-                                        "ocs": {
-                                            "type": "object",
-                                            "required": [
-                                                "meta",
-                                                "data"
-                                            ],
-                                            "properties": {
-                                                "meta": {
-                                                    "$ref": "#/components/schemas/OCSMeta"
-                                                },
-                                                "data": {
-                                                    "type": "boolean"
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    "406": {
-                        "description": "Stopping all bridges is not possible",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "required": [
-                                        "ocs"
-                                    ],
-                                    "properties": {
-                                        "ocs": {
-                                            "type": "object",
-                                            "required": [
-                                                "meta",
-                                                "data"
-                                            ],
-                                            "properties": {
-                                                "meta": {
-                                                    "$ref": "#/components/schemas/OCSMeta"
-                                                },
-                                                "data": {
-                                                    "type": "object",
-                                                    "required": [
-                                                        "error"
-                                                    ],
-                                                    "properties": {
-                                                        "error": {
-                                                            "type": "string"
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/ocs/v2.php/apps/spreed/api/{apiVersion}/bridge/version": {
-            "get": {
-                "operationId": "matterbridge_settings-get-matterbridge-version",
-                "summary": "Get Matterbridge version",
-                "description": "This endpoint requires admin access",
-                "tags": [
-                    "matterbridge_settings"
-                ],
-                "security": [
-                    {
-                        "bearer_auth": []
-                    },
-                    {
-                        "basic_auth": []
-                    }
-                ],
-                "parameters": [
-                    {
-                        "name": "apiVersion",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "type": "string",
-                            "enum": [
-                                "v1"
-                            ],
-                            "default": "v1"
-                        }
-                    },
-                    {
-                        "name": "OCS-APIRequest",
-                        "in": "header",
-                        "description": "Required to be true for the API request to pass",
-                        "required": true,
-                        "schema": {
-                            "type": "boolean",
-                            "default": true
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Bridge version returned",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "required": [
-                                        "ocs"
-                                    ],
-                                    "properties": {
-                                        "ocs": {
-                                            "type": "object",
-                                            "required": [
-                                                "meta",
-                                                "data"
-                                            ],
-                                            "properties": {
-                                                "meta": {
-                                                    "$ref": "#/components/schemas/OCSMeta"
-                                                },
-                                                "data": {
-                                                    "type": "object",
-                                                    "required": [
-                                                        "version"
-                                                    ],
-                                                    "properties": {
-                                                        "version": {
-                                                            "type": "string"
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Getting bridge version is not possible",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "required": [
-                                        "ocs"
-                                    ],
-                                    "properties": {
-                                        "ocs": {
-                                            "type": "object",
-                                            "required": [
-                                                "meta",
-                                                "data"
-                                            ],
-                                            "properties": {
-                                                "meta": {
-                                                    "$ref": "#/components/schemas/OCSMeta"
-                                                },
-                                                "data": {
-                                                    "type": "object",
-                                                    "required": [
-                                                        "error"
-                                                    ],
-                                                    "properties": {
-                                                        "error": {
-                                                            "type": "string"
-                                                        }
-                                                    }
                                                 }
                                             }
                                         }
@@ -9321,11 +7311,11 @@
         },
         "/ocs/v2.php/apps/spreed/api/{apiVersion}/publicshareauth": {
             "post": {
-                "operationId": "public_share_auth-create-room",
-                "summary": "Creates a new room for requesting the password of a share",
+                "operationId": "files_integration-create-room",
+                "summary": "Creates a new room for video verification (requesting the password of a share)",
                 "description": "The new room is a public room associated with a \"share:password\" object with the ID of the share token. Unlike normal rooms in which the owner is the user that created the room these are special rooms always created by a guest or user on behalf of a registered user, the sharer, who will be the owner of the room.\nThe share must have \"send password by Talk\" enabled; an error is returned otherwise.",
                 "tags": [
-                    "public_share_auth"
+                    "files_integration"
                 ],
                 "security": [
                     {},
@@ -9943,165 +7933,6 @@
                 }
             }
         },
-        "/ocs/v2.php/apps/spreed/api/{apiVersion}/recording/welcome/{serverId}": {
-            "get": {
-                "operationId": "recording-get-welcome-message",
-                "summary": "Get the welcome message of a recording server",
-                "description": "This endpoint requires admin access",
-                "tags": [
-                    "recording"
-                ],
-                "security": [
-                    {
-                        "bearer_auth": []
-                    },
-                    {
-                        "basic_auth": []
-                    }
-                ],
-                "parameters": [
-                    {
-                        "name": "apiVersion",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "type": "string",
-                            "enum": [
-                                "v1"
-                            ],
-                            "default": "v1"
-                        }
-                    },
-                    {
-                        "name": "serverId",
-                        "in": "path",
-                        "description": "ID of the server",
-                        "required": true,
-                        "schema": {
-                            "type": "integer",
-                            "format": "int64"
-                        }
-                    },
-                    {
-                        "name": "OCS-APIRequest",
-                        "in": "header",
-                        "description": "Required to be true for the API request to pass",
-                        "required": true,
-                        "schema": {
-                            "type": "boolean",
-                            "default": true
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Welcome message returned",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "required": [
-                                        "ocs"
-                                    ],
-                                    "properties": {
-                                        "ocs": {
-                                            "type": "object",
-                                            "required": [
-                                                "meta",
-                                                "data"
-                                            ],
-                                            "properties": {
-                                                "meta": {
-                                                    "$ref": "#/components/schemas/OCSMeta"
-                                                },
-                                                "data": {
-                                                    "type": "object",
-                                                    "required": [
-                                                        "version"
-                                                    ],
-                                                    "properties": {
-                                                        "version": {
-                                                            "type": "number",
-                                                            "format": "float"
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    "404": {
-                        "description": "Recording server not found or not configured",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "required": [
-                                        "ocs"
-                                    ],
-                                    "properties": {
-                                        "ocs": {
-                                            "type": "object",
-                                            "required": [
-                                                "meta",
-                                                "data"
-                                            ],
-                                            "properties": {
-                                                "meta": {
-                                                    "$ref": "#/components/schemas/OCSMeta"
-                                                },
-                                                "data": {}
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    "500": {
-                        "description": "",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "required": [
-                                        "ocs"
-                                    ],
-                                    "properties": {
-                                        "ocs": {
-                                            "type": "object",
-                                            "required": [
-                                                "meta",
-                                                "data"
-                                            ],
-                                            "properties": {
-                                                "meta": {
-                                                    "$ref": "#/components/schemas/OCSMeta"
-                                                },
-                                                "data": {
-                                                    "type": "object",
-                                                    "required": [
-                                                        "error"
-                                                    ],
-                                                    "properties": {
-                                                        "error": {
-                                                            "type": "string"
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
         "/ocs/v2.php/apps/spreed/api/{apiVersion}/recording/{token}": {
             "post": {
                 "operationId": "recording-start",
@@ -10333,188 +8164,6 @@
                                                     "properties": {
                                                         "error": {
                                                             "type": "string"
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/ocs/v2.php/apps/spreed/api/{apiVersion}/recording/{token}/store": {
-            "post": {
-                "operationId": "recording-store",
-                "summary": "Store the recording",
-                "tags": [
-                    "recording"
-                ],
-                "security": [
-                    {},
-                    {
-                        "bearer_auth": []
-                    },
-                    {
-                        "basic_auth": []
-                    }
-                ],
-                "parameters": [
-                    {
-                        "name": "owner",
-                        "in": "query",
-                        "description": "User that will own the recording file",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "name": "apiVersion",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "type": "string",
-                            "enum": [
-                                "v1"
-                            ],
-                            "default": "v1"
-                        }
-                    },
-                    {
-                        "name": "token",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "type": "string",
-                            "pattern": "^[a-z0-9]{4,30}$"
-                        }
-                    },
-                    {
-                        "name": "OCS-APIRequest",
-                        "in": "header",
-                        "description": "Required to be true for the API request to pass",
-                        "required": true,
-                        "schema": {
-                            "type": "boolean",
-                            "default": true
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Recording stored successfully",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "required": [
-                                        "ocs"
-                                    ],
-                                    "properties": {
-                                        "ocs": {
-                                            "type": "object",
-                                            "required": [
-                                                "meta",
-                                                "data"
-                                            ],
-                                            "properties": {
-                                                "meta": {
-                                                    "$ref": "#/components/schemas/OCSMeta"
-                                                },
-                                                "data": {}
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Storing recording is not possible",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "required": [
-                                        "ocs"
-                                    ],
-                                    "properties": {
-                                        "ocs": {
-                                            "type": "object",
-                                            "required": [
-                                                "meta",
-                                                "data"
-                                            ],
-                                            "properties": {
-                                                "meta": {
-                                                    "$ref": "#/components/schemas/OCSMeta"
-                                                },
-                                                "data": {
-                                                    "type": "object",
-                                                    "required": [
-                                                        "error"
-                                                    ],
-                                                    "properties": {
-                                                        "error": {
-                                                            "type": "string"
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Missing permissions to store recording",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "required": [
-                                        "ocs"
-                                    ],
-                                    "properties": {
-                                        "ocs": {
-                                            "type": "object",
-                                            "required": [
-                                                "meta",
-                                                "data"
-                                            ],
-                                            "properties": {
-                                                "meta": {
-                                                    "$ref": "#/components/schemas/OCSMeta"
-                                                },
-                                                "data": {
-                                                    "type": "object",
-                                                    "required": [
-                                                        "type",
-                                                        "error"
-                                                    ],
-                                                    "properties": {
-                                                        "type": {
-                                                            "type": "string"
-                                                        },
-                                                        "error": {
-                                                            "type": "object",
-                                                            "required": [
-                                                                "code",
-                                                                "message"
-                                                            ],
-                                                            "properties": {
-                                                                "code": {
-                                                                    "type": "string"
-                                                                },
-                                                                "message": {
-                                                                    "type": "string"
-                                                                }
-                                                            }
                                                         }
                                                     }
                                                 }
@@ -11701,7 +9350,8 @@
         "/ocs/v2.php/apps/spreed/api/{apiVersion}/room/{token}/breakout-rooms": {
             "get": {
                 "operationId": "room-get-breakout-rooms",
-                "summary": "Get all (for moderators and in case of \"free selection\") or the assigned breakout room",
+                "summary": "Get breakout rooms",
+                "description": "All for moderators and in case of \"free selection\", or the assigned breakout room for other participants",
                 "tags": [
                     "room"
                 ],
@@ -15697,108 +13347,6 @@
                 }
             }
         },
-        "/ocs/v2.php/apps/spreed/api/{apiVersion}/settings/sip": {
-            "post": {
-                "operationId": "settings-setsip-settings",
-                "summary": "Update SIP settings",
-                "description": "This endpoint requires admin access",
-                "tags": [
-                    "settings"
-                ],
-                "security": [
-                    {
-                        "bearer_auth": []
-                    },
-                    {
-                        "basic_auth": []
-                    }
-                ],
-                "parameters": [
-                    {
-                        "name": "sipGroups[]",
-                        "in": "query",
-                        "description": "New SIP groups",
-                        "schema": {
-                            "type": "array",
-                            "default": [],
-                            "items": {
-                                "type": "string"
-                            }
-                        }
-                    },
-                    {
-                        "name": "dialInInfo",
-                        "in": "query",
-                        "description": "New dial info",
-                        "schema": {
-                            "type": "string",
-                            "default": ""
-                        }
-                    },
-                    {
-                        "name": "sharedSecret",
-                        "in": "query",
-                        "description": "New shared secret",
-                        "schema": {
-                            "type": "string",
-                            "default": ""
-                        }
-                    },
-                    {
-                        "name": "apiVersion",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "type": "string",
-                            "enum": [
-                                "v1"
-                            ],
-                            "default": "v1"
-                        }
-                    },
-                    {
-                        "name": "OCS-APIRequest",
-                        "in": "header",
-                        "description": "Required to be true for the API request to pass",
-                        "required": true,
-                        "schema": {
-                            "type": "boolean",
-                            "default": true
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Successfully set new SIP settings",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "required": [
-                                        "ocs"
-                                    ],
-                                    "properties": {
-                                        "ocs": {
-                                            "type": "object",
-                                            "required": [
-                                                "meta",
-                                                "data"
-                                            ],
-                                            "properties": {
-                                                "meta": {
-                                                    "$ref": "#/components/schemas/OCSMeta"
-                                                },
-                                                "data": {}
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
         "/ocs/v2.php/apps/spreed/api/{apiVersion}/settings/user": {
             "post": {
                 "operationId": "settings-set-user-setting",
@@ -15821,7 +13369,13 @@
                         "description": "Key to update",
                         "required": true,
                         "schema": {
-                            "type": "string"
+                            "type": "string",
+                            "enum": [
+                                "attachment_folder",
+                                "read_status_privacy",
+                                "typing_privacy",
+                                "play_sounds"
+                            ]
                         }
                     },
                     {
@@ -15918,10 +13472,11 @@
         },
         "/ocs/v2.php/apps/spreed/api/{apiVersion}/signaling/settings": {
             "get": {
-                "operationId": "signaling-get-settings",
+                "operationId": "internal_signaling-external_signaling-get-settings",
                 "summary": "Get the signaling settings",
                 "tags": [
-                    "signaling"
+                    "internal_signaling",
+                    "external_signaling"
                 ],
                 "security": [
                     {},
@@ -16055,168 +13610,12 @@
                 }
             }
         },
-        "/ocs/v2.php/apps/spreed/api/{apiVersion}/signaling/welcome/{serverId}": {
-            "get": {
-                "operationId": "signaling-get-welcome-message",
-                "summary": "Get the welcome message from a signaling server",
-                "description": "Only available for logged-in users because guests can not use the apps right now.\nThis endpoint requires admin access",
-                "tags": [
-                    "signaling"
-                ],
-                "security": [
-                    {
-                        "bearer_auth": []
-                    },
-                    {
-                        "basic_auth": []
-                    }
-                ],
-                "parameters": [
-                    {
-                        "name": "apiVersion",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "type": "string",
-                            "enum": [
-                                "v3"
-                            ],
-                            "default": "v3"
-                        }
-                    },
-                    {
-                        "name": "serverId",
-                        "in": "path",
-                        "description": "ID of the signaling server",
-                        "required": true,
-                        "schema": {
-                            "type": "integer",
-                            "format": "int64"
-                        }
-                    },
-                    {
-                        "name": "OCS-APIRequest",
-                        "in": "header",
-                        "description": "Required to be true for the API request to pass",
-                        "required": true,
-                        "schema": {
-                            "type": "boolean",
-                            "default": true
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Welcome message returned",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "required": [
-                                        "ocs"
-                                    ],
-                                    "properties": {
-                                        "ocs": {
-                                            "type": "object",
-                                            "required": [
-                                                "meta",
-                                                "data"
-                                            ],
-                                            "properties": {
-                                                "meta": {
-                                                    "$ref": "#/components/schemas/OCSMeta"
-                                                },
-                                                "data": {
-                                                    "type": "object",
-                                                    "additionalProperties": {
-                                                        "type": "object"
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    "404": {
-                        "description": "Signaling server not found",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "required": [
-                                        "ocs"
-                                    ],
-                                    "properties": {
-                                        "ocs": {
-                                            "type": "object",
-                                            "required": [
-                                                "meta",
-                                                "data"
-                                            ],
-                                            "properties": {
-                                                "meta": {
-                                                    "$ref": "#/components/schemas/OCSMeta"
-                                                },
-                                                "data": {}
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    "500": {
-                        "description": "",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "required": [
-                                        "ocs"
-                                    ],
-                                    "properties": {
-                                        "ocs": {
-                                            "type": "object",
-                                            "required": [
-                                                "meta",
-                                                "data"
-                                            ],
-                                            "properties": {
-                                                "meta": {
-                                                    "$ref": "#/components/schemas/OCSMeta"
-                                                },
-                                                "data": {
-                                                    "type": "object",
-                                                    "required": [
-                                                        "error"
-                                                    ],
-                                                    "properties": {
-                                                        "error": {
-                                                            "type": "string"
-                                                        },
-                                                        "version": {
-                                                            "type": "string"
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
         "/ocs/v2.php/apps/spreed/api/{apiVersion}/signaling/{token}": {
             "post": {
-                "operationId": "signaling-send-messages",
+                "operationId": "internal_signaling-send-messages",
                 "summary": "Send signaling messages",
                 "tags": [
-                    "signaling"
+                    "internal_signaling"
                 ],
                 "security": [
                     {},
@@ -16332,10 +13731,10 @@
                 }
             },
             "get": {
-                "operationId": "signaling-pull-messages",
+                "operationId": "internal_signaling-pull-messages",
                 "summary": "Get signaling messages",
                 "tags": [
-                    "signaling"
+                    "internal_signaling"
                 ],
                 "security": [
                     {},
@@ -16581,10 +13980,10 @@
         },
         "/ocs/v2.php/apps/spreed/temp-user-avatar": {
             "post": {
-                "operationId": "temp_avatar-post-avatar",
-                "summary": "Upload a temporary avatar",
+                "operationId": "user_avatar-post-avatar",
+                "summary": "Upload your avatar as a user",
                 "tags": [
-                    "temp_avatar"
+                    "user_avatar"
                 ],
                 "security": [
                     {
@@ -16676,10 +14075,10 @@
                 }
             },
             "delete": {
-                "operationId": "temp_avatar-delete-avatar",
-                "summary": "Delete a temporary avatar",
+                "operationId": "user_avatar-delete-avatar",
+                "summary": "Delete your avatar as a user",
                 "tags": [
-                    "temp_avatar"
+                    "user_avatar"
                 ],
                 "security": [
                     {
