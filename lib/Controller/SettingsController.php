@@ -32,6 +32,7 @@ use OCA\Talk\Participant;
 use OCA\Talk\Service\ParticipantService;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\Attribute\NoAdminRequired;
+use OCP\AppFramework\Http\Attribute\OpenAPI;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\OCSController;
 use OCP\Files\Folder;
@@ -62,7 +63,7 @@ class SettingsController extends OCSController {
 	/**
 	 * Update user setting
 	 *
-	 * @param string $key Key to update
+	 * @param 'attachment_folder'|'read_status_privacy'|'typing_privacy'|'play_sounds' $key Key to update
 	 * @param string|int|null $value New value for the key
 	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_BAD_REQUEST, array<empty>, array{}>
 	 *
@@ -120,7 +121,7 @@ class SettingsController extends OCSController {
 	}
 
 	/**
-	 * Update SIP settings
+	 * Update SIP bridge settings
 	 *
 	 * @param string[] $sipGroups New SIP groups
 	 * @param string $dialInInfo New dial info
@@ -129,6 +130,7 @@ class SettingsController extends OCSController {
 	 *
 	 * 200: Successfully set new SIP settings
 	 */
+	#[OpenAPI(scope: OpenAPI::SCOPE_ADMINISTRATION, tags: ['settings'])]
 	public function setSIPSettings(
 		array $sipGroups = [],
 		string $dialInInfo = '',

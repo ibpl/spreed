@@ -45,7 +45,7 @@ use OCA\Talk\Signaling\Messages;
 use OCA\Talk\TalkSession;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\Attribute\BruteForceProtection;
-use OCP\AppFramework\Http\Attribute\IgnoreOpenAPI;
+use OCP\AppFramework\Http\Attribute\OpenAPI;
 use OCP\AppFramework\Http\Attribute\PublicPage;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\OCSController;
@@ -136,6 +136,7 @@ class SignalingController extends OCSController {
 	#[PublicPage]
 	#[BruteForceProtection(action: 'talkRoomToken')]
 	#[BruteForceProtection(action: 'talkRecordingSecret')]
+	#[OpenAPI(tags: ['internal_signaling', 'external_signaling'])]
 	public function getSettings(string $token = ''): DataResponse {
 		$isRecordingRequest = false;
 
@@ -232,6 +233,7 @@ class SignalingController extends OCSController {
 	 * 200: Welcome message returned
 	 * 404: Signaling server not found
 	 */
+	#[OpenAPI(scope: OpenAPI::SCOPE_ADMINISTRATION, tags: ['settings'])]
 	public function getWelcomeMessage(int $serverId): DataResponse {
 		$signalingServers = $this->talkConfig->getSignalingServers();
 		if (empty($signalingServers) || !isset($signalingServers[$serverId])) {
@@ -319,6 +321,7 @@ class SignalingController extends OCSController {
 	 * 400: Sending signaling message is not possible
 	 */
 	#[PublicPage]
+	#[OpenAPI(tags: ['internal_signaling'])]
 	public function sendMessages(string $token, string $messages): DataResponse {
 		if ($this->talkConfig->getSignalingMode() !== Config::SIGNALING_INTERNAL) {
 			return new DataResponse('Internal signaling disabled.', Http::STATUS_BAD_REQUEST);
@@ -370,6 +373,7 @@ class SignalingController extends OCSController {
 	 * 409: Session killed
 	 */
 	#[PublicPage]
+	#[OpenAPI(tags: ['internal_signaling'])]
 	public function pullMessages(string $token): DataResponse {
 		if ($this->talkConfig->getSignalingMode() !== Config::SIGNALING_INTERNAL) {
 			return new DataResponse('Internal signaling disabled.', Http::STATUS_BAD_REQUEST);
@@ -549,7 +553,7 @@ class SignalingController extends OCSController {
 	 *
 	 * 200: Always, sorry about that
 	 */
-	#[IgnoreOpenAPI]
+	#[OpenAPI(scope: 'backend-signaling')]
 	#[PublicPage]
 	#[BruteForceProtection(action: 'talkSignalingSecret')]
 	public function backend(): DataResponse {

@@ -36,6 +36,7 @@ use OCA\Talk\ResponseDefinitions;
 use OCP\AppFramework\Db\MultipleObjectsReturnedException;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\Attribute\NoAdminRequired;
+use OCP\AppFramework\Http\Attribute\OpenAPI;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\OCSController;
 use OCP\DB\Exception as DBException;
@@ -45,7 +46,10 @@ use OCP\IUserSession;
 
 /**
  * @psalm-import-type TalkFederationInvite from ResponseDefinitions
+ *
+ * Ignored from OpenAPI until the implementation is finished and the API stable
  */
+#[OpenAPI(scope: OpenAPI::SCOPE_IGNORE)]
 class FederationController extends OCSController {
 
 	public function __construct(
