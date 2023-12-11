@@ -49,6 +49,10 @@
 				:class="previewImageClass"
 				alt=""
 				:src="defaultIconUrl">
+			<NcProgressBar v-if="isTemporaryUpload && !isUploadEditor"
+				class="file-preview__progress"
+				size="medium"
+				:value="uploadProgress" />
 		</div>
 		<span v-else-if="isLoading"
 			v-tooltip="previewTooltip"
@@ -64,7 +68,6 @@
 				<Close />
 			</template>
 		</NcButton>
-		<NcProgressBar v-if="isTemporaryUpload && !isUploadEditor" :value="uploadProgress" />
 		<div v-if="shouldShowFileDetail" class="name-container">
 			{{ fileDetail }}
 		</div>
@@ -78,6 +81,7 @@ import PlayCircleOutline from 'vue-material-design-icons/PlayCircleOutline.vue'
 import { getCapabilities } from '@nextcloud/capabilities'
 import { encodePath } from '@nextcloud/paths'
 import { generateUrl, imagePath, generateRemoteUrl } from '@nextcloud/router'
+import { getUploader } from '@nextcloud/upload'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcProgressBar from '@nextcloud/vue/dist/Components/NcProgressBar.js'
@@ -282,6 +286,7 @@ export default {
 		return {
 			isLoading: true,
 			failed: false,
+			uploadManager: getUploader(),
 		}
 	},
 	computed: {
@@ -506,13 +511,29 @@ export default {
 			return this.id.startsWith('temp') && this.index && this.uploadId
 		},
 
+		uploadStatus() {
+			return this.$store.getters.uploadStatus(this.uploadId, this.index)
+		},
+
+		uploadPath() {
+			return this.$store.getters.uploadPath(this.uploadId, this.index)
+		},
+
 		uploadProgress() {
-			if (this.isTemporaryUpload) {
-				if (this.$store.getters.uploadProgress(this.uploadId, this.index)) {
-					return this.$store.getters.uploadProgress(this.uploadId, this.index)
-				}
+			if (!this.isTemporaryUpload) {
+				return 0
 			}
-			// likely never reached
+
+			if (this.uploadStatus === 'successUpload'
+				|| this.uploadStatus === 'sharing'
+				|| this.uploadStatus === 'shared') {
+				return 100
+			}
+
+			if (this.uploadStatus === 'uploading') {
+				return (this.uploadManager.info.progress / this.uploadManager.info.size * 100) || 0
+			}
+
 			return 0
 		},
 
@@ -608,6 +629,12 @@ export default {
 	&__image {
 		object-fit: cover;
 		transition: outline 0.1s ease-in-out;
+	}
+
+	&__progress {
+		position: absolute;
+		bottom: 0;
+		left: 0;
 	}
 
 	.loading {

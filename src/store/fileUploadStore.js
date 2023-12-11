@@ -25,6 +25,7 @@ import Vue from 'vue'
 import { showError } from '@nextcloud/dialogs'
 import { loadState } from '@nextcloud/initial-state'
 import moment from '@nextcloud/moment'
+import { getUploader } from '@nextcloud/upload'
 
 import { getDavClient } from '../services/DavClient.js'
 import { EventBus } from '../services/EventBus.js'
@@ -40,6 +41,8 @@ import {
 	getFileNamePrompt,
 	separateDuplicateUploads,
 } from '../utils/fileUpload.js'
+
+const uploader = getUploader()
 
 const state = {
 	attachmentFolder: loadState('spreed', 'attachment_folder', ''),
@@ -88,12 +91,12 @@ const getters = {
 		return state.localUrls[referenceId]
 	},
 
-	uploadProgress: (state) => (uploadId, index) => {
-		if (state.uploads[uploadId].files[index]) {
-			return state.uploads[uploadId].files[index].uploadedSize / state.uploads[uploadId].files[index].totalSize * 100
-		} else {
-			return 0
-		}
+	uploadStatus: (state) => (uploadId, index) => {
+		return state.uploads[uploadId]?.files[index]?.status
+	},
+
+	uploadPath: (state) => (uploadId, index) => {
+		return state.uploads[uploadId]?.files[index]?.sharePath
 	},
 
 	currentUploadId: (state) => {
@@ -127,7 +130,6 @@ const mutations = {
 			file,
 			status: 'initialised',
 			totalSize: file.size,
-			uploadedSize: 0,
 			temporaryMessage,
 		 })
 		Vue.set(state.localUrls, temporaryMessage.referenceId, localUrl)
@@ -139,14 +141,14 @@ const mutations = {
 	},
 
 	// Marks a given file as uploaded
-	markFileAsSuccessUpload(state, { uploadId, index, sharePath }) {
+	markFileAsSuccessUpload(state, { uploadId, index }) {
 		state.uploads[uploadId].files[index].status = 'successUpload'
-		Vue.set(state.uploads[uploadId].files[index], 'sharePath', sharePath)
 	},
 
 	// Marks a given file as uploading
-	markFileAsUploading(state, { uploadId, index }) {
+	markFileAsUploading(state, { uploadId, index, sharePath }) {
 		state.uploads[uploadId].files[index].status = 'uploading'
+		Vue.set(state.uploads[uploadId].files[index], 'sharePath', sharePath)
 	},
 
 	// Marks a given file as sharing
@@ -167,11 +169,6 @@ const mutations = {
 	 */
 	setAttachmentFolder(state, attachmentFolder) {
 		state.attachmentFolder = attachmentFolder
-	},
-
-	// Sets uploaded amount of bytes
-	setUploadedSize(state, { uploadId, index, uploadedSize }) {
-		state.uploads[uploadId].files[index].uploadedSize = uploadedSize
 	},
 
 	// Set temporary message for each file
@@ -298,8 +295,6 @@ const actions = {
 		// If caption is provided, attach to the last temporary message
 		const lastIndex = getters.getUploadsArray(uploadId).at(-1).at(0)
 		for (const [index, uploadedFile] of getters.getUploadsArray(uploadId)) {
-			// mark all files as uploading
-			commit('markFileAsUploading', { uploadId, index })
 			// Store the previously created temporary message
 			const temporaryMessage = {
 				...uploadedFile.temporaryMessage,
@@ -330,19 +325,11 @@ const actions = {
 			knownPaths[promptPath] = suffix
 
 			try {
-				// Upload the file
-				const currentFileBuffer = await new Blob([currentFile]).arrayBuffer()
-				await client.putFileContents(userRoot + uniquePath, currentFileBuffer, {
-					onUploadProgress: progress => {
-						const uploadedSize = progress.loaded
-						commit('setUploadedSize', { state, uploadId, index, uploadedSize })
-					},
-					contentLength: currentFile.size,
-				})
 				// Path for the sharing request
 				const sharePath = '/' + uniquePath
-				// Mark the file as uploaded in the store
-				commit('markFileAsSuccessUpload', { uploadId, index, sharePath })
+				commit('markFileAsUploading', { uploadId, index, sharePath })
+				await uploader.upload(uniquePath, currentFile)
+				commit('markFileAsSuccessUpload', { uploadId, index })
 			} catch (exception) {
 				let reason = 'failed-upload'
 				if (exception.response) {
