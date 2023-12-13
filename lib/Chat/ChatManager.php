@@ -493,18 +493,11 @@ class ChatManager {
 
 //		$this->attachmentService->deleteAttachmentByMessageId((int) $comment->getId());
 
-		$metaData = [];
-		if ($comment->getMetaData()) {
-			try {
-				$metaData = (array) json_decode($comment->getMetaData(), true, flags: JSON_THROW_ON_ERROR);
-			} catch (\JsonException) {
-			}
-		}
-
+		$metaData = $comment->getMetaData() ?? [];
 		$metaData['last_edited_by_type'] = $participant->getAttendee()->getActorType();
 		$metaData['last_edited_by_id'] = $participant->getAttendee()->getActorId();
 		$metaData['last_edited_time'] = $editTime->getTimestamp();
-		$comment->setMetaData(json_encode($metaData));
+		$comment->setMetaData($metaData);
 		$comment->setMessage($message, self::MAX_CHAT_LENGTH);
 		$this->commentsManager->save($comment);
 		$this->referenceManager->invalidateCache($chat->getToken());
