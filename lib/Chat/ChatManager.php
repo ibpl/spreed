@@ -476,6 +476,54 @@ class ChatManager {
 		);
 	}
 
+	/**
+	 * @param Room $chat
+	 * @param IComment $comment
+	 * @param Participant $participant
+	 * @param \DateTime $editTime
+	 * @param string $message
+	 * @return IComment
+	 */
+	public function editMessage(Room $chat, IComment $comment, Participant $participant, \DateTime $editTime, string $message): IComment {
+//		if ($comment->getVerb() === self::VERB_OBJECT_SHARED) {
+//			$messageData = json_decode($comment->getMessage(), true);
+//			$this->unshareFileOnMessageDelete($chat, $participant, $messageData);
+//			$this->removePollOnMessageDelete($chat, $participant, $messageData, $deletionTime);
+//		}
+
+//		$this->attachmentService->deleteAttachmentByMessageId((int) $comment->getId());
+
+		$metaData = [];
+		if ($comment->getMetaData()) {
+			try {
+				$metaData = (array) json_decode($comment->getMetaData(), true, flags: JSON_THROW_ON_ERROR);
+			} catch (\JsonException) {
+			}
+		}
+
+		$metaData['last_edited_by_type'] = $participant->getAttendee()->getActorType();
+		$metaData['last_edited_by_id'] = $participant->getAttendee()->getActorId();
+		$metaData['last_edited_time'] = $editTime->getTimestamp();
+		$comment->setMetaData(json_encode($metaData));
+		$comment->setMessage($message, self::MAX_CHAT_LENGTH);
+		$this->commentsManager->save($comment);
+		$this->referenceManager->invalidateCache($chat->getToken());
+
+		// TODO update mentions/notifications
+
+		return $this->addSystemMessage(
+			$chat,
+			$participant->getAttendee()->getActorType(),
+			$participant->getAttendee()->getActorId(),
+			json_encode(['message' => 'message_edited', 'parameters' => ['message' => $comment->getId()]]),
+			$this->timeFactory->getDateTime(),
+			false,
+			null,
+			(int) $comment->getId(),
+			true
+		);
+	}
+
 	public function clearHistory(Room $chat, string $actorType, string $actorId): IComment {
 		$this->commentsManager->deleteCommentsAtObject('chat', (string) $chat->getId());
 
