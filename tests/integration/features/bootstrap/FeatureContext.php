@@ -2578,7 +2578,7 @@ new TableNode([['message', $newMessage]])
 
 		$expected = $formData->getHash();
 		$count = count($expected);
-		Assert::assertCount($count, $messages, 'Message count does not match');
+		Assert::assertCount($count, $messages, 'Message count does not match' . "\n" . print_r($messages, true));
 		for ($i = 0; $i < $count; $i++) {
 			if ($expected[$i]['messageParameters'] === '"IGNORE"') {
 				$messages[$i]['messageParameters'] = 'IGNORE';

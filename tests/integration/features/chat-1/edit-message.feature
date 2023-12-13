@@ -12,7 +12,7 @@ Feature: chat-1/edit-message
     Then user "participant1" sees the following messages in room "room" with 200
       | room | actorType | actorId      | actorDisplayName         | message     | messageParameters | parentMessage |
       | room | users     | participant1 | participant1-displayname | Message 1   | []                |               |
-    And user "participant1" edits message "Message 1" in room "room" to "Message 1 - Edit 1" with 201
+    And user "participant1" edits message "Message 1" in room "room" to "Message 1 - Edit 1" with 200
     Then user "participant1" sees the following messages in room "room" with 200
       | room | actorType | actorId      | actorDisplayName         | message            | messageParameters | parentMessage |
       | room | users     | participant1 | participant1-displayname | Message 1 - Edit 1 | []                |               |
@@ -36,14 +36,14 @@ Feature: chat-1/edit-message
     Then user "participant1" sees the following messages in room "room" with 200
       | room | actorType | actorId      | actorDisplayName         | message     | messageParameters | parentMessage |
       | room | users     | participant2 | participant2-displayname | Message 1   | []                |               |
-    And user "participant1" edits message "Message 1" in room "room" to "Message 1 - Edit 1" with 201
+    And user "participant1" edits message "Message 1" in room "room" to "Message 1 - Edit 1" with 200
     Then user "participant1" sees the following messages in room "room" with 200
       | room | actorType | actorId      | actorDisplayName         | message            | messageParameters | parentMessage |
       | room | users     | participant2 | participant2-displayname | Message 1 - Edit 1 | []                |               |
     Then user "participant2" sees the following messages in room "room" with 200
       | room | actorType | actorId      | actorDisplayName         | message            | messageParameters | parentMessage |
       | room | users     | participant2 | participant2-displayname | Message 1 - Edit 1 | []                |               |
-    And user "participant2" edits message "Message 1 - Edit 1" in room "room" to "Message 1 - Edit 2" with 201
+    And user "participant2" edits message "Message 1 - Edit 1" in room "room" to "Message 1 - Edit 2" with 200
     Then user "participant1" sees the following messages in room "room" with 200
       | room | actorType | actorId      | actorDisplayName         | message            | messageParameters | parentMessage |
       | room | users     | participant2 | participant2-displayname | Message 1 - Edit 2 | []                |               |
