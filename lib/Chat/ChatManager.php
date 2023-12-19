@@ -512,7 +512,7 @@ class ChatManager {
 			$this->timeFactory->getDateTime(),
 			false,
 			null,
-			(int) $comment->getId(),
+			$comment,
 			true
 		);
 	}
