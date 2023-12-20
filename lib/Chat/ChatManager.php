@@ -498,11 +498,50 @@ class ChatManager {
 		$metaData['last_edited_by_id'] = $participant->getAttendee()->getActorId();
 		$metaData['last_edited_time'] = $editTime->getTimestamp();
 		$comment->setMetaData($metaData);
+
+		// FIXME Caption support
+		$mentionsBefore = $comment->getMentions();
+		$usersDirectlyMentionedBefore = $this->notifier->getMentionedUserIds($comment);
+		$notifyMentionedUsersBefore = $this->notifier->notifyMentionedUsers($chat, $comment, [], silent: false);
 		$comment->setMessage($message, self::MAX_CHAT_LENGTH);
+		$mentionsAfter = $comment->getMentions();
+		$usersDirectlyMentionedAfter = $this->notifier->getMentionedUserIds($comment);
+		$notifyMentionedUsersAfter = $this->notifier->notifyMentionedUsers($chat, $comment, [], silent: false);
+
 		$this->commentsManager->save($comment);
 		$this->referenceManager->invalidateCache($chat->getToken());
 
+		\OC::$server->getLogger()->error('$mentionsBefore' . json_encode($mentionsBefore));
+		\OC::$server->getLogger()->error('$mentionsAfter' . json_encode($mentionsAfter));
+		\OC::$server->getLogger()->error('$notifyMentionedUsersBefore' . json_encode($notifyMentionedUsersBefore));
+		\OC::$server->getLogger()->error('$notifyMentionedUsersAfter' . json_encode($notifyMentionedUsersAfter));
 		// TODO update mentions/notifications
+		// FIXME handle @all distinct
+		// FIXME handle reply-parent author
+		$removedMentions = empty($mentionsAfter) ? $mentionsBefore : array_diff($mentionsBefore, $mentionsAfter);
+		$addedMentions = empty($mentionsBefore) ? $mentionsAfter : array_diff($mentionsAfter, $mentionsBefore);
+
+		\OC::$server->getLogger()->error('$removedMentions' . json_encode($removedMentions));
+		\OC::$server->getLogger()->error('$addedMentions' . json_encode($addedMentions));
+		if (!empty($removedMentions)) {
+			$removedUsersDirectMentioned = array_diff($usersDirectlyMentionedBefore, $usersDirectlyMentionedAfter);
+			// FIXME Not needed when it was silent, once it's stored in metadata
+			$this->notifier->removeMentionNotificationAfterEdit($chat, $comment, $removedUsersDirectMentioned);
+		}
+
+		if (!empty($addedMentions)) {
+			$addedUsersDirectMentioned = array_diff($usersDirectlyMentionedAfter, $usersDirectlyMentionedBefore);
+			\OC::$server->getLogger()->error('$addedUsersDirectMentioned' . json_encode($addedUsersDirectMentioned));
+
+			// FIXME silent support, once it's stored in metadata
+			$alreadyNotifiedUsers = $this->notifier->notifyMentionedUsers($chat, $comment, [], silent: false);
+			\OC::$server->getLogger()->error('$alreadyNotifiedUsers' . json_encode($alreadyNotifiedUsers));
+			if (!empty($alreadyNotifiedUsers)) {
+				$userIds = array_column($alreadyNotifiedUsers, 'id');
+				\OC::$server->getLogger()->error('$userIds' . json_encode($userIds));
+				$this->participantService->markUsersAsMentioned($chat, $userIds, (int) $comment->getId(), $addedUsersDirectMentioned);
+			}
+		}
 
 		return $this->addSystemMessage(
 			$chat,

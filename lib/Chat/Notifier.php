@@ -365,6 +365,36 @@ class Notifier {
 	}
 
 	/**
+	 * Remove all mention notifications of users that got their mention removed
+	 *
+	 * @param list<string> $userIds
+	 */
+	public function removeMentionNotificationAfterEdit(Room $chat, IComment $comment, array $userIds): void {
+		$shouldFlush = $this->notificationManager->defer();
+		$notification = $this->notificationManager->createNotification();
+
+		$notification
+			->setApp('spreed')
+			->setObject('chat', $chat->getToken())
+			// FIXME message_parameters are not handled by notification app, so this removes all notifications :(
+			->setMessage('comment', [
+				'commentId' => $comment->getId(),
+			]);
+
+		foreach (['mention_all', 'mention_direct'] as $subject) {
+			$notification->setSubject($subject);
+			foreach ($userIds as $userId) {
+				$notification->setUser($userId);
+				$this->notificationManager->markProcessed($notification);
+			}
+		}
+
+		if ($shouldFlush) {
+			$this->notificationManager->flush();
+		}
+	}
+
+	/**
 	 * Returns the IDs of the users mentioned in the given comment.
 	 *
 	 * @param IComment $comment
