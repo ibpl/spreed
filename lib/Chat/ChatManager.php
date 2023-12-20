@@ -485,13 +485,13 @@ class ChatManager {
 	 * @return IComment
 	 */
 	public function editMessage(Room $chat, IComment $comment, Participant $participant, \DateTime $editTime, string $message): IComment {
-//		if ($comment->getVerb() === self::VERB_OBJECT_SHARED) {
-//			$messageData = json_decode($comment->getMessage(), true);
-//			$this->unshareFileOnMessageDelete($chat, $participant, $messageData);
-//			$this->removePollOnMessageDelete($chat, $participant, $messageData, $deletionTime);
-//		}
+		// if ($comment->getVerb() === self::VERB_OBJECT_SHARED) {
+		// $messageData = json_decode($comment->getMessage(), true);
+		// $this->unshareFileOnMessageDelete($chat, $participant, $messageData);
+		// $this->removePollOnMessageDelete($chat, $participant, $messageData, $deletionTime);
+		// }
 
-//		$this->attachmentService->deleteAttachmentByMessageId((int) $comment->getId());
+		// $this->attachmentService->deleteAttachmentByMessageId((int) $comment->getId());
 
 		$metaData = $comment->getMetaData() ?? [];
 		$metaData['last_edited_by_type'] = $participant->getAttendee()->getActorType();
