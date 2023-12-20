@@ -1947,8 +1947,9 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 
 		$this->setCurrentUser($user, $identifier);
 		$this->sendRequest(
-			'PUT', '/apps/spreed/api/' . $apiVersion . '/chat/' . self::$identifierToToken[$identifier] . '/' . $messageId,
-new TableNode([['message', $newMessage]])
+			'PUT',
+			'/apps/spreed/api/' . $apiVersion . '/chat/' . self::$identifierToToken[$identifier] . '/' . $messageId,
+			new TableNode([['message', $newMessage]])
 		);
 		$this->assertStatusCode($this->response, $statusCode);
 		sleep(1); // make sure Postgres manages the order of the messages
