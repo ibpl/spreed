@@ -25,6 +25,7 @@
 		<GeneralSettings />
 		<MatterbridgeIntegration />
 		<AllowedGroups />
+		<Federations />
 		<BotsSettings />
 		<Commands />
 		<WebServerSetupChecks />
@@ -41,6 +42,7 @@
 import AllowedGroups from '../components/AdminSettings/AllowedGroups.vue'
 import BotsSettings from '../components/AdminSettings/BotsSettings.vue'
 import Commands from '../components/AdminSettings/Commands.vue'
+import Federations from '../components/AdminSettings/Federations.vue'
 import GeneralSettings from '../components/AdminSettings/GeneralSettings.vue'
 import HostedSignalingServer from '../components/AdminSettings/HostedSignalingServer.vue'
 import MatterbridgeIntegration from '../components/AdminSettings/MatterbridgeIntegration.vue'
@@ -58,6 +60,7 @@ export default {
 		AllowedGroups,
 		BotsSettings,
 		Commands,
+		Federations,
 		GeneralSettings,
 		HostedSignalingServer,
 		MatterbridgeIntegration,
