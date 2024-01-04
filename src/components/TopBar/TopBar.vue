@@ -164,8 +164,8 @@ import TopBarMenu from './TopBarMenu.vue'
 import BreakoutRoomsEditor from '../BreakoutRoomsEditor/BreakoutRoomsEditor.vue'
 import ConversationIcon from '../ConversationIcon.vue'
 
+import { useGetParticipants } from '../../composables/useGetParticipants.js'
 import { CONVERSATION } from '../../constants.js'
-import getParticipants from '../../mixins/getParticipants.js'
 import BrowserStorage from '../../services/BrowserStorage.js'
 import { getStatusMessage } from '../../utils/userStatus.js'
 import { localCallParticipantModel, localMediaModel } from '../../utils/webrtc/index.js'
@@ -194,10 +194,7 @@ export default {
 		MessageText,
 	},
 
-	mixins: [
-		richEditor,
-		getParticipants,
-	],
+	mixins: [richEditor],
 
 	props: {
 		isInCall: {
@@ -212,6 +209,17 @@ export default {
 			type: Boolean,
 			default: false,
 		},
+	},
+
+	setup() {
+		const {
+			initialiseGetParticipants,
+			stopGetParticipants
+		} = useGetParticipants()
+		return {
+			initialiseGetParticipants,
+			stopGetParticipants
+		}
 	},
 
 	data: () => {
@@ -350,9 +358,9 @@ export default {
 			// Group conversations have mixin in RightSidebar, so should work only for one-to-one
 			handler(newValue) {
 				if (newValue) {
-					this.initialiseGetParticipantsMixin()
+					this.initialiseGetParticipants()
 				} else {
-					this.stopGetParticipantsMixin()
+					this.stopGetParticipants()
 				}
 			},
 		},
