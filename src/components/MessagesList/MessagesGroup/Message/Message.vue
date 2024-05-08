@@ -86,7 +86,6 @@
 import UnfoldLess from 'vue-material-design-icons/UnfoldLessHorizontal.vue'
 import UnfoldMore from 'vue-material-design-icons/UnfoldMoreHorizontal.vue'
 
-import { getCapabilities } from '@nextcloud/capabilities'
 import { showError, showSuccess, showWarning, TOAST_DEFAULT_TIMEOUT } from '@nextcloud/dialogs'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
@@ -105,13 +104,10 @@ import Poll from './MessagePart/Poll.vue'
 import Reactions from './MessagePart/Reactions.vue'
 
 import { CONVERSATION, PARTICIPANT } from '../../../../constants.js'
+import { getTalkConfig } from '../../../../services/CapabilitiesManager.ts'
 import { EventBus } from '../../../../services/EventBus.js'
 import { useChatExtrasStore } from '../../../../stores/chatExtras.js'
 import { getItemTypeFromMessage } from '../../../../utils/getItemTypeFromMessage.ts'
-
-const isTranslationAvailable = getCapabilities()?.spreed?.config?.chat?.['has-translation-providers']
-	// Fallback for the desktop client when connecting to Talk 17
-	?? getCapabilities()?.spreed?.config?.chat?.translations?.length > 0
 
 export default {
 	name: 'Message',
@@ -291,7 +287,11 @@ export default {
 
 	emits: ['toggle-combined-system-message'],
 
-	setup() {
+	setup(props) {
+		const isTranslationAvailable = getTalkConfig(props.token, 'chat', 'has-translation-providers')
+			// Fallback for the desktop client when connecting to Talk 17
+			?? getTalkConfig(props.token, 'chat', 'translations')?.length > 0
+
 		return {
 			isTranslationAvailable,
 			chatExtrasStore: useChatExtrasStore(),

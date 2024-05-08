@@ -7,7 +7,6 @@ import SHA256 from 'crypto-js/sha256.js'
 import cloneDeep from 'lodash/cloneDeep.js'
 import Vue from 'vue'
 
-import { getCapabilities } from '@nextcloud/capabilities'
 import { showError } from '@nextcloud/dialogs'
 
 import {
@@ -15,6 +14,7 @@ import {
 	CHAT,
 	CONVERSATION,
 } from '../constants.js'
+import { hasTalkFeature } from '../services/CapabilitiesManager.ts'
 import { fetchNoteToSelfConversation } from '../services/conversationsService.js'
 import { EventBus } from '../services/EventBus.js'
 import {
@@ -32,8 +32,6 @@ import { useGuestNameStore } from '../stores/guestName.js'
 import { useReactionsStore } from '../stores/reactions.js'
 import { useSharedItemsStore } from '../stores/sharedItems.js'
 import CancelableRequest from '../utils/cancelableRequest.js'
-
-const markAsReadWithoutLast = getCapabilities()?.spreed?.features?.includes('chat-read-last')
 
 /**
  * Returns whether the given message contains a mention to self, directly
@@ -829,7 +827,7 @@ const actions = {
 	 */
 	async clearLastReadMessage(context, { token, updateVisually = false }) {
 		const conversation = context.getters.conversation(token)
-		if (markAsReadWithoutLast) {
+		if (hasTalkFeature(token, 'chat-read-last')) {
 			context.dispatch('updateLastReadMessage', { token, id: null, updateVisually })
 			return
 		}

@@ -5,14 +5,11 @@
 
 import { computed, unref, ref } from 'vue'
 
-import { getCapabilities } from '@nextcloud/capabilities'
 import moment from '@nextcloud/moment'
 
 import { useConversationInfo } from './useConversationInfo.js'
 import { useStore } from './useStore.js'
-
-const canDeleteMessageUnlimited = getCapabilities()?.spreed?.features?.includes('delete-messages-unlimited')
-const canEditMessage = getCapabilities()?.spreed?.features?.includes('edit-messages')
+import { hasTalkFeature } from '../services/CapabilitiesManager.ts'
 
 /**
  * Check whether the user can edit the message or not
@@ -58,7 +55,7 @@ export function useMessageInfo(tokenRef = ref(null), messageIdRef = ref(null)) {
 	)
 
 	const isEditable = computed(() => {
-		if (!canEditMessage || !isConversationModifiable.value || isObjectShare.value || message.value.systemMessage
+		if (!hasTalkFeature(token, 'edit-messages') || !isConversationModifiable.value || isObjectShare.value || message.value.systemMessage
 			|| ((!store.getters.isModerator || isOneToOneConversation.value) && !isCurrentUserOwnMessage.value)) {
 			return false
 		}
@@ -71,7 +68,7 @@ export function useMessageInfo(tokenRef = ref(null), messageIdRef = ref(null)) {
 	const isFileShareWithoutCaption = computed(() => message.value.message === '{file}' && isFileShare.value)
 
 	const isDeleteable = computed(() =>
-		(canDeleteMessageUnlimited || (moment(message.value.timestamp * 1000).add(6, 'h')) > moment())
+		(hasTalkFeature(token, 'delete-messages-unlimited') || (moment(message.value.timestamp * 1000).add(6, 'h')) > moment())
 		&& (message.value.messageType === 'comment' || message.value.messageType === 'voice-message')
 		&& (isCurrentUserOwnMessage.value || (!isOneToOneConversation.value && store.getters.isModerator))
 		&& isConversationModifiable.value)

@@ -273,7 +273,6 @@ import Reply from 'vue-material-design-icons/Reply.vue'
 import Share from 'vue-material-design-icons/Share.vue'
 import Translate from 'vue-material-design-icons/Translate.vue'
 
-import { getCapabilities } from '@nextcloud/capabilities'
 import { showError, showSuccess } from '@nextcloud/dialogs'
 import moment from '@nextcloud/moment'
 
@@ -289,13 +288,12 @@ import { emojiSearch } from '@nextcloud/vue/dist/Functions/emoji.js'
 
 import { useMessageInfo } from '../../../../../composables/useMessageInfo.js'
 import { CONVERSATION, ATTENDEE } from '../../../../../constants.js'
+import { hasTalkFeature } from '../../../../../services/CapabilitiesManager.ts'
 import { getMessageReminder, removeMessageReminder, setMessageReminder } from '../../../../../services/remindersService.js'
 import { useIntegrationsStore } from '../../../../../stores/integrations.js'
 import { useReactionsStore } from '../../../../../stores/reactions.js'
 import { copyConversationLinkToClipboard } from '../../../../../utils/handleUrl.ts'
 import { parseMentions } from '../../../../../utils/textParse.ts'
-
-const supportReminders = getCapabilities()?.spreed?.features?.includes('remind-me-later')
 
 export default {
 	name: 'MessageButtonsBar',
@@ -478,6 +476,7 @@ export default {
 			isConversationReadOnly,
 			isConversationModifiable,
 		} = useMessageInfo(token, id)
+		const supportReminders = hasTalkFeature(token.value, 'remind-me-later')
 
 		return {
 			messageActions,
