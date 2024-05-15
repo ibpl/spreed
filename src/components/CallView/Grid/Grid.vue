@@ -151,6 +151,8 @@ import LocalVideo from '../shared/LocalVideo.vue'
 import VideoBottomBar from '../shared/VideoBottomBar.vue'
 import VideoVue from '../shared/VideoVue.vue'
 
+import { PARTICIPANT } from '../../../constants.js'
+
 // Max number of videos per page. `0`, the default value, means no cap
 const videosCap = parseInt(loadState('spreed', 'grid_videos_limit'), 10) || 0
 const videosCapEnforced = loadState('spreed', 'grid_videos_limit_enforced') || false
@@ -267,6 +269,7 @@ export default {
 			// Timer for the videos bottom bar
 			showVideoOverlayTimer: null,
 			debounceMakeGrid: () => {},
+			orderedVideos: [],
 		}
 	},
 
@@ -284,7 +287,7 @@ export default {
 		// `videosCap`, these videos are shown in one or more grid 'pages'.
 		videos() {
 			if (this.devMode) {
-				return Array.from(Array(this.dummies).keys())
+				return this.callParticipantModels.concat(Array.from(Array(this.dummies).keys()))
 			} else {
 				return this.callParticipantModels
 			}
@@ -316,11 +319,11 @@ export default {
 			const slots = (this.videosCap && this.videosCapEnforced) ? Math.min(this.videosCap, this.slots) : this.slots
 
 			// Slice the `videos` array to display the current page of videos
-			if (((this.currentPage + 1) * slots) >= this.videos.length) {
-				return this.videos.slice(this.currentPage * slots)
+			if (((this.currentPage + 1) * slots) >= this.orderedVideos.length) {
+				return this.orderedVideos.slice(this.currentPage * slots)
 			}
 
-			return this.videos.slice(this.currentPage * slots, (this.currentPage + 1) * slots)
+			return this.orderedVideos.slice(this.currentPage * slots, (this.currentPage + 1) * slots)
 		},
 
 		isLessThanTwoVideos() {
@@ -419,7 +422,7 @@ export default {
 		// Hides or displays the `grid-navigation next` button
 		hasNextPage() {
 			if (this.displayedVideos.length !== 0 && this.hasPagination) {
-				return this.displayedVideos.at(-1) !== this.videos.at(-1)
+				return this.displayedVideos.at(-1) !== this.orderedVideos.at(-1)
 			} else {
 				return false
 			}
@@ -428,7 +431,7 @@ export default {
 		// Hides or displays the `grid-navigation previous` button
 		hasPreviousPage() {
 			if (this.displayedVideos.length !== 0 && this.hasPagination) {
-				return this.displayedVideos[0] !== this.videos[0]
+				return this.displayedVideos[0] !== this.orderedVideos[0]
 			} else {
 				return false
 			}
@@ -477,6 +480,10 @@ export default {
 		stripeOpen() {
 			return this.$store.getters.isStripeOpen && !this.isRecording
 		},
+
+		speakers() {
+			return this.callParticipantModels.filter(model => model.attributes.speaking)
+		},
 	},
 
 	watch: {
@@ -522,6 +529,23 @@ export default {
 				this.currentPage = Math.max(0, this.numberOfPages - 1)
 			}
 		},
+
+		callParticipantModels: {
+			immediate: true,
+			handler() {
+				this.orderedVideos = this.orderVideos(this.videos)
+			},
+		},
+
+		speakers(speakers) {
+			if (speakers.length === 0) {
+				return
+			}
+			speakers.forEach(speaker => {
+				this.orderedVideos = this.orderVideos(this.orderedVideos, speaker)
+			})
+
+		}
 	},
 
 	// bind event handlers to the `handleResize` method
@@ -530,6 +554,7 @@ export default {
 		window.addEventListener('resize', this.handleResize)
 		subscribe('navigation-toggled', this.handleResize)
 		this.makeGrid()
+		this.orderedVideos = this.orderVideos(this.videos)
 
 		window.OCA.Talk.gridDebugInformation = this.gridDebugInformation
 	},
@@ -824,6 +849,39 @@ export default {
 
 		isSelected(callParticipantModel) {
 			return callParticipantModel.attributes.peerId === this.$store.getters.selectedVideoPeerId
+		},
+
+		orderVideos(initialVideos, model = null) {
+			// If model is passed, that model is moved to the front of the array
+			if (model) {
+				const videosOfSpeakers = initialVideos.filter((video) => {
+					return video.attributes.peerId !== model.attributes.peerId
+				})
+				videosOfSpeakers.unshift(model)
+				return videosOfSpeakers
+			}
+
+			// videos are ordered as follows:
+			// 1. videos of users who has speaker per
+			// 2. videos of users who don't have permissions
+			// If the user has the permission to speak, the video is shown first
+			const videosOfSpeakers = []
+			const videosWithoutPermissions = []
+			initialVideos.forEach((video) => {
+				// FIX !!!!: the store is not loaded when joining the call for the first time
+				const participant = this.$store.getters.getParticipantByPeerId(this.token, video.attributes.peerId)
+				if (!participant) {
+					return false
+				}
+				if (participant?.permissions & PARTICIPANT.PERMISSIONS.PUBLISH_AUDIO) {
+					videosOfSpeakers.push(video)
+				} else {
+					videosWithoutPermissions.push(video)
+				}
+			})
+
+			return videosOfSpeakers.concat(videosWithoutPermissions)
+
 		},
 
 	},

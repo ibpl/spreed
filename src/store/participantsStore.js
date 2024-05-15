@@ -263,6 +263,13 @@ const getters = {
 		}
 		return 0
 	},
+
+	getParticipantByPeerId: (state) => (token, peerId) => {
+		if (state.attendees[token]) {
+			return Object.values(state.attendees[token]).find(attendee => attendee.sessionIds.includes(peerId))
+		}
+		return null
+	},
 }
 
 const mutations = {
