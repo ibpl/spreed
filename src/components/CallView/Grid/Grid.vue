@@ -156,6 +156,7 @@ import { PARTICIPANT } from '../../../constants.js'
 // Max number of videos per page. `0`, the default value, means no cap
 const videosCap = parseInt(loadState('spreed', 'grid_videos_limit'), 10) || 0
 const videosCapEnforced = loadState('spreed', 'grid_videos_limit_enforced') || false
+const MODERATOR_TYPES = [PARTICIPANT.TYPE.OWNER, PARTICIPANT.TYPE.MODERATOR, PARTICIPANT.TYPE.GUEST_MODERATOR]
 
 export default {
 	name: 'Grid',
@@ -270,6 +271,7 @@ export default {
 			showVideoOverlayTimer: null,
 			debounceMakeGrid: () => {},
 			orderedVideos: [],
+			videosOfModerators: [],
 		}
 	},
 
@@ -869,7 +871,15 @@ export default {
 				const videosOfSpeakers = initialVideos.filter((video) => {
 					return video.attributes.peerId !== model.attributes.peerId
 				})
-				videosOfSpeakers.unshift(model)
+				const participant = this.$store.getters.getParticipantByPeerId(this.token, model.attributes.peerId)
+				// check if it is a moderator
+				if (MODERATOR_TYPES.includes(participant.participantType)) {
+					// add the model
+					videosOfSpeakers.unshift(model)
+				} else {
+					videosOfSpeakers.splice(this.videosOfModerators.length, 0, model)
+				}
+
 				return videosOfSpeakers
 			}
 
@@ -877,6 +887,7 @@ export default {
 			// 1. videos of users who has speaker per
 			// 2. videos of users who don't have permissions
 			// If the user has the permission to speak, the video is shown first
+			this.videosOfModerators = []
 			const videosOfSpeakers = []
 			const videosWithoutPermissions = []
 			initialVideos.forEach((video) => {
@@ -886,13 +897,17 @@ export default {
 					return false
 				}
 				if (participant?.permissions & PARTICIPANT.PERMISSIONS.PUBLISH_AUDIO) {
-					videosOfSpeakers.push(video)
+					if (MODERATOR_TYPES.includes(participant.participantType)) {
+						this.videosOfModerators.push(video)
+					} else {
+						videosOfSpeakers.push(video)
+					}
 				} else {
 					videosWithoutPermissions.push(video)
 				}
 			})
 
-			return videosOfSpeakers.concat(videosWithoutPermissions)
+			return this.videosOfModerators.concat(videosOfSpeakers, videosWithoutPermissions)
 
 		},
 
