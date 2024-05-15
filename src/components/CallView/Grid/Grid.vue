@@ -484,6 +484,10 @@ export default {
 		speakers() {
 			return this.callParticipantModels.filter(model => model.attributes.speaking)
 		},
+
+		participantsInitialised() {
+			return this.$store.getters.participantsInitialised(this.token)
+		},
 	},
 
 	watch: {
@@ -533,8 +537,17 @@ export default {
 		callParticipantModels: {
 			immediate: true,
 			handler() {
+				if (!this.participantsInitialised) {
+					return
+				}
 				this.orderedVideos = this.orderVideos(this.videos)
 			},
+		},
+
+		participantsInitialised(value) {
+			if (value) {
+				this.orderedVideos = this.orderVideos(this.videos)
+			}
 		},
 
 		speakers(speakers) {
@@ -554,7 +567,6 @@ export default {
 		window.addEventListener('resize', this.handleResize)
 		subscribe('navigation-toggled', this.handleResize)
 		this.makeGrid()
-		this.orderedVideos = this.orderVideos(this.videos)
 
 		window.OCA.Talk.gridDebugInformation = this.gridDebugInformation
 	},
