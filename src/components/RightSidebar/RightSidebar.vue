@@ -4,14 +4,23 @@
 -->
 
 <template>
-	<NcAppSidebar v-show="opened"
+	<NcAppSidebar :open="opened"
 		:name="name"
 		:title="name"
 		:active="activeTab"
 		:class="'active-tab-' + activeTab"
+		@update:open="$event ? openSidebar() : handleClose()"
 		@update:active="handleUpdateActive"
 		@closed="handleClosed"
 		@close="handleClose">
+		<template #toggle-icon>
+			<template v-if="isInCall">
+				<MessageText :size="20" />
+				<NcCounterBubble class="chat-button__unread-messages-counter">
+					2
+				</NcCounterBubble>
+			</template>
+		</template>
 		<template #description>
 			<LobbyStatus v-if="canFullModerate && hasLobbyEnabled" :token="token" />
 		</template>
@@ -90,6 +99,7 @@ import DotsCircle from 'vue-material-design-icons/DotsCircle.vue'
 import FolderMultipleImage from 'vue-material-design-icons/FolderMultipleImage.vue'
 import InformationOutline from 'vue-material-design-icons/InformationOutline.vue'
 import Message from 'vue-material-design-icons/Message.vue'
+import MessageText from 'vue-material-design-icons/MessageText.vue'
 
 import { getCapabilities } from '@nextcloud/capabilities'
 import { emit, subscribe, unsubscribe } from '@nextcloud/event-bus'
@@ -97,6 +107,7 @@ import { emit, subscribe, unsubscribe } from '@nextcloud/event-bus'
 import NcAppSidebar from '@nextcloud/vue/dist/Components/NcAppSidebar.js'
 import NcAppSidebarTab from '@nextcloud/vue/dist/Components/NcAppSidebarTab.js'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
+import NcCounterBubble from '@nextcloud/vue/dist/Components/NcCounterBubble.js'
 
 import BreakoutRoomsTab from './BreakoutRooms/BreakoutRoomsTab.vue'
 import LobbyStatus from './LobbyStatus.vue'
@@ -120,6 +131,7 @@ export default {
 		NcAppSidebar,
 		NcAppSidebarTab,
 		NcButton,
+		NcCounterBubble,
 		ParticipantsTab,
 		SetGuestUsername,
 		SharedItemsTab,
@@ -131,6 +143,7 @@ export default {
 		FolderMultipleImage,
 		InformationOutline,
 		Message,
+		MessageText,
 	},
 
 	props: {
@@ -356,6 +369,11 @@ export default {
 	},
 
 	methods: {
+		openSidebar() {
+			this.$store.dispatch('showSidebar')
+			// BrowserStorage.setItem('sidebarOpen', 'true')
+		},
+
 		handleClose() {
 			this.$store.dispatch('hideSidebar')
 			BrowserStorage.setItem('sidebarOpen', 'false')

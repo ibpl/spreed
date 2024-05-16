@@ -4,7 +4,10 @@
 -->
 
 <template>
-	<div class="top-bar" :style="topBarStyle" :data-theme-dark="isInCall">
+	<div class="top-bar"
+		:style="topBarStyle"
+		:data-theme-dark="isInCall"
+		style="margin-right: var(--app-sidebar-offset)">
 		<ConversationIcon :key="conversation.token"
 			class="conversation-icon"
 			:offline="isPeerInactive"
@@ -83,7 +86,7 @@
 		<!-- sidebar toggle -->
 		<template v-if="showOpenSidebarButton">
 			<!-- in chat: open last tab -->
-			<NcButton v-if="!isInCall"
+			<!-- <NcButton v-if="!isInCall"
 				:aria-label="t('spreed', 'Open sidebar')"
 				:title="t('spreed', 'Open sidebar')"
 				close-after-click="true"
@@ -92,9 +95,9 @@
 				<template #icon>
 					<MenuIcon :size="20" />
 				</template>
-			</NcButton>
+			</NcButton> -->
 
-			<!-- in call: open chat tab -->
+			<!-- in call: open chat tab
 			<NcButton v-else
 				:aria-label="t('spreed', 'Open chat')"
 				:title="t('spreed', 'Open chat')"
@@ -109,7 +112,7 @@
 						{{ unreadMessagesCounter }}
 					</NcCounterBubble>
 				</template>
-			</NcButton>
+			</NcButton> -->
 		</template>
 
 		<!-- Breakout rooms editor -->
