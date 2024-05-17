@@ -81,6 +81,7 @@ import Upload from 'vue-material-design-icons/Upload.vue'
 import { getCapabilities } from '@nextcloud/capabilities'
 import { showError } from '@nextcloud/dialogs'
 import { FilePickerVue } from '@nextcloud/dialogs/filepicker.js'
+import { t } from '@nextcloud/l10n'
 import { imagePath, generateUrl } from '@nextcloud/router'
 
 import { VIRTUAL_BACKGROUND } from '../../constants.js'
@@ -190,6 +191,7 @@ export default {
 	},
 
 	methods: {
+		t,
 		handleSelectBackground(path) {
 			this.$emit('update-background', path)
 			this.selectedBackground = path

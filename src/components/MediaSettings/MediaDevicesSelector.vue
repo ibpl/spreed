@@ -37,6 +37,8 @@ import Microphone from 'vue-material-design-icons/Microphone.vue'
 import RefreshIcon from 'vue-material-design-icons/Refresh.vue'
 import VideoIcon from 'vue-material-design-icons/Video.vue'
 
+import { t } from '@nextcloud/l10n'
+
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcSelect from '@nextcloud/vue/dist/Components/NcSelect.js'
 

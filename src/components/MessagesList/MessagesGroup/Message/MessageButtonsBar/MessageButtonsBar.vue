@@ -275,6 +275,7 @@ import Translate from 'vue-material-design-icons/Translate.vue'
 
 import { getCapabilities } from '@nextcloud/capabilities'
 import { showError, showSuccess } from '@nextcloud/dialogs'
+import { t } from '@nextcloud/l10n'
 import moment from '@nextcloud/moment'
 
 import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
@@ -649,6 +650,7 @@ export default {
 	},
 
 	methods: {
+		t,
 		handleReply() {
 			this.$emit('reply')
 		},

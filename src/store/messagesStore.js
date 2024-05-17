@@ -9,6 +9,7 @@ import Vue from 'vue'
 
 import { getCapabilities } from '@nextcloud/capabilities'
 import { showError } from '@nextcloud/dialogs'
+import { t } from '@nextcloud/l10n'
 
 import {
 	ATTENDEE,

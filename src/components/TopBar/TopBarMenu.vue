@@ -163,6 +163,7 @@ import GridView from 'vue-material-design-icons/ViewGrid.vue'
 import { getCapabilities } from '@nextcloud/capabilities'
 import { showWarning } from '@nextcloud/dialogs'
 import { emit } from '@nextcloud/event-bus'
+import { t } from '@nextcloud/l10n'
 
 import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
 import NcActionLink from '@nextcloud/vue/dist/Components/NcActionLink.js'
@@ -381,6 +382,7 @@ export default {
 	},
 
 	methods: {
+		t,
 		forceMuteOthers() {
 			callParticipantCollection.callParticipantModels.value.forEach(callParticipantModel => {
 				callParticipantModel.forceMute()

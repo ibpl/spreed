@@ -34,6 +34,8 @@
 </template>
 
 <script>
+import { t } from '@nextcloud/l10n'
+
 import Message from './Message/Message.vue'
 import AvatarWrapper from '../../AvatarWrapper/AvatarWrapper.vue'
 

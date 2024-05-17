@@ -121,6 +121,7 @@ import ReloadIcon from 'vue-material-design-icons/Reload.vue'
 
 import { getCapabilities } from '@nextcloud/capabilities'
 import { showError, showSuccess } from '@nextcloud/dialogs'
+import { t } from '@nextcloud/l10n'
 import moment from '@nextcloud/moment'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
@@ -378,6 +379,7 @@ export default {
 	},
 
 	methods: {
+		t,
 		handleMarkdownMouseOver(event) {
 			if (!this.containsCodeBlocks) {
 				return

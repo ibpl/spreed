@@ -59,6 +59,8 @@
 import CancelIcon from 'vue-material-design-icons/Cancel.vue'
 import CheckIcon from 'vue-material-design-icons/Check.vue'
 
+import { t } from '@nextcloud/l10n'
+
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcLoadingIcon from '@nextcloud/vue/dist/Components/NcLoadingIcon.js'
 import NcModal from '@nextcloud/vue/dist/Components/NcModal.js'
@@ -114,6 +116,7 @@ export default {
 	expose: ['showModal'],
 
 	methods: {
+		t,
 		showModal() {
 			this.modal = true
 		},

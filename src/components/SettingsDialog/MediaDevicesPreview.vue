@@ -73,6 +73,8 @@ import AlertCircle from 'vue-material-design-icons/AlertCircle.vue'
 import MicrophoneOff from 'vue-material-design-icons/MicrophoneOff.vue'
 import VideoOff from 'vue-material-design-icons/VideoOff.vue'
 
+import { t } from '@nextcloud/l10n'
+
 import MediaDevicesSelector from '../MediaSettings/MediaDevicesSelector.vue'
 import VolumeIndicator from '../UIShared/VolumeIndicator.vue'
 
@@ -176,7 +178,11 @@ export default {
 
 			return t('spreed', 'Error while accessing camera')
 		},
-	}
+	},
+
+	methods: {
+		t,
+	},
 }
 </script>
 

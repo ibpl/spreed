@@ -53,6 +53,7 @@ import Magnify from 'vue-material-design-icons/Magnify.vue'
 import MessageOutline from 'vue-material-design-icons/MessageOutline.vue'
 
 import { getCapabilities } from '@nextcloud/capabilities'
+import { t } from '@nextcloud/l10n'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcEmptyContent from '@nextcloud/vue/dist/Components/NcEmptyContent.js'
@@ -174,6 +175,7 @@ export default {
 	},
 
 	methods: {
+		t,
 		async fetchRooms() {
 			const response = this.listOpenConversations
 				? await searchListedConversations({ searchText: '' }, {})

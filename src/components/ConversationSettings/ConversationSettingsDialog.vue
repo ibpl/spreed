@@ -95,6 +95,7 @@
 import { getCapabilities } from '@nextcloud/capabilities'
 import { subscribe, unsubscribe } from '@nextcloud/event-bus'
 import { loadState } from '@nextcloud/initial-state'
+import { t } from '@nextcloud/l10n'
 
 import NcAppSettingsDialog from '@nextcloud/vue/dist/Components/NcAppSettingsDialog.js'
 import NcAppSettingsSection from '@nextcloud/vue/dist/Components/NcAppSettingsSection.js'
@@ -250,6 +251,7 @@ export default {
 	},
 
 	methods: {
+		t,
 		handleShowSettings({ token }) {
 			this.$store.dispatch('updateConversationSettingsToken', token)
 			this.showSettings = true

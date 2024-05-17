@@ -44,6 +44,8 @@
 <script>
 import WebIcon from 'vue-material-design-icons/Web.vue'
 
+import { t } from '@nextcloud/l10n'
+
 import NcAvatar from '@nextcloud/vue/dist/Components/NcAvatar.js'
 
 import { ATTENDEE, AVATAR } from '../../constants.js'

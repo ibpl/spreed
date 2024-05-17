@@ -58,6 +58,7 @@ import { ref, toRefs } from 'vue'
 import { getCapabilities } from '@nextcloud/capabilities'
 import { showError } from '@nextcloud/dialogs'
 import { subscribe, unsubscribe } from '@nextcloud/event-bus'
+import { t } from '@nextcloud/l10n'
 
 import NcAppNavigationCaption from '@nextcloud/vue/dist/Components/NcAppNavigationCaption.js'
 
@@ -220,6 +221,7 @@ export default {
 	},
 
 	methods: {
+		t,
 		async updateUsers(usersList) {
 			const currentUser = usersList.flat().find(user => user.userId === this.userId)
 			const currentParticipant = this.participants.find(user => user.userId === this.userId)

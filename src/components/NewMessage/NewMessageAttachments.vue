@@ -62,6 +62,8 @@ import Paperclip from 'vue-material-design-icons/Paperclip.vue'
 import PollIcon from 'vue-material-design-icons/Poll.vue'
 import Upload from 'vue-material-design-icons/Upload.vue'
 
+import { t } from '@nextcloud/l10n'
+
 import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
 import NcActions from '@nextcloud/vue/dist/Components/NcActions.js'
 import NcIconSvgWrapper from '@nextcloud/vue/dist/Components/NcIconSvgWrapper.js'

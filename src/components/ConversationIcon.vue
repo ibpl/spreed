@@ -59,6 +59,7 @@ import VideoIcon from 'vue-material-design-icons/Video.vue'
 import WebIcon from 'vue-material-design-icons/Web.vue'
 
 import { getCapabilities } from '@nextcloud/capabilities'
+import { t } from '@nextcloud/l10n'
 
 import NcAvatar from '@nextcloud/vue/dist/Components/NcAvatar.js'
 

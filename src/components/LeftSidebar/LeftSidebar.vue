@@ -311,6 +311,7 @@ import { getCapabilities } from '@nextcloud/capabilities'
 import { showError } from '@nextcloud/dialogs'
 import { emit } from '@nextcloud/event-bus'
 import { loadState } from '@nextcloud/initial-state'
+import { t } from '@nextcloud/l10n'
 
 import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
 import NcActions from '@nextcloud/vue/dist/Components/NcActions.js'
@@ -658,6 +659,7 @@ export default {
 	},
 
 	methods: {
+		t,
 		showModalNewConversation() {
 			this.$refs.newConversationDialog.showModal()
 		},
