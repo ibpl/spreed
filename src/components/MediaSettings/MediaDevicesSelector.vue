@@ -193,6 +193,10 @@ export default {
 			this.$emit('update:deviceId', deviceSelectedOption ? deviceSelectedOption.id : undefined)
 		},
 	},
+
+	methods: {
+		t,
+	},
 }
 </script>
 

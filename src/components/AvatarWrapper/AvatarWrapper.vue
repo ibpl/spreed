@@ -190,6 +190,10 @@ export default {
 			return getUserProxyAvatarOcsUrl(this.token, this.id, isDarkTheme, this.size > AVATAR.SIZE.MEDIUM ? 512 : 64)
 		},
 	},
+
+	methods: {
+		t,
+	},
 }
 </script>
 

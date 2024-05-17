@@ -146,6 +146,9 @@ export default {
 		},
 	},
 
+	methods: {
+		t,
+	},
 }
 </script>
 

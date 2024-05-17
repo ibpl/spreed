@@ -234,6 +234,10 @@ export default {
 			return getConversationAvatarOcsUrl(this.item.token, isDarkTheme, this.item.avatarVersion)
 		},
 	},
+
+	methods: {
+		t,
+	},
 }
 </script>
 

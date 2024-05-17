@@ -130,5 +130,9 @@ export default {
 			return t('spreed', 'Share from {nextcloud}', { nextcloud: OC.theme.productName })
 		},
 	},
+
+	methods: {
+		t,
+	},
 }
 </script>
