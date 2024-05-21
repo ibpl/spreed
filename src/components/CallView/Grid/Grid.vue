@@ -868,6 +868,10 @@ export default {
 		orderVideos(initialVideos, model = null) {
 			// If model is passed, that model is moved to the front of the array
 			if (model) {
+				// if model is already in the first page, do nothing
+				if (initialVideos.slice(0, this.slots).find(video => video.attributes.peerId === model.attributes.peerId)) {
+					return initialVideos
+				}
 				const videosOfSpeakers = initialVideos.filter((video) => {
 					return video.attributes.peerId !== model.attributes.peerId
 				})
