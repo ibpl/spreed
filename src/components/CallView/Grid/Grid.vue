@@ -151,7 +151,7 @@ import LocalVideo from '../shared/LocalVideo.vue'
 import VideoBottomBar from '../shared/VideoBottomBar.vue'
 import VideoVue from '../shared/VideoVue.vue'
 
-import { PARTICIPANT } from '../../../constants.js'
+import { PARTICIPANT, ATTENDEE } from '../../../constants.js'
 
 // Max number of videos per page. `0`, the default value, means no cap
 const videosCap = parseInt(loadState('spreed', 'grid_videos_limit'), 10) || 0
@@ -270,8 +270,9 @@ export default {
 			// Timer for the videos bottom bar
 			showVideoOverlayTimer: null,
 			debounceMakeGrid: () => {},
-			orderedVideos: [],
 			videosOfModerators: [],
+			videosOfSpeakersNonModerators: [],
+			videosWithoutPermissions: [],
 		}
 	},
 
@@ -490,6 +491,17 @@ export default {
 		participantsInitialised() {
 			return this.$store.getters.participantsInitialised(this.token)
 		},
+
+		actorType() {
+			return this.$store.getters.getActorType()
+		},
+
+		orderedVideos() {
+			if (this.actorType === ATTENDEE.ACTOR_TYPE.GUESTS) {
+				return this.videos
+			}
+			return [...this.videosOfModerators, ...this.videosOfSpeakersNonModerators, ...this.videosWithoutPermissions]
+		},
 	},
 
 	watch: {
@@ -538,17 +550,18 @@ export default {
 
 		callParticipantModels: {
 			immediate: true,
-			handler() {
+			handler(newModels, oldModels) {
 				if (!this.participantsInitialised) {
 					return
 				}
-				this.orderedVideos = this.orderVideos(this.videos)
+				// TODO: patch the array with the new models
+				this.patchOrderedVideos(newModels)
 			},
 		},
 
 		participantsInitialised(value) {
 			if (value) {
-				this.orderedVideos = this.orderVideos(this.videos)
+				this.orderVideos(this.videos)
 			}
 		},
 
@@ -557,9 +570,8 @@ export default {
 				return
 			}
 			speakers.forEach(speaker => {
-				this.orderedVideos = this.orderVideos(this.orderedVideos, speaker)
+				this.promoteSpeaker(speaker)
 			})
-
 		}
 	},
 
@@ -865,35 +877,42 @@ export default {
 			return callParticipantModel.attributes.peerId === this.$store.getters.selectedVideoPeerId
 		},
 
-		orderVideos(initialVideos, model = null) {
-			// If model is passed, that model is moved to the front of the array
-			if (model) {
-				// if model is already in the first page, do nothing
-				if (initialVideos.slice(0, this.slots).find(video => video.attributes.peerId === model.attributes.peerId)) {
-					return initialVideos
-				}
-				const videosOfSpeakers = initialVideos.filter((video) => {
+		promoteSpeaker(model) {
+			// if model is already in the first page, do nothing
+			if (this.orderedVideos.slice(0, this.slots).find(video => video.attributes.peerId === model.attributes.peerId)) {
+				return
+			}
+			const participant = this.$store.getters.getParticipantByPeerId(this.token, model.attributes.peerId)
+			// check if it is a moderator
+			if (MODERATOR_TYPES.includes(participant.participantType)) {
+				// remove the model from its current position
+				this.videosOfModerators = this.videosOfModerators.filter((video) => {
 					return video.attributes.peerId !== model.attributes.peerId
 				})
-				const participant = this.$store.getters.getParticipantByPeerId(this.token, model.attributes.peerId)
-				// check if it is a moderator
-				if (MODERATOR_TYPES.includes(participant.participantType)) {
-					// add the model
-					videosOfSpeakers.unshift(model)
-				} else {
-					videosOfSpeakers.splice(this.videosOfModerators.length, 0, model)
-				}
-
-				return videosOfSpeakers
+				// add the model
+				this.videosOfModerators.unshift(model)
+			} else {
+				// remove the model from its current position
+				this.videosOfSpeakersNonModerators = this.videosOfSpeakersNonModerators.filter((video) => {
+					return video.attributes.peerId !== model.attributes.peerId
+				})
+				// add the model
+				this.videosOfSpeakersNonModerators.unshift(model)
 			}
+		},
 
+		orderVideos(initialVideos) {
+			// Guests don't have participants data, so we can't order them
+			if (this.actorType === ATTENDEE.ACTOR_TYPE.GUESTS) {
+				return
+			}
 			// videos are ordered as follows:
 			// 1. videos of users who has speaker per
 			// 2. videos of users who don't have permissions
 			// If the user has the permission to speak, the video is shown first
 			this.videosOfModerators = []
-			const videosOfSpeakers = []
-			const videosWithoutPermissions = []
+			this.videosOfSpeakersNonModerators = []
+			this.videosWithoutPermissions = []
 			initialVideos.forEach((video) => {
 				// FIX !!!!: the store is not loaded when joining the call for the first time
 				const participant = this.$store.getters.getParticipantByPeerId(this.token, video.attributes.peerId)
@@ -904,14 +923,39 @@ export default {
 					if (MODERATOR_TYPES.includes(participant.participantType)) {
 						this.videosOfModerators.push(video)
 					} else {
-						videosOfSpeakers.push(video)
+						this.videosOfSpeakersNonModerators.push(video)
 					}
 				} else {
-					videosWithoutPermissions.push(video)
+					this.videosWithoutPermissions.push(video)
+				}
+			})
+		},
+
+		patchOrderedVideos(newVideos) {
+			const addedVideos = newVideos.filter(model => !this.orderedVideos.includes(model))
+			const removedVideos = this.orderedVideos.filter(model => !newVideos.includes(model))
+
+			// Place the added videos in the correct position
+			addedVideos.forEach(model => {
+				const participant = this.$store.getters.getParticipantByPeerId(this.token, model.attributes.peerId)
+
+				if (participant?.permissions & PARTICIPANT.PERMISSIONS.PUBLISH_AUDIO) {
+					if (MODERATOR_TYPES.includes(participant.participantType)) {
+						this.videosOfModerators.push(model)
+					} else {
+						this.videosOfSpeakersNonModerators.push(model)
+					}
+				} else {
+					this.videosWithoutPermissions.push(model)
 				}
 			})
 
-			return this.videosOfModerators.concat(videosOfSpeakers, videosWithoutPermissions)
+			// Remove the removed videos
+			removedVideos.forEach(model => {
+				this.videosOfModerators = this.videosOfModerators.filter(video => video.attributes.peerId !== model.attributes.peerId)
+				this.videosOfSpeakersNonModerators = this.videosOfSpeakersNonModerators.filter(video => video.attributes.peerId !== model.attributes.peerId)
+				this.videosWithoutPermissions = this.videosWithoutPermissions.filter(video => video.attributes.peerId !== model.attributes.peerId)
+			})
 
 		},
 
