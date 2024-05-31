@@ -288,8 +288,19 @@
 
 			<!-- Remove -->
 			<NcActionSeparator v-if="canBeModerated && showPermissionsOptions" />
+			<NcActionButton v-if="canBeModerated && supportBanV1"
+				key="ban-participant"
+				class="critical"
+				close-after-click
+				@click="isBanDialogOpen = true">
+				<template #icon>
+					<AccountCancel :size="20" />
+				</template>
+				{{ t('spreed', 'Ban participant') }}
+			</NcActionButton>
 			<NcActionButton v-if="canBeModerated"
 				key="remove-participant"
+				class="critical"
 				close-after-click
 				@click="removeParticipant">
 				<template #icon>
@@ -306,6 +317,23 @@
 			:token="token"
 			@close="hidePermissionsEditor" />
 
+		<!-- Confirmation required to ban participant -->
+		<NcDialog v-if="isBanDialogOpen"
+			:open.sync="isBanDialogOpen"
+			:name="t('spreed', 'Ban participant')"
+			:container="container">
+			<p> {{ dialogMessage }} </p>
+			<NcTextField :value.sync="internalNote" />
+			<template #actions>
+				<NcButton type="tertiary" @click="isBanDialogOpen = false">
+					{{ t('spreed', 'Dismiss') }}
+				</NcButton>
+				<NcButton type="error" @click="banParticipant">
+					{{ t('spreed', 'Ban') }}
+				</NcButton>
+			</template>
+		</NcDialog>
+
 		<!-- Checkmark in case the current participant is selected -->
 		<div v-if="isSelected" class="icon-checkmark participant-row__utils utils__checkmark" />
 	</component>
@@ -315,6 +343,7 @@
 import { inject } from 'vue'
 
 import Account from 'vue-material-design-icons/Account.vue'
+import AccountCancel from 'vue-material-design-icons/AccountCancel.vue'
 import AccountMinusIcon from 'vue-material-design-icons/AccountMinus.vue'
 import AccountPlusIcon from 'vue-material-design-icons/AccountPlus.vue'
 import Bell from 'vue-material-design-icons/Bell.vue'
@@ -346,6 +375,8 @@ import NcActions from '@nextcloud/vue/dist/Components/NcActions.js'
 import NcActionSeparator from '@nextcloud/vue/dist/Components/NcActionSeparator.js'
 import NcActionText from '@nextcloud/vue/dist/Components/NcActionText.js'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
+import NcDialog from '@nextcloud/vue/dist/Components/NcDialog.js'
+import NcTextField from '@nextcloud/vue/dist/Components/NcTextField.js'
 import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip.js'
 
 import ParticipantPermissionsEditor from './ParticipantPermissionsEditor.vue'
@@ -367,6 +398,7 @@ import { readableNumber } from '../../../utils/readableNumber.ts'
 import { getStatusMessage } from '../../../utils/userStatus.js'
 
 const supportFederationV1 = getCapabilities()?.spreed?.features?.includes('federation-v1')
+const supportBanV1 = getCapabilities()?.spreed?.features?.includes('ban-v1')
 
 export default {
 	name: 'Participant',
@@ -379,9 +411,12 @@ export default {
 		NcActionText,
 		NcActionSeparator,
 		NcButton,
+		NcDialog,
+		NcTextField,
 		ParticipantPermissionsEditor,
 		// Icons
 		Account,
+		AccountCancel,
 		AccountMinusIcon,
 		AccountPlusIcon,
 		Bell,
@@ -443,6 +478,7 @@ export default {
 			isInCall,
 			selectedParticipants,
 			isSelectable,
+			supportBanV1,
 		}
 	},
 
@@ -451,6 +487,8 @@ export default {
 			isUserNameTooltipVisible: false,
 			isStatusTooltipVisible: false,
 			permissionsEditor: false,
+			isBanDialogOpen: false,
+			internalNote: '',
 			disabled: false,
 		}
 	},
@@ -558,6 +596,13 @@ export default {
 			}
 
 			return this.statusMessage
+		},
+
+		dialogMessage() {
+			return t('spreed', 'Provide an internal note for banning {displayName}', this.participant, undefined, {
+				escape: false,
+				sanitize: false,
+			})
 		},
 
 		/**
@@ -938,6 +983,16 @@ export default {
 			}
 		},
 
+		async banParticipant() {
+			await this.$store.dispatch('banParticipant', {
+				token: this.token,
+				attendeeId: this.attendeeId,
+				internalNote: this.internalNote,
+			})
+			this.internalNote = ''
+			this.isBanDialogOpen = false
+		},
+
 		async removeParticipant() {
 			await this.$store.dispatch('removeParticipant', {
 				token: this.token,
@@ -1199,6 +1254,10 @@ export default {
 	.participant-row__user-descriptor > span {
 		color: var(--color-text-maxcontrast);
 	}
+}
+
+.critical > :deep(.action-button) {
+	color: var(--color-error);
 }
 
 </style>

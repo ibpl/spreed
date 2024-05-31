@@ -11,6 +11,7 @@ import { emit } from '@nextcloud/event-bus'
 import { generateUrl } from '@nextcloud/router'
 
 import { ATTENDEE, PARTICIPANT } from '../constants.js'
+import { banActor } from '../services/banService.ts'
 import {
 	joinCall,
 	leaveCall,
@@ -556,6 +557,20 @@ const actions = {
 			participantType: attendee.participantType === PARTICIPANT.TYPE.GUEST_MODERATOR ? PARTICIPANT.TYPE.GUEST : PARTICIPANT.TYPE.USER,
 		}
 		commit('updateParticipant', { token, attendeeId, updatedData })
+	},
+
+	async banParticipant({ commit, getters }, { token, attendeeId, internalNote }) {
+		const attendee = getters.getParticipant(token, attendeeId)
+		if (!attendee) {
+			return
+		}
+
+		await banActor(token, {
+			actorId: attendee.actorId,
+			actorType: attendee.actorType,
+			internalNote,
+		})
+		commit('deleteParticipant', { token, attendeeId })
 	},
 
 	async removeParticipant({ commit, getters }, { token, attendeeId }) {
