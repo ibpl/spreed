@@ -40,6 +40,7 @@
 				<LinkShareSettings v-if="!isNoteToSelf" :token="token" :can-moderate="canFullModerate" />
 				<RecordingConsentSettings v-if="!isNoteToSelf && recordingConsentAvailable" :token="token" :can-moderate="selfIsOwnerOrModerator" />
 				<ExpirationSettings :token="token" :can-moderate="selfIsOwnerOrModerator" />
+				<BanSettings v-if="canFullModerate && supportBanV1" :token="token" />
 			</NcAppSettingsSection>
 
 			<!-- Meeting: lobby and sip -->
@@ -100,6 +101,7 @@ import NcAppSettingsDialog from '@nextcloud/vue/dist/Components/NcAppSettingsDia
 import NcAppSettingsSection from '@nextcloud/vue/dist/Components/NcAppSettingsSection.js'
 import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadioSwitch.js'
 
+import BanSettings from './BanSettings.vue'
 import BasicInfo from './BasicInfo.vue'
 import BotsSettings from './BotsSettings.vue'
 import BreakoutRoomsSettings from './BreakoutRoomsSettings.vue'
@@ -122,11 +124,13 @@ const recordingEnabled = getCapabilities()?.spreed?.config?.call?.recording || f
 const recordingConsentCapability = getCapabilities()?.spreed?.features?.includes('recording-consent')
 const recordingConsent = getCapabilities()?.spreed?.config?.call?.['recording-consent'] !== CALL.RECORDING_CONSENT.OFF
 const supportFederationV1 = getCapabilities()?.spreed?.features?.includes('federation-v1')
+const supportBanV1 = getCapabilities()?.spreed?.features?.includes('ban-v1')
 
 export default {
 	name: 'ConversationSettingsDialog',
 
 	components: {
+		BanSettings,
 		BasicInfo,
 		BotsSettings,
 		BreakoutRoomsSettings,
@@ -148,7 +152,10 @@ export default {
 
 	setup() {
 		const settingsStore = useSettingsStore()
-		return { settingsStore }
+		return {
+			settingsStore,
+			supportBanV1,
+		}
 	},
 
 	data() {
