@@ -288,7 +288,7 @@
 
 			<!-- Remove -->
 			<NcActionSeparator v-if="canBeModerated && showPermissionsOptions" />
-			<NcActionButton v-if="canBeModerated && supportBanV1"
+			<NcActionButton v-if="canBeModerated && supportBanV1 && showPermissionsOptions"
 				key="ban-participant"
 				class="critical"
 				close-after-click
@@ -984,13 +984,19 @@ export default {
 		},
 
 		async banParticipant() {
-			await this.$store.dispatch('banParticipant', {
-				token: this.token,
-				attendeeId: this.attendeeId,
-				internalNote: this.internalNote,
-			})
-			this.internalNote = ''
-			this.isBanDialogOpen = false
+			try {
+				await this.$store.dispatch('banParticipant', {
+					token: this.token,
+					attendeeId: this.attendeeId,
+					internalNote: this.internalNote,
+				})
+				this.internalNote = ''
+				this.isBanDialogOpen = false
+				showSuccess(t('spreed', 'Participant {displayName} is banned successfully', { displayName: this.computedName }))
+			} catch(error) {
+				showError(t('spreed', 'Could not ban participant {displayName}', { displayName: this.computedName }))	
+			}
+				
 		},
 
 		async removeParticipant() {
