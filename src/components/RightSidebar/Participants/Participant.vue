@@ -249,7 +249,7 @@
 			</template>
 
 			<!-- Permissions -->
-			<template v-if="showPermissionsOptions">
+			<template v-if="isModeratableParticipant">
 				<NcActionSeparator />
 				<NcActionButton v-if="hasNonDefaultPermissions"
 					key="reset-permissions"
@@ -287,8 +287,8 @@
 			</template>
 
 			<!-- Remove -->
-			<NcActionSeparator v-if="canBeModerated && showPermissionsOptions" />
-			<NcActionButton v-if="canBeModerated && supportBanV1 && showPermissionsOptions"
+			<NcActionSeparator v-if="isModeratableParticipant" />
+			<NcActionButton v-if="supportBanV1 && isModeratableParticipant"
 				key="ban-participant"
 				class="critical"
 				close-after-click
@@ -801,7 +801,7 @@ export default {
 			return this.participantTypeIsModerator(this.participantType)
 		},
 
-		showPermissionsOptions() {
+		isModeratableParticipant() {
 			return this.canBeModerated
 				&& !this.isModerator
 				&& (this.participant.actorType === ATTENDEE.ACTOR_TYPE.USERS
@@ -993,10 +993,10 @@ export default {
 				this.internalNote = ''
 				this.isBanDialogOpen = false
 				showSuccess(t('spreed', 'Participant {displayName} is banned successfully', { displayName: this.computedName }))
-			} catch(error) {
-				showError(t('spreed', 'Could not ban participant {displayName}', { displayName: this.computedName }))	
+			} catch (error) {
+				showError(t('spreed', 'Could not ban participant {displayName}', { displayName: this.computedName }))
 			}
-				
+
 		},
 
 		async removeParticipant() {
