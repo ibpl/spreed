@@ -101,7 +101,7 @@ import NcAppSettingsDialog from '@nextcloud/vue/dist/Components/NcAppSettingsDia
 import NcAppSettingsSection from '@nextcloud/vue/dist/Components/NcAppSettingsSection.js'
 import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadioSwitch.js'
 
-import BanSettings from './BanSettings.vue'
+import BanSettings from './BanSettings/BanSettings.vue'
 import BasicInfo from './BasicInfo.vue'
 import BotsSettings from './BotsSettings.vue'
 import BreakoutRoomsSettings from './BreakoutRoomsSettings.vue'

@@ -9,14 +9,14 @@
 			{{ t('spreed', 'Banned users') }}
 		</h4>
 		<div class="app-settings-section__hint">
-			TODO add a proper text here
+			{{ t('spreed', 'Manage the list of banned users in this conversation.') }}
 		</div>
 		<NcButton @click="modal = true">
 			{{ t('spreed', 'Manage bans') }}
 		</NcButton>
 
 		<NcModal v-if="modal"
-			container=".conversation-ban-settings"
+			container=".conversation-ban__settings"
 			@close="modal = false">
 			<div class="conversation-ban__content">
 				<h2 class="conversation-ban__title">
@@ -24,12 +24,10 @@
 				</h2>
 
 				<ul v-if="banList.length" class="conversation-ban__list">
-					<li v-for="ban in banList" :key="ban.id" class="conversation-ban__item">
-						<span>{{ ban.bannedId }}</span>
-						<NcButton @click="handleUnban(ban.id)">
-							{{ t('spreed', 'Unban') }}
-						</NcButton>
-					</li>
+					<BannedItem v-for="ban in banList"
+						:key="ban.id"
+						:ban="ban"
+						@unban-participant="handleUnban(ban.id)" />
 				</ul>
 
 				<NcEmptyContent v-else>
@@ -55,7 +53,9 @@ import NcEmptyContent from '@nextcloud/vue/dist/Components/NcEmptyContent.js'
 import NcLoadingIcon from '@nextcloud/vue/dist/Components/NcLoadingIcon.js'
 import NcModal from '@nextcloud/vue/dist/Components/NcModal.js'
 
-import { getConversationBans, unbanActor } from '../../services/banService.ts'
+import BannedItem from './BannedItem.vue'
+
+import { getConversationBans, unbanActor } from '../../../services/banService.ts'
 
 export default {
 	name: 'BanSettings',
@@ -65,6 +65,7 @@ export default {
 		NcEmptyContent,
 		NcLoadingIcon,
 		NcModal,
+		BannedItem,
 		// Icons
 		AccountCancel,
 	},
@@ -81,6 +82,7 @@ export default {
 			banList: [],
 			isLoading: true,
 			modal: false,
+			showDetails: false,
 		}
 	},
 
@@ -112,9 +114,6 @@ export default {
 
 <style lang="scss" scoped>
 .conversation-ban {
-	&__settings {
-	}
-
 	&__content {
 		min-height: 240px;
 	}
@@ -125,11 +124,7 @@ export default {
 
 	&__list {
 		overflow: scroll;
-	}
-
-	&__item {
-		display: flex;
-		align-items: center;
+		height: 400px;
 	}
 }
 </style>
