@@ -882,7 +882,7 @@ export default {
 			if (this.orderedVideos.slice(0, this.slots).find(video => video.attributes.peerId === model.attributes.peerId)) {
 				return
 			}
-			const participant = this.$store.getters.getParticipantByPeerId(this.token, model.attributes.peerId)
+			const participant = this.$store.getters.getParticipantByPeerId(this.token, model.attributes.nextcloudSessionId)
 			// check if it is a moderator
 			if (MODERATOR_TYPES.includes(participant.participantType)) {
 				// remove the model from its current position

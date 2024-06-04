@@ -264,9 +264,9 @@ const getters = {
 		return 0
 	},
 
-	getParticipantByPeerId: (state) => (token, peerId) => {
+	getParticipantByPeerId: (state) => (token, sessionId) => {
 		if (state.attendees[token]) {
-			return Object.values(state.attendees[token]).find(attendee => attendee.sessionIds.includes(peerId))
+			return Object.values(state.attendees[token]).find(attendee => attendee.sessionIds.includes(sessionId))
 		}
 		return null
 	},
