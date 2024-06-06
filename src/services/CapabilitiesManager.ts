@@ -10,88 +10,76 @@ import { getRemoteCapabilities } from './federationService.ts'
 import BrowserStorage from '../services/BrowserStorage.js'
 import type { Capabilities, JoinRoomFullResponse } from '../types'
 
-interface ICapabilitiesManager {
-	localCapabilities: Capabilities
-	remoteCapabilities: Record<string, Capabilities & Partial<{ hash: string }>>
-	getCapabilities: (token: 'local'|string) => Capabilities
-}
-
 type Config = Capabilities['spreed']['config']
+type RemoteCapabilities = Record<string, Capabilities & Partial<{ hash: string }>>
 
-class CapabilitiesManager implements ICapabilitiesManager {
+const localCapabilities: Capabilities = _getCapabilities() as Capabilities
+const remoteCapabilities: RemoteCapabilities = restoreRemoteCapabilities()
 
-	public localCapabilities
-
-	public remoteCapabilities
-
-	static instance: ICapabilitiesManager
-
-	constructor() {
-		this.localCapabilities = _getCapabilities() as Capabilities
-		this.remoteCapabilities = this.restoreRemoteCapabilities()
+/**
+ * Check whether the feature is presented (in case of federation - on both servers)
+ * @param token conversation token
+ * @param feature feature capability in string format
+ */
+export function hasTalkFeature(token: string = 'local', feature: string): boolean {
+	const hasLocalTalkFeature = localCapabilities?.spreed?.features?.includes(feature) ?? false
+	if (token === 'local' || !remoteCapabilities[token] || localCapabilities.spreed['features-local'].includes(feature)) {
+		return hasLocalTalkFeature
 	}
 
-	public getCapabilities(token: 'local'|string = 'local') {
-		return (token === 'local' || !this.remoteCapabilities[token])
-			? this.localCapabilities
-			: this.remoteCapabilities[token]
-	}
-
-	public hasTalkFeature(token: 'local'|string, feature: string): boolean {
-		if (this.localCapabilities.spreed['features-local'].includes(feature)) {
-			return this.localCapabilities?.spreed?.features?.includes(feature) ?? false
-		}
-		return this.getCapabilities(token)?.spreed?.features?.includes(feature) ?? false
-	}
-
-	public getTalkConfig(token: 'local'|string, key1: keyof Config, key2: keyof Config[keyof Config]) {
-		return this.localCapabilities.spreed['config-local'][key1][key2]
-			? this.localCapabilities?.spreed?.config?.[key1]?.[key2]
-			: getCapabilities(token)?.spreed?.config?.[key1]?.[key2]
-	}
-
-	public async setRemoteCapabilities(joinRoomResponse: JoinRoomFullResponse): Promise<void> {
-		const token = joinRoomResponse.data.ocs.data.token
-
-		// Check if remote capabilities have not changed since last check
-		if (joinRoomResponse.headers['x-nextcloud-talk-proxy-hash'] === this.remoteCapabilities[token]?.hash) {
-			return
-		}
-
-		try {
-			const response = await getRemoteCapabilities(token)
-			if (Array.isArray(response.data.ocs.data)) {
-				// unknown[] received from server, nothing to update with
-				return
-			}
-
-			this.remoteCapabilities[token] = { spreed: response.data.ocs.data }
-			this.remoteCapabilities[token].hash = joinRoomResponse.headers['x-nextcloud-talk-proxy-hash']
-			BrowserStorage.setItem('remoteCapabilities', JSON.stringify(this.remoteCapabilities))
-
-			// As normal capabilities update, requires a reload to take effect
-			showError(t('spreed', 'Nextcloud Talk Federation was updated, please reload the page'), {
-				timeout: TOAST_PERMANENT_TIMEOUT,
-			})
-		} catch (error) {
-			console.error(error)
-		}
-	}
-
-	restoreRemoteCapabilities(): ICapabilitiesManager['remoteCapabilities'] {
-		const remoteCapabilities = BrowserStorage.getItem('remoteCapabilities')
-		if (!remoteCapabilities?.length) {
-			return {}
-		}
-
-		return JSON.parse(remoteCapabilities) as ICapabilitiesManager['remoteCapabilities']
-	}
-
+	return (hasLocalTalkFeature && remoteCapabilities[token].spreed?.features?.includes(feature)) ?? false
 }
 
-const capabilitiesManager = new CapabilitiesManager()
+/**
+ * Get an according config value from local or remote capabilities
+ * @param token conversation token
+ * @param key1 top-level key (e.g. 'attachments')
+ * @param key2 second-level key (e.g. 'allowed')
+ */
+export function getTalkConfig(token: string = 'local', key1: keyof Config, key2: keyof Config[keyof Config]) {
+	if (token === 'local' || !remoteCapabilities[token] || localCapabilities.spreed['config-local'][key1][key2]) {
+		return localCapabilities?.spreed?.config?.[key1]?.[key2]
+	}
 
-export const getCapabilities = capabilitiesManager.getCapabilities.bind(capabilitiesManager)
-export const getTalkConfig = capabilitiesManager.getTalkConfig.bind(capabilitiesManager)
-export const hasTalkFeature = capabilitiesManager.hasTalkFeature.bind(capabilitiesManager)
-export const setRemoteCapabilities = capabilitiesManager.setRemoteCapabilities.bind(capabilitiesManager)
+	return remoteCapabilities[token]?.spreed?.config?.[key1]?.[key2]
+}
+
+/**
+ * Compares talk hash from remote instance and fetch new capabilities if it doesn't match
+ * @param joinRoomResponse server response
+ */
+export async function setRemoteCapabilities(joinRoomResponse: JoinRoomFullResponse): Promise<void> {
+	const token = joinRoomResponse.data.ocs.data.token
+
+	// Check if remote capabilities have not changed since last check
+	if (joinRoomResponse.headers['x-nextcloud-talk-proxy-hash'] === remoteCapabilities[token]?.hash) {
+		return
+	}
+
+	const response = await getRemoteCapabilities(token)
+	if (Array.isArray(response.data.ocs.data)) {
+		// unknown[] received from server, nothing to update with
+		return
+	}
+
+	remoteCapabilities[token] = { spreed: response.data.ocs.data }
+	remoteCapabilities[token].hash = joinRoomResponse.headers['x-nextcloud-talk-proxy-hash']
+	BrowserStorage.setItem('remoteCapabilities', JSON.stringify(remoteCapabilities))
+
+	// As normal capabilities update, requires a reload to take effect
+	showError(t('spreed', 'Nextcloud Talk Federation was updated, please reload the page'), {
+		timeout: TOAST_PERMANENT_TIMEOUT,
+	})
+}
+
+/**
+ * Restores capabilities from BrowserStorage
+ */
+function restoreRemoteCapabilities(): RemoteCapabilities {
+	const remoteCapabilities = BrowserStorage.getItem('remoteCapabilities')
+	if (!remoteCapabilities?.length) {
+		return {}
+	}
+
+	return JSON.parse(remoteCapabilities) as RemoteCapabilities
+}
