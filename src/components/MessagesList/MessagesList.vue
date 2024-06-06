@@ -728,6 +728,7 @@ export default {
 		 * a long-polling request for new messages.
 		 */
 		async lookForNewMessages() {
+			console.log('lookForNewMessages', this.token)
 			// Once the history is received, starts looking for new messages.
 			if (this._isBeingDestroyed || this._isDestroyed) {
 				console.debug('Prevent getting new messages on a destroyed MessagesList')
@@ -738,6 +739,7 @@ export default {
 		},
 
 		async getMessageContext(messageId) {
+			console.log('getMessageContext', this.token, messageId)
 			// Make the request
 			this.loadingOldMessages = true
 			try {

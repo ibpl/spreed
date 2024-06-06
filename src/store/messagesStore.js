@@ -788,6 +788,7 @@ const actions = {
 	 * @param {string} data.id Id of the last known chat message
 	 */
 	setLastKnownMessageId(context, { token, id }) {
+		console.log(token, id, typeof id)
 		context.commit('setLastKnownMessageId', { token, id })
 	},
 
@@ -1111,6 +1112,23 @@ const actions = {
 
 		// Assign the new cancel function to our data value
 		context.commit('setCancelLookForNewMessages', { cancelFunction: cancel, requestId })
+
+		// FIXME testing fetch of first messages for conversation
+		// if param is null | undefined, it won't be included in the request query
+		if (!lastKnownMessageId) {
+			console.error('Error: trying to load chat from the beginning:', token, {
+				token,
+				lastKnownMessageId,
+				messagesList: structuredClone(context.getters.messagesList(token)),
+				messagesListLength: context.getters.messagesList(token)?.length,
+				firstKnown: context.getters.getFirstKnownMessageId(token),
+				lastKnown: context.getters.getLastKnownMessageId(token),
+				realFirstKnown: context.getters.messagesList(token)?.at(0)?.id,
+				realLastKnown: context.getters.messagesList(token)?.at(-1)?.id,
+				lastReadMessageId: context.getters.conversation(token)?.lastReadMessage,
+			})
+			showError('Error: trying to load chat from the beginning: open console')
+		}
 
 		const response = await request({
 			token,
