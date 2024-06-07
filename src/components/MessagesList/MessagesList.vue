@@ -273,7 +273,7 @@ export default {
 				if (oldValue) {
 					this.$store.dispatch('cancelLookForNewMessages', { requestId: oldValue })
 				}
-				this.handleStartGettingMessagesPreconditions()
+				this.handleStartGettingMessagesPreconditions(this.token)
 
 				// Remove expired messages when joining a room
 				this.removeExpiredMessagesFromStore()
@@ -641,53 +641,53 @@ export default {
 			}
 		},
 
-		async handleStartGettingMessagesPreconditions() {
-			if (this.token && this.isParticipant && !this.isInLobby) {
+		async handleStartGettingMessagesPreconditions(token) {
+			if (token && this.isParticipant && !this.isInLobby) {
 
 				// prevent sticky mode before we have loaded anything
 				this.isInitialisingMessages = true
 				const focusMessageId = this.getMessageIdFromHash()
 
 				this.$store.dispatch('setVisualLastReadMessageId', {
-					token: this.token,
+					token,
 					id: this.conversation.lastReadMessage,
 				})
 
-				if (this.$store.getters.getFirstKnownMessageId(this.token) === null) {
+				if (this.$store.getters.getFirstKnownMessageId(token) === null) {
 					let startingMessageId = 0
 					// first time load, initialize important properties
 					if (focusMessageId === null) {
 						// Start from unread marker
 						this.$store.dispatch('setFirstKnownMessageId', {
-							token: this.token,
+							token,
 							id: this.conversation.lastReadMessage,
 						})
 						startingMessageId = this.conversation.lastReadMessage
 						this.$store.dispatch('setLastKnownMessageId', {
-							token: this.token,
+							token,
 							id: this.conversation.lastReadMessage,
 						})
 					} else {
 						// Start from message hash
 						this.$store.dispatch('setFirstKnownMessageId', {
-							token: this.token,
+							token,
 							id: focusMessageId,
 						})
 						startingMessageId = focusMessageId
 						this.$store.dispatch('setLastKnownMessageId', {
-							token: this.token,
+							token,
 							id: focusMessageId,
 						})
 					}
 
 					// Get chat messages before last read message and after it
-					await this.getMessageContext(startingMessageId)
+					await this.getMessageContext(token, startingMessageId)
 					const startingMessageFound = this.focusMessage(startingMessageId, false, focusMessageId !== null)
 
 					if (!startingMessageFound) {
-						const fallbackStartingMessageId = this.$store.getters.getFirstDisplayableMessageIdBeforeReadMarker(this.token, startingMessageId)
+						const fallbackStartingMessageId = this.$store.getters.getFirstDisplayableMessageIdBeforeReadMarker(token, startingMessageId)
 						this.$store.dispatch('setVisualLastReadMessageId', {
-							token: this.token,
+							token,
 							id: fallbackStartingMessageId,
 						})
 						this.focusMessage(fallbackStartingMessageId, false, false)
@@ -709,7 +709,7 @@ export default {
 				this.isInitialisingMessages = false
 
 				// get new messages
-				await this.lookForNewMessages()
+				await this.lookForNewMessages(token)
 
 				if (focusMessageId === null) {
 					// don't scroll if lookForNewMessages was polling as we don't want
@@ -727,24 +727,24 @@ export default {
 		 * Fetches the messages of a conversation given the conversation token. Triggers
 		 * a long-polling request for new messages.
 		 */
-		async lookForNewMessages() {
-			console.log('lookForNewMessages', this.token)
+		async lookForNewMessages(token) {
+			console.log('lookForNewMessages', token)
 			// Once the history is received, starts looking for new messages.
 			if (this._isBeingDestroyed || this._isDestroyed) {
 				console.debug('Prevent getting new messages on a destroyed MessagesList')
 				return
 			}
 
-			await this.getNewMessages()
+			await this.getNewMessages(token)
 		},
 
-		async getMessageContext(messageId) {
-			console.log('getMessageContext', this.token, messageId)
+		async getMessageContext(token, messageId) {
+			console.log('getMessageContext', token, messageId)
 			// Make the request
 			this.loadingOldMessages = true
 			try {
 				await this.$store.dispatch('getMessageContext', {
-					token: this.token,
+					token,
 					messageId,
 					minimumVisible: CHAT.MINIMUM_VISIBLE,
 				})
@@ -797,7 +797,7 @@ export default {
 		 * Creates a long polling request for a new message.
 		 *
 		 */
-		async getNewMessages() {
+		async getNewMessages(token) {
 			if (this.destroying) {
 				return
 			}
@@ -806,8 +806,8 @@ export default {
 				// TODO: move polling logic to the store and also cancel timers on cancel
 				this.pollingErrorTimeout = 1
 				await this.$store.dispatch('lookForNewMessages', {
-					token: this.token,
-					lastKnownMessageId: this.$store.getters.getLastKnownMessageId(this.token),
+					token,
+					lastKnownMessageId: this.$store.getters.getLastKnownMessageId(token),
 					requestId: this.chatIdentifier,
 				})
 			} catch (exception) {
@@ -821,7 +821,7 @@ export default {
 					// This is not an error, so reset error timeout and poll again
 					this.pollingErrorTimeout = 1
 					setTimeout(() => {
-						this.getNewMessages()
+						this.getNewMessages(token)
 					}, 500)
 					return
 				}
@@ -834,13 +834,13 @@ export default {
 				console.debug('Error happened while getting chat messages. Trying again in ', this.pollingErrorTimeout, exception)
 
 				setTimeout(() => {
-					this.getNewMessages()
+					this.getNewMessages(token)
 				}, this.pollingErrorTimeout * 1000)
 				return
 			}
 
 			setTimeout(() => {
-				this.getNewMessages()
+				this.getNewMessages(token)
 			}, 500)
 		},
 
@@ -1190,7 +1190,7 @@ export default {
 
 		handleNetworkOnline() {
 			console.debug('Restarting polling of new chat messages')
-			this.getNewMessages()
+			this.getNewMessages(this.token)
 		},
 
 		async onRouteChange({ from, to }) {
