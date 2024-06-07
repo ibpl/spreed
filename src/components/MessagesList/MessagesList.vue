@@ -681,7 +681,14 @@ export default {
 					}
 
 					// Get chat messages before last read message and after it
-					await this.getMessageContext(token, startingMessageId)
+					try {
+						await this.getMessageContext(token, startingMessageId)
+					} catch (exception) {
+						// Request was cancelled, stop getting preconditions and restore initial state
+						this.$store.dispatch('setFirstKnownMessageId', { token, id: null })
+						this.$store.dispatch('setLastKnownMessageId', { token, id: null })
+						return
+					}
 					const startingMessageFound = this.focusMessage(startingMessageId, false, focusMessageId !== null)
 
 					if (!startingMessageFound) {
@@ -748,12 +755,14 @@ export default {
 					messageId,
 					minimumVisible: CHAT.MINIMUM_VISIBLE,
 				})
+				this.loadingOldMessages = false
 			} catch (exception) {
 				if (Axios.isCancel(exception)) {
 					console.debug('The request has been canceled', exception)
+					this.loadingOldMessages = false
+					throw exception
 				}
 			}
-			this.loadingOldMessages = false
 		},
 
 		/**
