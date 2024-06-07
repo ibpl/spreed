@@ -384,6 +384,7 @@ export default {
 		},
 
 		canUploadFiles() {
+			// TODO attachments should be allowed on both instances?
 			return getTalkConfig(this.token, 'attachments', 'allowed') && this.canShareFiles
 				&& this.$store.getters.getAttachmentFolderFreeSpace() !== 0
 		},
