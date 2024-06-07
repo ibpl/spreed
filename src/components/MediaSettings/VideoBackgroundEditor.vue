@@ -120,6 +120,13 @@ export default {
 
 	emits: ['update-background'],
 
+	setup() {
+		return {
+			canUploadBackgrounds: getTalkConfig('local', 'call', 'can-upload-background'),
+			predefinedBackgrounds: getTalkConfig('local', 'call', 'predefined-backgrounds'),
+		}
+	},
+
 	data() {
 		return {
 			selectedBackground: undefined,
@@ -128,14 +135,6 @@ export default {
 	},
 
 	computed: {
-		canUploadBackgrounds() {
-			return getTalkConfig(this.token, 'call', 'can-upload-background')
-		},
-
-		predefinedBackgrounds() {
-			return getTalkConfig(this.token, 'call', 'predefined-backgrounds')
-		},
-
 		isCustomBackground() {
 			return this.selectedBackground !== 'none'
 				&& this.selectedBackground !== 'blur'
