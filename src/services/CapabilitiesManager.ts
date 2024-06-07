@@ -23,11 +23,13 @@ const remoteCapabilities: RemoteCapabilities = restoreRemoteCapabilities()
  */
 export function hasTalkFeature(token: string = 'local', feature: string): boolean {
 	const hasLocalTalkFeature = localCapabilities?.spreed?.features?.includes(feature) ?? false
-	if (token === 'local' || !remoteCapabilities[token] || localCapabilities.spreed['features-local'].includes(feature)) {
+	if (localCapabilities.spreed['features-local'].includes(feature)) {
 		return hasLocalTalkFeature
+	} else if (token === 'local' || !remoteCapabilities[token]) {
+		return hasLocalTalkFeature
+	} else {
+		return hasLocalTalkFeature && (remoteCapabilities[token]?.spreed?.features?.includes(feature) ?? false)
 	}
-
-	return (hasLocalTalkFeature && remoteCapabilities[token].spreed?.features?.includes(feature)) ?? false
 }
 
 /**
@@ -37,11 +39,14 @@ export function hasTalkFeature(token: string = 'local', feature: string): boolea
  * @param key2 second-level key (e.g. 'allowed')
  */
 export function getTalkConfig(token: string = 'local', key1: keyof Config, key2: keyof Config[keyof Config]) {
-	if (token === 'local' || !remoteCapabilities[token] || localCapabilities.spreed['config-local'][key1][key2]) {
+	if (localCapabilities.spreed['config-local'][key1][key2]) {
 		return localCapabilities?.spreed?.config?.[key1]?.[key2]
+	} else if (token === 'local' || !remoteCapabilities[token]) {
+		return localCapabilities?.spreed?.config?.[key1]?.[key2]
+	} else {
+		// TODO discuss handling remote config (respect remote only / both / minimal)
+		return remoteCapabilities[token]?.spreed?.config?.[key1]?.[key2]
 	}
-
-	return remoteCapabilities[token]?.spreed?.config?.[key1]?.[key2]
 }
 
 /**
