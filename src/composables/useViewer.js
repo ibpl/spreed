@@ -119,13 +119,13 @@ export function useViewer() {
 	})
 
 	const generateViewerObject = (file) => ({
-		fileid: parseInt(file.id, 10),
-		filename: generateAbsolutePath(file.path),
-		basename: file.name,
-		mime: file.mimetype,
-		hasPreview: file.previewAvailable === 'yes' || file['preview-available'] === 'yes',
+		fileid: file.fileid ?? parseInt(file.id, 10),
+		filename: file.filename ?? generateAbsolutePath(file.path),
+		basename: file.basename ?? file.name,
+		mime: file.mime ?? file.mimetype,
+		hasPreview: file.hasPreview ?? (file.previewAvailable === 'yes' || file['preview-available'] === 'yes'),
 		etag: file.etag,
-		permissions: generatePermissions(file.permissions),
+		permissions: generatePermissions(file.permissions), // Viewer expects a String instead of Bitmask
 	})
 
 	/**
@@ -147,8 +147,8 @@ export function useViewer() {
 
 		OCA.Viewer.open({
 			path,
-			list,
-			fileInfo,
+			list: list.map(generateViewerObject),
+			fileInfo: generateViewerObject(fileInfo),
 			onClose: () => {
 				isViewerOpen.value = false
 				store.dispatch('setCallViewMode', { isViewerOverlay: false })
@@ -170,6 +170,5 @@ export function useViewer() {
 	return {
 		isViewerOpen,
 		openViewer,
-		generateViewerObject,
 	}
 }
