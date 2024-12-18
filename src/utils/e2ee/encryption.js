@@ -29,6 +29,12 @@ const DEBOUNCE_PERIOD = 5000
 
 const REQUEST_TIMEOUT_MS = 5 * 1000
 
+const TYPE_ENCRYPTION_START = 'encryption.start'
+const TYPE_ENCRYPTION_FINISH = 'encryption.finish'
+const TYPE_ENCRYPTION_SET_KEY = 'encryption.setkey'
+const TYPE_ENCRYPTION_GOT_KEY = 'encryption.gotkey'
+const TYPE_ENCRYPTION_ERROR = 'encryption.error'
+
 class Encryption {
 
 	/**
@@ -183,19 +189,19 @@ class Encryption {
 	_handleMessage(message) {
 		const sender = message.from
 		switch (message.payload?.type) {
-		case 'e2e.start':
+		case TYPE_ENCRYPTION_START:
 			this._processStartSession(sender, message)
 			break
-		case 'e2e.finish':
+		case TYPE_ENCRYPTION_FINISH:
 			this._processFinishSession(sender, message)
 			break
-		case 'e2e.setkey':
+		case TYPE_ENCRYPTION_SET_KEY:
 			this._processSessionSetKey(sender, message)
 			break
-		case 'e2e.gotkey':
+		case TYPE_ENCRYPTION_GOT_KEY:
 			this._processSessionGotKey(sender, message)
 			break
-		case 'e2e.error':
+		case TYPE_ENCRYPTION_ERROR:
 			this._processError(sender, message)
 			break
 		}
@@ -247,7 +253,7 @@ class Encryption {
 			to: sessionId,
 			payload: {
 				id: msgId,
-				type: 'e2e.start',
+				type: TYPE_ENCRYPTION_START,
 				identity: this._keys.curve25519,
 				key,
 			},
@@ -397,7 +403,7 @@ class Encryption {
 			to: sessionId,
 			payload: {
 				id: payload.id,
-				type: 'e2e.finish',
+				type: TYPE_ENCRYPTION_FINISH,
 				key: this._encryptKey(session),
 			},
 		}
@@ -491,7 +497,7 @@ class Encryption {
 				to: sessionId,
 				payload: {
 					id: payload.id,
-					type: 'e2e.gotkey',
+					type: TYPE_ENCRYPTION_GOT_KEY,
 					key: this._encryptKey(sessionData.session),
 				},
 			}
@@ -556,7 +562,7 @@ class Encryption {
 			type: 'message',
 			to: sessionId,
 			payload: {
-				type: 'e2e.error',
+				type: TYPE_ENCRYPTION_ERROR,
 				error,
 			},
 		}
@@ -586,7 +592,7 @@ class Encryption {
 			to: sessionId,
 			payload: {
 				id: msgId,
-				type: 'e2e.setkey',
+				type: TYPE_ENCRYPTION_SET_KEY,
 				key: this._encryptKey(sessionData.session),
 			},
 		}
