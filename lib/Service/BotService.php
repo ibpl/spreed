@@ -12,6 +12,7 @@ namespace OCA\Talk\Service;
 use OCA\Talk\Chat\MessageParser;
 use OCA\Talk\Events\BotDisabledEvent;
 use OCA\Talk\Events\BotEnabledEvent;
+use OCA\Talk\Events\BotNotifyEvent;
 use OCA\Talk\Events\ChatMessageSentEvent;
 use OCA\Talk\Events\SystemMessageSentEvent;
 use OCA\Talk\Model\Attendee;
@@ -24,6 +25,7 @@ use OCA\Talk\Room;
 use OCA\Talk\TalkSession;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Utility\ITimeFactory;
+use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Http\Client\IClientService;
 use OCP\Http\Client\IResponse;
 use OCP\ICertificateManager;
@@ -36,6 +38,9 @@ use OCP\L10N\IFactory;
 use OCP\Security\ISecureRandom;
 use Psr\Log\LoggerInterface;
 
+/**
+ * @psalm-import-type ChatMessageData from BotNotifyEvent
+ */
 class BotService {
 	public function __construct(
 		protected BotServerMapper $botServerMapper,
@@ -51,6 +56,7 @@ class BotService {
 		protected ITimeFactory $timeFactory,
 		protected LoggerInterface $logger,
 		protected ICertificateManager $certificateManager,
+		protected IEventDispatcher $dispatcher,
 	) {
 	}
 
@@ -93,7 +99,7 @@ class BotService {
 			return;
 		}
 
-		$bots = $this->getBotsForToken($event->getRoom()->getToken(), Bot::FEATURE_WEBHOOK);
+		$bots = $this->getBotsForToken($event->getRoom()->getToken(), Bot::FEATURE_WEBHOOK|Bot::FEATURE_EVENT);
 		if (empty($bots)) {
 			return;
 		}
@@ -133,7 +139,7 @@ class BotService {
 	}
 
 	public function afterSystemMessageSent(SystemMessageSentEvent $event, MessageParser $messageParser): void {
-		$bots = $this->getBotsForToken($event->getRoom()->getToken(), Bot::FEATURE_WEBHOOK);
+		$bots = $this->getBotsForToken($event->getRoom()->getToken(), Bot::FEATURE_WEBHOOK|Bot::FEATURE_EVENT);
 		if (empty($bots)) {
 			return;
 		}
@@ -222,13 +228,18 @@ class BotService {
 
 	/**
 	 * @param Bot[] $bots
-	 * @param array $body
+	 * @param ChatMessageData $body
 	 */
 	protected function sendAsyncRequests(array $bots, array $body): void {
 		$jsonBody = json_encode($body, JSON_THROW_ON_ERROR);
 
 		foreach ($bots as $bot) {
-			$this->sendAsyncRequest($bot->getBotServer(), $body, $jsonBody);
+			if ($bot->getBotServer()->getFeatures() & Bot::FEATURE_EVENT) {
+				$event = new BotNotifyEvent($bot, $body);
+				$this->dispatcher->dispatchTyped($event);
+			} else {
+				$this->sendAsyncRequest($bot->getBotServer(), $body, $jsonBody);
+			}
 		}
 	}
 
