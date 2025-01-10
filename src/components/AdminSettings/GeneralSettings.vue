@@ -27,15 +27,36 @@
 
 		<NcCheckboxRadioSwitch :model-value="isConversationsFilesChecked"
 			:disabled="loading || loadingConversationsFiles"
+			type="switch"
 			@update:model-value="saveConversationsFiles">
 			{{ t('spreed', 'Allow conversations on files') }}
 		</NcCheckboxRadioSwitch>
 
 		<NcCheckboxRadioSwitch :model-value="isConversationsFilesPublicSharesChecked"
 			:disabled="loading || loadingConversationsFiles || !isConversationsFilesChecked"
+			type="switch"
 			@update:model-value="saveConversationsFilesPublicShares">
 			{{ t('spreed', 'Allow conversations on public shares for files') }}
 		</NcCheckboxRadioSwitch>
+
+		<h3>
+			{{ t('spreed', 'End-to-end encrypted calls') }}
+			<small>{{ t('spreed', 'Beta') }}</small>
+		</h3>
+
+		<NcCheckboxRadioSwitch v-model="isE2EECallsEnabled"
+			type="switch"
+			:disabled="loading || !canEnableE2EE"
+			@update:model-value="updateE2EECallsEnabled">
+			{{ t('spreed', 'Enable encryption') }}
+		</NcCheckboxRadioSwitch>
+
+		<NcNoteCard v-if="!canEnableE2EE"
+			type="warning"
+			:text="t('spreed', 'End-to-end encryption is only possible with a High-performance backend.')" />
+		<NcNoteCard v-else
+			type="warning"
+			:text="t('spreed', 'Mobile clients do not support end-to-end encrypted calls at the moment.')" />
 	</section>
 </template>
 
@@ -44,7 +65,10 @@ import { loadState } from '@nextcloud/initial-state'
 import { t } from '@nextcloud/l10n'
 
 import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadioSwitch.js'
+import NcNoteCard from '@nextcloud/vue/dist/Components/NcNoteCard.js'
 import NcSelect from '@nextcloud/vue/dist/Components/NcSelect.js'
+
+import { EventBus } from '../../services/EventBus.ts'
 
 const defaultGroupNotificationOptions = [
 	{ value: 1, label: t('spreed', 'All messages') },
@@ -55,6 +79,7 @@ export default {
 	name: 'GeneralSettings',
 
 	components: {
+		NcNoteCard,
 		NcCheckboxRadioSwitch,
 		NcSelect,
 	},
@@ -70,6 +95,9 @@ export default {
 
 			conversationsFiles: parseInt(loadState('spreed', 'conversations_files')) === 1,
 			conversationsFilesPublicShares: parseInt(loadState('spreed', 'conversations_files_public_shares')) === 1,
+
+			canEnableE2EE: false,
+			isE2EECallsEnabled: false,
 		}
 	},
 
@@ -86,10 +114,28 @@ export default {
 		this.loading = true
 		this.defaultGroupNotification = defaultGroupNotificationOptions[parseInt(loadState('spreed', 'default_group_notification')) - 1]
 		this.loading = false
+
+		const signaling = loadState('spreed', 'signaling_servers')
+		this.updateSignalingServers(signaling.servers)
+		EventBus.on('signaling-servers-updated', this.updateSignalingServers)
+	},
+
+	beforeDestroy() {
+		EventBus.off('signaling-servers-updated', this.updateSignalingServers)
 	},
 
 	methods: {
 		t,
+
+		updateSignalingServers(servers) {
+			this.canEnableE2EE = servers.length > 0
+		},
+
+		updateE2EECallsEnabled(value) {
+			// TODO: add API handling
+			console.log(value)
+		},
+
 		saveDefaultGroupNotification() {
 			this.loadingDefaultGroupNotification = true
 
@@ -137,6 +183,13 @@ export default {
 h3 {
 	margin-top: 24px;
 	font-weight: 600;
+}
+
+small {
+	color: var(--color-warning);
+	border: 1px solid var(--color-warning);
+	border-radius: 16px;
+	padding: 0 9px;
 }
 
 .default-group-notification {
