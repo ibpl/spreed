@@ -182,7 +182,7 @@
 					data-nav-id="conversation_create_new"
 					@click="createConversation(searchText)">
 					<template #icon>
-						<ChatPlus :size="isCompact? AVATAR.SIZE.COMPACT: AVATAR.SIZE.DEFAULT" />
+						<ChatPlus :size="isCompact ? AVATAR.SIZE.COMPACT: AVATAR.SIZE.DEFAULT" />
 					</template>
 					<template v-if="!isCompact" #subname>
 						{{ t('spreed', 'New group conversation') }}
@@ -230,7 +230,8 @@
 							:compact="isCompact"
 							@click="createAndJoinConversation(item)">
 							<template #icon>
-								<ConversationIcon :item="iconData(item)" :size="isCompact ? AVATAR.SIZE.COMPACT : AVATAR.SIZE.DEFAULT" />
+								<ConversationIcon :item="iconData(item)"
+									:size="isCompact ? AVATAR.SIZE.COMPACT : AVATAR.SIZE.DEFAULT" />
 							</template>
 							<template v-if="!isCompact" #subname>
 								{{ t('spreed', 'New group conversation') }}
@@ -248,7 +249,8 @@
 							:compact="isCompact"
 							@click="createAndJoinConversation(item)">
 							<template #icon>
-								<ConversationIcon :item="iconData(item)" :size="isCompact ? AVATAR.SIZE.COMPACT : AVATAR.SIZE.DEFAULT" />
+								<ConversationIcon :item="iconData(item)"
+									:size="isCompact ? AVATAR.SIZE.COMPACT : AVATAR.SIZE.DEFAULT" />
 							</template>
 							<template v-if="!isCompact" #subname>
 								{{ t('spreed', 'New group conversation') }}
@@ -1046,13 +1048,11 @@ export default {
 					token: 'new',
 					showUserStatus: true,
 					size: this.isCompact ? AVATAR.SIZE.COMPACT : AVATAR.SIZE.DEFAULT,
-					compact: this.isCompact,
 				}
 			}
 			return {
 				type: CONVERSATION.TYPE.GROUP,
 				objectType: item.source,
-				compact: this.isCompact,
 			}
 		},
 	},
@@ -1166,8 +1166,6 @@ export default {
 		bottom: -2px !important;
 		min-height: 11px !important;
 		min-width: 11px !important;
-		line-height: 1 !important;
-		font-size: clamp(var(--font-size-small), 85%, var(--default-font-size)) !important;
 	}
 }
 
