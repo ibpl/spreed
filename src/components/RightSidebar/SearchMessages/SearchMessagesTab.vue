@@ -12,6 +12,7 @@ import IconCalendarRange from 'vue-material-design-icons/CalendarRange.vue'
 import IconFilter from 'vue-material-design-icons/Filter.vue'
 import IconMessageOutline from 'vue-material-design-icons/MessageOutline.vue'
 
+import { getCurrentUser } from '@nextcloud/auth'
 import { showError } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
 
@@ -31,8 +32,7 @@ import TransitionWrapper from '../../UIShared/TransitionWrapper.vue'
 
 import { useIsInCall } from '../../../composables/useIsInCall.js'
 import { useStore } from '../../../composables/useStore.js'
-import { ATTENDEE } from '../../../constants.js'
-import { searchMessages } from '../../../services/coreService.ts'
+import { searchMessages, getContacts } from '../../../services/coreService.ts'
 import { EventBus } from '../../../services/EventBus.ts'
 import {
 	CoreUnifiedSearchResultEntry,
@@ -45,6 +45,15 @@ import CancelableRequest from '../../../utils/cancelableRequest.js'
 const emit = defineEmits<{
 	(event: 'close'): void
 }>()
+
+type contactObject = {
+	id: string | number | null,
+	displayName: string | null | undefined,
+	isNoUser: boolean,
+	user: string | number | null,
+	isUser: boolean,
+	showUserStatus: boolean,
+}
 
 const searchBox = ref(null)
 const isFocused = ref(false)
@@ -73,24 +82,13 @@ const store = useStore()
 const isInCall = useIsInCall()
 
 const token = computed(() => store.getters.getToken())
-const participantsInitialised = computed(() => store.getters.participantsInitialised(token.value))
-const participants = computed<UserFilterObject>(() => {
-	return store.getters.participantsList(token.value)
-		.filter(({ actorType }) => actorType === ATTENDEE.ACTOR_TYPE.USERS) // FIXME: federated users are not supported by the search provider
-		.map(({ actorId, displayName, actorType }: { actorId: string; displayName: string; actorType: string}) => ({
-			id: actorId,
-			displayName,
-			isNoUser: actorType !== 'users',
-			user: actorId,
-			disableMenu: true,
-			showUserStatus: false,
-		}))
-})
+const contactsList = ref<contactObject[]>([])
 const canLoadMore = computed(() => !isSearchExhausted.value && !isFetchingResults.value && searchCursor.value !== 0)
 const hasFilter = computed(() => fromUser.value || sinceDate.value || untilDate.value)
 
 onMounted(() => {
 	EventBus.on('route-change', onRouteChange)
+	fetchContacts()
 })
 
 onBeforeUnmount(() => {
@@ -112,6 +110,61 @@ watch(searchText, (value) => {
 		isSearchExhausted.value = false
 	}
 })
+
+/**
+ * Fetch contacts list
+ * @param searchTerm - Search term to filter contacts
+ */
+async function fetchContacts(searchTerm: string = '') {
+	try {
+		const { data: { contacts } } = await getContacts(searchTerm)
+		const mappedContacts = contacts.map(contact => {
+			return {
+				id: contact.id,
+				displayName: contact.fullName,
+				isNoUser: false,
+				user: contact.id,
+				isUser: contact.isUser,
+				showUserStatus: false,
+			}
+		})
+		contactsList.value.splice(0, contactsList.value.length, ...mappedContacts)
+		/*
+		* Add authenticated user to list of contacts for search filter
+		* If authtenicated user is searching/filtering, do not add them to the list
+		*/
+		if (!searchTerm) {
+			const authenticatedUser = getCurrentUser()
+			const currentUser = {
+				id: authenticatedUser?.uid || null,
+				isNoUser: false,
+				displayName: authenticatedUser?.displayName,
+				user: authenticatedUser?.uid || null,
+				isUser: true,
+				showUserStatus: false,
+			}
+			contactsList.value.unshift(currentUser)
+		}
+	} catch (error) {
+		console.error('Failed to fetch contacts:', error)
+	}
+}
+
+/**
+ * Handle search contacts
+ * @param search - Search term
+ * @param loading - Loading function
+ */
+async function handleSearchContacts(search: string, loading: (loading: boolean) => void) {
+	try {
+		loading(true)
+		await fetchContacts(search)
+	} catch (error) {
+		console.error('Failed to search contacts:', error)
+	} finally {
+		loading(false)
+	}
+}
 
 /**
  * Cancel search and cleanup the search fields and results.
@@ -258,8 +311,8 @@ const debounceFetchSearchResults = debounce(fetchNewSearchResult, 250)
 							:aria-label-combobox="t('spreed', 'From User')"
 							:placeholder="t('spreed', 'From User')"
 							user-select
-							:loading="!participantsInitialised"
-							:options="participants"
+							:options="contactsList"
+							@search="handleSearchContacts"
 							@update:modelValue="debounceFetchSearchResults" />
 						<div class="search-form__search-detail__date-picker-wrapper">
 							<NcDateTimePickerNative id="search-form__search-detail__date-picker--since"
