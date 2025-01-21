@@ -48,8 +48,9 @@
 								{{ conversation.description }}
 							</p>
 						</template>
-						<!-- eslint-disable-next-line vue/no-v-html -->
-						<div class="description__popover" v-html="renderedDescription" />
+						<NcRichText class="description__popover"
+							:text="conversation.description"
+							use-markdown />
 					</NcPopover>
 				</div>
 			</a>
@@ -113,7 +114,7 @@ import { t, n } from '@nextcloud/l10n'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcPopover from '@nextcloud/vue/dist/Components/NcPopover.js'
-import richEditor from '@nextcloud/vue/dist/Mixins/richEditor.js'
+import NcRichText from '@nextcloud/vue/dist/Components/NcRichText.js'
 
 import CallButton from './CallButton.vue'
 import CallTime from './CallTime.vue'
@@ -146,14 +147,13 @@ export default {
 		TopBarMediaControls,
 		NcButton,
 		NcPopover,
+		NcRichText,
 		TopBarMenu,
 		TasksCounter,
 		ReactionMenu,
 		// Icons
 		IconAccountMultiple,
 	},
-
-	mixins: [richEditor],
 
 	props: {
 		isInCall: {
