@@ -1159,7 +1159,6 @@ export default {
 	overflow: hidden;
 	outline-offset: -2px;
 
-	// FIXME in upstream to make the status position dependent on the language direction
 	.avatardiv .avatardiv__user-status {
 		inset-inline-end: -2px !important;
 		bottom: -2px !important;

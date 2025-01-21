@@ -30,7 +30,7 @@
 					<PlayCircleOutline :size="48"
 						fill-color="#ffffff" />
 				</span>
-				<NcProgressBar v-if="showUploadProgress"
+				<NcProgressBar v-if="true"
 					class="file-preview__progress"
 					type="circular"
 					:value="uploadProgress" />
@@ -556,8 +556,8 @@ export default {
 	&__progress {
 		position: absolute;
 		top: 50%;
-		inset-inline-end: 0;
-		transform: translate(100%, -50%);
+		inset-inline-end: calc(var(--progress-bar-height) * -2);
+		transform: translateY(-50%);
 	}
 
 	.mimeicon {

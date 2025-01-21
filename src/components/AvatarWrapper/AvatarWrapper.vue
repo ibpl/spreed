@@ -250,8 +250,7 @@ export default {
 			padding: 0;
 			display: block;
 			text-align: center;
-			margin-inline-start: auto;
-			margin-inline-end: auto;
+			margin-inline: auto;
 		}
 	}
 

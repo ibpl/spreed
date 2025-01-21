@@ -567,7 +567,7 @@ export default {
 }
 
 // Hardcode to prevent RTL affecting on user mentions
-:deep(.rich-text--component) {
+:deep(.user-bubble__wrapper) {
 	direction: ltr;
 }
 
