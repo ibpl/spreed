@@ -72,12 +72,12 @@
 			@update:model-value="debounceUpdateServers" />
 
 		<template v-if="!serversProxy.length">
-			<NcCheckboxRadioSwitch v-model="hideWarningProxy"
+			<NcCheckboxRadioSwitch v-model="showWarningProxy"
 				type="switch"
 				class="additional-top-margin"
 				:disabled="loading"
 				@update:model-value="updateHideWarning">
-				{{ t('spreed', 'Don\'t warn about connectivity issues in calls with more than 2 participants') }}
+				{{ t('spreed', 'Warn about connectivity issues in calls with more than 2 participants') }}
 			</NcCheckboxRadioSwitch>
 		</template>
 	</section>
@@ -137,12 +137,13 @@ const secretProxy = computed({
 		emit('update:secret', value)
 	}
 })
-const hideWarningProxy = computed({
+/** Opposite value of hideWarning */
+const showWarningProxy = computed({
 	get() {
-		return props.hideWarning
+		return !props.hideWarning
 	},
 	set(value) {
-		emit('update:hideWarning', value)
+		emit('update:hideWarning', !value)
 	}
 })
 
