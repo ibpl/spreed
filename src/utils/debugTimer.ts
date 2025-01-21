@@ -20,14 +20,14 @@ const getReadable = (time: number) => {
 }
 
 export const debugTimer = {
-	start: (name: string) => {
+	start: (name: string, payload?: unknown) => {
 		timersPool[name] = performance.now()
 	},
-	end: (name: string, payload: unknown) => {
+	end: (name: string, payload?: unknown) => {
 		console.debug(`[DEBUG] spreed: ${name} | ${getReadable(performance.now() - timersPool[name])}`, payload)
 		delete timersPool[name]
 	},
-	tick: (name: string, payload: unknown) => {
+	tick: (name: string, payload?: unknown) => {
 		console.debug(`[DEBUG] spreed: ${name} | ${getReadable(performance.now() - timersPool[name])}`, payload)
 		timersPool[name] = performance.now()
 	},

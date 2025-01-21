@@ -1295,13 +1295,15 @@ export default {
 					const focusedId = this.getMessageIdFromHash(to.hash)
 					if (this.messagesList.find(m => m.id === focusedId)) {
 						// need some delay (next tick is too short) to be able to run
-						// after the browser's native "scroll to anchor" from
-						// the hash
+						// after the browser's native "scroll to anchor" from the hash
 						window.setTimeout(() => {
 							// scroll to message in URL anchor
 							this.focusMessage(focusedId, true)
 						}, 2)
 					} else {
+						// TODO delete only for 'history' mode - need to know conditions (context timestamp)
+						// console.log('InHistoryMode', this.isConversationInHistoryMode)
+						// this.$store.dispatch('purgeMessagesStore', this.token)
 						// Update environment around context to fill the gaps
 						this.$store.dispatch('setFirstKnownMessageId', {
 							token: this.token,
@@ -1314,6 +1316,13 @@ export default {
 						await this.getMessageContext(this.token, focusedId)
 						this.focusMessage(focusedId, true)
 					}
+				// } else if (!to.hash) {
+					// the hash is cleared, need to purge messages list and load new messages
+					// await this.$store.dispatch('purgeMessagesStore', this.token)
+					// this.$nextTick(async () => {
+					// 	// TODO just fetch last pack or start with preconditions?
+					// 	await this.handleStartGettingMessagesPreconditions()
+					// })
 				}
 			}
 		},
@@ -1372,8 +1381,15 @@ export default {
 				}
 
 				this.debounceHandleScroll({ skipHeightCheck: true })
+			} else {
+				// TODO
 			}
 		},
+
+		// clearRouterHash() {
+		// 	this.$router.push({ name: 'conversation', params: { token: this.token } })
+		// 		.catch(err => console.debug(`Error while pushing the new conversation's route: ${err}`))
+		// },
 	},
 }
 </script>
