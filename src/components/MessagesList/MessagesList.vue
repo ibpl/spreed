@@ -957,8 +957,7 @@ export default {
 				this.setChatScrolledToBottom(false)
 			}
 
-			if ((scrollHeight > clientHeight && scrollTop < 800 && this.isScrolling === 'up')
-				|| skipHeightCheck) {
+			if (((scrollHeight > clientHeight && scrollTop < 800) || skipHeightCheck) && this.isScrolling === 'up') {
 				if (this.loadingOldMessages || this.isChatBeginningReached) {
 					// already loading, don't do it twice
 					return
@@ -973,8 +972,7 @@ export default {
 					})
 				}
 				this.setChatScrolledToBottom(false, { auto: true })
-			} else if ((scrollHeight > clientHeight && (scrollHeight - clientHeight - scrollTop < 800) && this.isScrolling === 'down')
-				|| skipHeightCheck) {
+			} else if (((scrollHeight > clientHeight && scrollOffset - clientHeight < 800) || skipHeightCheck) && this.isScrolling === 'down') {
 				if (this.loadingNewMessages || !this.hasMoreMessagesToLoad) {
 					// already loading, don't do it twice
 					return
@@ -1382,6 +1380,7 @@ export default {
 					return
 				}
 
+				this.isScrolling = 'down'
 				this.debounceHandleScroll({ skipHeightCheck: true })
 			}
 		},
