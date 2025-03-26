@@ -817,7 +817,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 	 * Rename a room
 	 *
 	 * @param string $roomName New name
-	 * @return DataResponse<Http::STATUS_OK, TalkRoom, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: 'type'|'value'}, array{}>
+	 * @return DataResponse<Http::STATUS_OK, TalkRoom, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_FORBIDDEN, array{error: 'type'|'value'}, array{}>
 	 *
 	 * 200: Room renamed successfully
 	 * 400: Renaming room is not possible
@@ -825,6 +825,9 @@ class RoomController extends AEnvironmentAwareOCSController {
 	#[PublicPage]
 	#[RequireModeratorParticipant]
 	public function renameRoom(string $roomName): DataResponse {
+		if($this->room->getObjectType() === Room::OBJECT_TYPE_EVENT) {
+			return new DataResponse(['error' => 'room'], Http::STATUS_FORBIDDEN);
+		}
 		try {
 			$this->roomService->setName($this->room, $roomName, validateType: true);
 		} catch (NameException $e) {
