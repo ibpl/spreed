@@ -821,12 +821,13 @@ class RoomController extends AEnvironmentAwareOCSController {
 	 *
 	 * 200: Room renamed successfully
 	 * 400: Renaming room is not possible
+	 * 403: Renaming room is not possible - it can only be edited by the associated calendar event
 	 */
 	#[PublicPage]
 	#[RequireModeratorParticipant]
 	public function renameRoom(string $roomName): DataResponse {
 		if ($this->room->getObjectType() === Room::OBJECT_TYPE_EVENT) {
-			return new DataResponse(['error' => 'room'], Http::STATUS_FORBIDDEN);
+			return new DataResponse(['error' => Room::OBJECT_TYPE_EVENT], Http::STATUS_FORBIDDEN);
 		}
 		try {
 			$this->roomService->setName($this->room, $roomName, validateType: true);
