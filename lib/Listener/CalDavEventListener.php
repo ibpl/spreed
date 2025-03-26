@@ -147,13 +147,13 @@ class CalDavEventListener implements IEventListener {
 		$objectId = $start . '#' . $end;
 		$this->roomService->setObject($room, $objectId, Room::OBJECT_TYPE_EVENT);
 
-		$name = $vevent->SUMMARY->getValue();
+		$name = $vevent->SUMMARY?->getValue();
 		if ($name !== null) {
 			$this->roomService->setName($room, $name);
 		}
 
-		$description = $vevent->DESCRIPTION->getValue();
-		if ($name !== null) {
+		$description = $vevent->DESCRIPTION?->getValue();
+		if ($description !== null) {
 			$this->roomService->setDescription($room, $description);
 		}
 	}
@@ -166,7 +166,7 @@ class CalDavEventListener implements IEventListener {
 				$searchResult = $calendar->search($roomToken, $searchProperties, [], 2);
 				foreach ($searchResult as $result) {
 					foreach ($result['objects'] as $object) {
-						if ($object['UID'] !== $eventUid) {
+						if ($object['UID'][0] !== $eventUid) {
 							return true;
 						}
 					}
