@@ -825,7 +825,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 	#[PublicPage]
 	#[RequireModeratorParticipant]
 	public function renameRoom(string $roomName): DataResponse {
-		if($this->room->getObjectType() === Room::OBJECT_TYPE_EVENT) {
+		if ($this->room->getObjectType() === Room::OBJECT_TYPE_EVENT) {
 			return new DataResponse(['error' => 'room'], Http::STATUS_FORBIDDEN);
 		}
 		try {
