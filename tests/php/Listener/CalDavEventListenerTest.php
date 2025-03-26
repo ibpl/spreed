@@ -57,7 +57,6 @@ class CalDavEventListenerTest extends TestCase {
 		$this->logger = $this->createMock(LoggerInterface::class);
 		$this->timezoneService = $this->createMock(TimezoneService::class);
 		$this->participantService = $this->createMock(ParticipantService::class);
-		$this->calendarManager = $this->createMock(IManager::class);
 		$this->userId = '123';
 		$this->calData = <<<EOD
 BEGIN:VCALENDAR
@@ -404,7 +403,7 @@ EOF;
 			->willReturn($participant);
 		$this->roomService->expects(self::once())
 			->method('setObject')
-			->with($room, '', '');
+			->with($room);
 		$this->logger->expects(self::once())
 			->method('debug');
 		$this->logger->expects(self::never())
@@ -477,7 +476,7 @@ EOF;
 			->willReturn(false);
 		$this->roomService->expects(self::once())
 			->method('setObject')
-			->with($room, '1741942800', Room::OBJECT_TYPE_EVENT);
+			->with($room, '1741942800#1741946400', Room::OBJECT_TYPE_EVENT);
 		$this->timezoneService->expects(self::never())
 			->method('getUserTimezone');
 		$this->logger->expects(self::never())
@@ -527,7 +526,7 @@ EOF;
 			->willReturn(false);
 		$this->roomService->expects(self::once())
 			->method('setObject')
-			->with($room, '1741820400', Room::OBJECT_TYPE_EVENT);
+			->with($room, '1741820400#1741906800', Room::OBJECT_TYPE_EVENT);
 		$this->timezoneService->expects(self::once())
 			->method('getUserTimezone')
 			->willReturn('Europe/Vienna');
@@ -578,7 +577,7 @@ EOF;
 			->willReturn(false);
 		$this->roomService->expects(self::once())
 			->method('setObject')
-			->with($room, '1741820400', Room::OBJECT_TYPE_EVENT);
+			->with($room, '1741820400#1741906800', Room::OBJECT_TYPE_EVENT);
 		$this->timezoneService->expects(self::once())
 			->method('getUserTimezone')
 			->willReturn(null);
@@ -630,7 +629,7 @@ EOF;
 			->willReturn(false);
 		$this->roomService->expects(self::once())
 			->method('setObject')
-			->with($room, '1741824000', Room::OBJECT_TYPE_EVENT);
+			->with($room, '1741824000#1741910400', Room::OBJECT_TYPE_EVENT);
 		$this->timezoneService->expects(self::once())
 			->method('getUserTimezone')
 			->willReturn(null);
