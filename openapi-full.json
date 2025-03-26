@@ -12876,8 +12876,7 @@
                                                         "error": {
                                                             "type": "string",
                                                             "enum": [
-                                                                "type",
-                                                                "value"
+                                                                "event"
                                                             ]
                                                         }
                                                     }
