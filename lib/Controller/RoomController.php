@@ -829,6 +829,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 		if ($this->room->getObjectType() === Room::OBJECT_TYPE_EVENT) {
 			return new DataResponse(['error' => Room::OBJECT_TYPE_EVENT], Http::STATUS_FORBIDDEN);
 		}
+
 		try {
 			$this->roomService->setName($this->room, $roomName, validateType: true);
 		} catch (NameException $e) {
@@ -841,14 +842,19 @@ class RoomController extends AEnvironmentAwareOCSController {
 	 * Update the description of a room
 	 *
 	 * @param string $description New description for the conversation (limited to 2.000 characters, was 500 before Talk 21)
-	 * @return DataResponse<Http::STATUS_OK, TalkRoom, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: 'type'|'value'}, array{}>
+	 * @return DataResponse<Http::STATUS_OK, TalkRoom, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: 'type'|'value'}, array{}>|DataResponse<Http::STATUS_FORBIDDEN, array{error: 'event'}, array{}>
 	 *
 	 * 200: Description updated successfully
 	 * 400: Updating description is not possible
+	 * 403: Updating the description is not possible - it can only be edited by the associated calendar event
 	 */
 	#[PublicPage]
 	#[RequireModeratorParticipant]
 	public function setDescription(string $description): DataResponse {
+		if ($this->room->getObjectType() === Room::OBJECT_TYPE_EVENT) {
+			return new DataResponse(['error' => Room::OBJECT_TYPE_EVENT], Http::STATUS_FORBIDDEN);
+		}
+
 		try {
 			$this->roomService->setDescription($this->room, $description);
 		} catch (DescriptionException $e) {
