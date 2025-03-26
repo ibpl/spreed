@@ -17,7 +17,6 @@ use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Service\RoomService;
 use OCP\Calendar\Events\CalendarObjectCreatedEvent;
 use OCP\Calendar\Events\CalendarObjectUpdatedEvent;
-use OCP\Calendar\IManager;
 use OCP\EventDispatcher\Event;
 use OCP\EventDispatcher\IEventListener;
 use Psr\Log\LoggerInterface;
@@ -35,7 +34,6 @@ class CalDavEventListener implements IEventListener {
 		private LoggerInterface $logger,
 		private TimezoneService $timezoneService,
 		private ParticipantService $participantService,
-		private IManager $calendarManager,
 		private string $userId,
 	) {
 
@@ -115,7 +113,7 @@ class CalDavEventListener implements IEventListener {
 			return;
 		}
 
-		if ($this->hasExistingCalendarEvents($roomToken, $vevent->UID->getValue())) {
+		if ($this->roomService->hasExistingCalendarEvents($room, $this->userId, $vevent->UID->getValue())) {
 			$this->roomService->setObject($room);
 			$this->logger->debug("Room $roomToken calendar event was already used previously, converting to regular room for calendar event integration");
 			return;
@@ -156,24 +154,5 @@ class CalDavEventListener implements IEventListener {
 		if ($description !== null) {
 			$this->roomService->setDescription($room, $description);
 		}
-	}
-
-	private function hasExistingCalendarEvents(string $roomToken, string $eventUid) : bool {
-		$calendars = $this->calendarManager->getCalendarsForPrincipal('principals/users/' . $this->userId);
-		if (!empty($calendars)) {
-			$searchProperties = ['LOCATION'];
-			foreach ($calendars as $calendar) {
-				$searchResult = $calendar->search($roomToken, $searchProperties, [], 2);
-				foreach ($searchResult as $result) {
-					foreach ($result['objects'] as $object) {
-						if ($object['UID'][0] !== $eventUid) {
-							return true;
-						}
-					}
-				}
-			}
-		}
-
-		return false;
 	}
 }
