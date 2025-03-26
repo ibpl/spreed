@@ -20,7 +20,7 @@
 				<TransitionWrapper name="radial-reveal">
 					<!-- Filters -->
 					<NcActions v-show="searchText === ''"
-						:primary="filters.length !== 0"
+						:type="filters.length !== 0 ? 'secondary' : 'tertiary'"
 						class="filters"
 						:class="{'hidden-visually': isSearching}">
 						<template #icon>
@@ -117,6 +117,15 @@
 				<!-- New Pending Invitations dialog -->
 				<InvitationHandler v-if="pendingInvitationsCount" ref="invitationHandler" />
 			</div>
+			<TransitionWrapper class="conversations__filters"
+				name="zoom"
+				tag="div"
+				group>
+				<NcChip v-for="filter in filters"
+					:key="filter"
+					:text="getFilterLabel(filter)"
+					@close="handleFilter(filter)" />
+			</TransitionWrapper>
 			<NcAppNavigationItem v-if="pendingInvitationsCount"
 				class="invitation-button"
 				:name="t('spreed', 'Pending invitations')"
@@ -352,6 +361,7 @@ import NcAppNavigation from '@nextcloud/vue/components/NcAppNavigation'
 import NcAppNavigationCaption from '@nextcloud/vue/components/NcAppNavigationCaption'
 import NcAppNavigationItem from '@nextcloud/vue/components/NcAppNavigationItem'
 import NcButton from '@nextcloud/vue/components/NcButton'
+import NcChip from '@nextcloud/vue/components/NcChip'
 import NcCounterBubble from '@nextcloud/vue/components/NcCounterBubble'
 import NcEmptyContent from '@nextcloud/vue/components/NcEmptyContent'
 import NcListItem from '@nextcloud/vue/components/NcListItem'
@@ -408,6 +418,7 @@ export default {
 		NcAppNavigationItem,
 		NcButton,
 		NcCounterBubble,
+		NcChip,
 		Hint,
 		SearchBox,
 		NewConversationDialog,
@@ -685,7 +696,12 @@ export default {
 		EventBus.once('conversations-received', this.handleConversationsReceived)
 		EventBus.on('route-change', this.onRouteChange)
 		// Check filter status in previous sessions and apply if it exists
-		this.handleFilter(BrowserStorage.getItem('filterEnabled'))
+		const filtersStored = BrowserStorage.getItem('filterEnabled').split(',')
+		if (filtersStored.length > 0) {
+			filtersStored.forEach(filter => {
+				this.handleFilter(filter)
+			})
+		}
 	},
 
 	beforeDestroy() {
@@ -731,15 +747,15 @@ export default {
 			// Store the active filter
 			if (filter !== null && this.filters.indexOf(filter) === -1) {
 				this.filters = [...this.filters, filter]
-				BrowserStorage.setItem('filterEnabled', filter)
+				BrowserStorage.setItem('filterEnabled', this.filters)
+			} else if (filter !== null) {
+				this.filters = this.filters.filter(f => f !== filter)
+				BrowserStorage.setItem('filterEnabled', this.filters)
 			} else {
-				if (filter !== null) {
-					this.filters = this.filters.filter(f => f !== filter)
-				} else {
-					this.filters = []
-				}
+				this.filters = []
 				BrowserStorage.removeItem('filterEnabled')
 			}
+
 			// Clear the search input once a filter is active
 			this.searchText = ''
 			// Initiate the navigation status
@@ -1060,6 +1076,15 @@ export default {
 				size: this.isCompact ? AVATAR.SIZE.COMPACT : AVATAR.SIZE.DEFAULT,
 			}
 		},
+
+		getFilterLabel(filter) {
+			if (filter === 'unread') {
+				return t('spreed', 'Unread')
+			} else if (filter === 'mentions') {
+				return t('spreed', 'Mentions')
+			}
+			return ''
+		},
 	},
 }
 </script>
@@ -1133,6 +1158,13 @@ export default {
 	:deep(.input-field) {
 		margin-block-start: 0;
 	}
+}
+
+.conversations__filters {
+	display: flex;
+	flex-wrap: wrap;
+	gap: var(--default-grid-baseline);
+	margin: var(--default-grid-baseline) calc(var(--default-grid-baseline) * 2);
 }
 
 .left-sidebar__settings-button-container {
