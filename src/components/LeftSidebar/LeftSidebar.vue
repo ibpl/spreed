@@ -123,7 +123,7 @@
 				group>
 				<NcChip v-for="filter in filters"
 					:key="filter"
-					:text="getFilterLabel(filter)"
+					:text="FILTER_LABELS[filter]"
 					@close="handleFilter(filter)" />
 			</TransitionWrapper>
 			<NcAppNavigationItem v-if="pendingInvitationsCount"
@@ -146,8 +146,8 @@
 					:name="emptyContentLabel"
 					:description="emptyContentDescription">
 					<template #icon>
-						<AtIcon v-if="filters.includes('mentions')" :size="64" />
-						<MessageBadge v-else-if="filters.includes('unread')" :size="64" />
+						<AtIcon v-if="filters.length === 1 && filters.includes('mentions')" :size="64" />
+						<MessageBadge v-else-if="filters.length === 1 && filters.includes('unread')" :size="64" />
 						<IconArchive v-else-if="showArchived" :size="64" />
 						<MessageOutline v-else :size="64" />
 					</template>
@@ -405,6 +405,11 @@ const canModerateSipDialOut = hasTalkFeature('local', 'sip-support-dialout')
 	&& getTalkConfig('local', 'call', 'can-enable-sip')
 const canNoteToSelf = hasTalkFeature('local', 'note-to-self')
 const supportsArchive = hasTalkFeature('local', 'archived-conversations-v2')
+const FILTER_LABELS = {
+	unread: t('spreed', 'Unread'),
+	mentions: t('spreed', 'Mentions'),
+	defult: '',
+}
 
 export default {
 	name: 'LeftSidebar',
@@ -478,6 +483,7 @@ export default {
 			supportsArchive,
 			showArchived,
 			settingsStore,
+			FILTER_LABELS,
 		}
 	},
 
@@ -548,9 +554,9 @@ export default {
 			if (this.showArchived) {
 				return t('spreed', 'You have no archived conversations.')
 			}
-			if (this.filters.includes('mentions')) {
+			if (this.filters.length === 1 && this.filters[0] === 'mentions') {
 				return t('spreed', 'You have no unread mentions.')
-			} else if (this.filters.includes('unread')) {
+			} else if (this.filters.length === 1 && this.filters[0] === 'unread') {
 				return t('spreed', 'You have no unread messages.')
 			} else {
 				return ''
@@ -696,8 +702,8 @@ export default {
 		EventBus.once('conversations-received', this.handleConversationsReceived)
 		EventBus.on('route-change', this.onRouteChange)
 		// Check filter status in previous sessions and apply if it exists
-		const filtersStored = BrowserStorage.getItem('filterEnabled').split(',')
-		if (filtersStored.length > 0) {
+		const filtersStored = BrowserStorage.getItem('filterEnabled')?.split(',')
+		if (filtersStored && filtersStored.length > 0) {
 			filtersStored.forEach(filter => {
 				this.handleFilter(filter)
 			})
@@ -745,7 +751,7 @@ export default {
 
 		handleFilter(filter) {
 			// Store the active filter
-			if (filter !== null && this.filters.indexOf(filter) === -1) {
+			if (filter !== null && !this.filters.includes(filter)) {
 				this.filters = [...this.filters, filter]
 				BrowserStorage.setItem('filterEnabled', this.filters)
 			} else if (filter !== null) {
@@ -1075,15 +1081,6 @@ export default {
 				objectType: item.source,
 				size: this.isCompact ? AVATAR.SIZE.COMPACT : AVATAR.SIZE.DEFAULT,
 			}
-		},
-
-		getFilterLabel(filter) {
-			if (filter === 'unread') {
-				return t('spreed', 'Unread')
-			} else if (filter === 'mentions') {
-				return t('spreed', 'Mentions')
-			}
-			return ''
 		},
 	},
 }
