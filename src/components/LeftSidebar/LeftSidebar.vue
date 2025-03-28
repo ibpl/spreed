@@ -146,8 +146,8 @@
 					:name="emptyContentLabel"
 					:description="emptyContentDescription">
 					<template #icon>
-						<AtIcon v-if="filters.length === 1 && filters.includes('mentions')" :size="64" />
-						<MessageBadge v-else-if="filters.length === 1 && filters.includes('unread')" :size="64" />
+						<AtIcon v-if="filters.length === 1 && filters[0] === 'mentions'" :size="64" />
+						<MessageBadge v-else-if="filters.length === 1 && filters[0] === 'unread'" :size="64" />
 						<IconArchive v-else-if="showArchived" :size="64" />
 						<MessageOutline v-else :size="64" />
 					</template>
@@ -408,7 +408,7 @@ const supportsArchive = hasTalkFeature('local', 'archived-conversations-v2')
 const FILTER_LABELS = {
 	unread: t('spreed', 'Unread'),
 	mentions: t('spreed', 'Mentions'),
-	defult: '',
+	default: '',
 }
 
 export default {
