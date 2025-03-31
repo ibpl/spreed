@@ -2839,7 +2839,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			}
 		}, $formData->getHash());
 
-		$this->assertRooms($expected, $data);
+		$this->assertRooms($data, $expected);
 	}
 
 	/**
