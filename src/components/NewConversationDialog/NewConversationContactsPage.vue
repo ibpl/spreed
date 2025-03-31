@@ -54,6 +54,7 @@
 			scrollable
 			show-search-hints
 			:token="token"
+			:only-users="onlyUsers"
 			@click="updateSelectedParticipants"
 			@click-search-hint="focusInput" />
 	</div>
@@ -116,6 +117,11 @@ export default {
 		canModerateSipDialOut: {
 			type: Boolean,
 			default: false,
+		},
+
+		onlyUsers: {
+			type: Boolean,
+			required: false,
 		},
 	},
 

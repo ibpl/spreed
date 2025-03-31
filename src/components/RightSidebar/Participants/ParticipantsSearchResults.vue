@@ -12,49 +12,51 @@
 				@click="handleClickParticipant" />
 		</template>
 
-		<template v-if="addableGroups.length !== 0">
-			<NcAppNavigationCaption :name="t('spreed', 'Add groups')" />
-			<ParticipantsList :items="addableGroups"
-				is-search-result
-				@click="handleClickParticipant" />
-		</template>
+		<template v-if="!onlyUsers">
+			<template v-if="addableGroups.length !== 0">
+				<NcAppNavigationCaption :name="t('spreed', 'Add groups')" />
+				<ParticipantsList :items="addableGroups"
+					is-search-result
+					@click="handleClickParticipant" />
+			</template>
 
-		<template v-if="addableEmails.length !== 0">
-			<NcAppNavigationCaption :name="t('spreed', 'Add emails')" />
-			<ParticipantsList :items="addableEmails"
-				is-search-result
-				@click="handleClickParticipant" />
-		</template>
+			<template v-if="addableEmails.length !== 0">
+				<NcAppNavigationCaption :name="t('spreed', 'Add emails')" />
+				<ParticipantsList :items="addableEmails"
+					is-search-result
+					@click="handleClickParticipant" />
+			</template>
 
-		<template v-if="addableCircles.length !== 0">
-			<NcAppNavigationCaption :name="t('spreed', 'Add teams')" />
-			<ParticipantsList :items="addableCircles"
-				is-search-result
-				@click="handleClickParticipant" />
-		</template>
+			<template v-if="addableCircles.length !== 0">
+				<NcAppNavigationCaption :name="t('spreed', 'Add teams')" />
+				<ParticipantsList :items="addableCircles"
+					is-search-result
+					@click="handleClickParticipant" />
+			</template>
 
-		<!-- integrations -->
-		<template v-if="integrations.length !== 0">
-			<NcAppNavigationCaption :name="t('spreed', 'Integrations')" />
-			<ul>
-				<NcButton v-for="(integration, index) in integrations"
-					:key="'integration' + index"
-					type="tertiary-no-background"
-					@click="runIntegration(integration)">
-					<!-- FIXME: dynamically change the material design icon -->
-					<template #icon>
-						<AccountPlus :size="20" />
-					</template>
-					{{ integration.label }}
-				</NcButton>
-			</ul>
-		</template>
+			<!-- integrations -->
+			<template v-if="integrations.length !== 0">
+				<NcAppNavigationCaption :name="t('spreed', 'Integrations')" />
+				<ul>
+					<NcButton v-for="(integration, index) in integrations"
+						:key="'integration' + index"
+						type="tertiary-no-background"
+						@click="runIntegration(integration)">
+						<!-- FIXME: dynamically change the material design icon -->
+						<template #icon>
+							<AccountPlus :size="20" />
+						</template>
+						{{ integration.label }}
+					</NcButton>
+				</ul>
+			</template>
 
-		<template v-if="addableRemotes.length !== 0">
-			<NcAppNavigationCaption :name="t('spreed', 'Add federated users')" />
-			<ParticipantsList :items="addableRemotes"
-				is-search-result
-				@click="handleClickParticipant" />
+			<template v-if="addableRemotes.length !== 0">
+				<NcAppNavigationCaption :name="t('spreed', 'Add federated users')" />
+				<ParticipantsList :items="addableRemotes"
+					is-search-result
+					@click="handleClickParticipant" />
+			</template>
 		</template>
 
 		<NcAppNavigationCaption v-if="sourcesWithoutResults" :name="sourcesWithoutResultsList" />
@@ -136,6 +138,13 @@ export default {
 			default: false,
 		},
 		/**
+		 * Display only results from internal users.
+		 */
+		onlyUsers: {
+			type: Boolean,
+			default: false,
+		},
+		/**
 		 * Display loading state instead of list.
 		 */
 		loading: {
@@ -173,7 +182,11 @@ export default {
 		},
 
 		sourcesWithoutResults() {
-			return !this.addableUsers.length || !this.addableGroups.length || this.circlesWithoutResults
+			if (this.onlyUsers) {
+				return !this.addableUsers.length
+			} else {
+				return !this.addableUsers.length || !this.addableGroups.length || this.circlesWithoutResults
+			}
 		},
 
 		integrations() {
@@ -182,7 +195,9 @@ export default {
 
 		sourcesWithoutResultsList() {
 			if (!this.addableUsers.length) {
-				if (!this.addableGroups.length) {
+				if (this.onlyUsers) {
+					return t('spreed', 'Add users')
+				} else if (!this.addableGroups.length) {
 					return this.circlesWithoutResults
 						? t('spreed', 'Add users, groups or teams')
 						: t('spreed', 'Add users or groups')
