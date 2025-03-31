@@ -13,7 +13,6 @@ use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\Manager;
 use OCA\Talk\Participant;
-use OCA\Talk\Room;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Calendar\IManager;
 use Psr\Log\LoggerInterface;
