@@ -52,7 +52,7 @@
 			:contacts-loading="contactsLoading"
 			:no-results="noResults"
 			scrollable
-			show-search-hints
+			:show-search-hints="!onlyUsers"
 			:token="token"
 			:only-users="onlyUsers"
 			@click="updateSelectedParticipants"
@@ -308,9 +308,9 @@ export default {
 	gap: var(--default-grid-baseline);
 	border-bottom: 1px solid var(--color-background-darker);
 	padding: var(--default-grid-baseline) 0;
+	min-height: min-content;
 	max-height: 97px;
 	overflow-y: auto;
-	flex: 1 0 auto;
 	align-content: flex-start;
 }
 </style>

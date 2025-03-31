@@ -6,7 +6,7 @@
 <template>
 	<div class="participants-search-results" :class="{'scrollable': scrollable }">
 		<template v-if="addableUsers.length !== 0">
-			<NcAppNavigationCaption :name="t('spreed', 'Add users')" />
+			<NcAppNavigationCaption v-if="!onlyUsers" :name="t('spreed', 'Add users')" />
 			<ParticipantsList :items="addableUsers"
 				is-search-result
 				@click="handleClickParticipant" />
@@ -59,7 +59,7 @@
 			</template>
 		</template>
 
-		<NcAppNavigationCaption v-if="sourcesWithoutResults" :name="sourcesWithoutResultsList" />
+		<NcAppNavigationCaption v-if="sourcesWithoutResults && !onlyUsers" :name="sourcesWithoutResultsList" />
 		<Hint v-if="contactsLoading" :hint="t('spreed', 'Searching …')" />
 		<Hint v-else-if="sourcesWithoutResults" :hint="t('spreed', 'No search results')" />
 
@@ -194,10 +194,11 @@ export default {
 		},
 
 		sourcesWithoutResultsList() {
+			if (this.onlyUsers) {
+				return ''
+			}
 			if (!this.addableUsers.length) {
-				if (this.onlyUsers) {
-					return t('spreed', 'Add users')
-				} else if (!this.addableGroups.length) {
+				if (!this.addableGroups.length) {
 					return this.circlesWithoutResults
 						? t('spreed', 'Add users, groups or teams')
 						: t('spreed', 'Add users or groups')
