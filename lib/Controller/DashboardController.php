@@ -50,7 +50,7 @@ class DashboardController extends AEnvironmentAwareOCSController {
 	#[NoAdminRequired]
 	public function getEventRooms(): DataResponse {
 		$userId = $this->userSession->getUser()?->getUID();
-		$participants = $this->service->getEventRooms($userId);
+		$participants = $this->service->getEvents($userId);
 		$rooms = [];
 		foreach ($participants as $participant) {
 			try {

@@ -1176,7 +1176,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		}
 
 		if (isset($body['objectType']) && $body['objectType'] === 'event') {
-			[$start, $end ] = explode('#', $body['objectId']);
+			[$start, $end] = explode('#', $body['objectId']);
 			$body['objectId'] = (time() + (int)$start) . '#' . (time() + (int)$end);
 		}
 
@@ -2833,11 +2833,13 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 
 		$data = $this->getDataFromResponse($this->response);
 
-		array_map(static function ($room) {
+		$expected = array_map(static function ($room) {
 			if (isset($room['objectId']) && preg_match('/OBJECT_ID\(([^)]+)\)/', $room['objectId'], $matches)) {
 				$room['objectId'] = self::$identifierToObjectId[$matches[1]] ;
 			}
 		}, $formData->getHash());
+
+		$this->assertRooms($expected, $data);
 	}
 
 	/**
@@ -5347,10 +5349,10 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	public function createCalendarEventConversation(string $user, string $identifier, string $apiVersion = 'v1', ?TableNode $formData = null): void {
 		$body = $formData->getRowsHash();
 		if (isset($body['objectId'])) {
-			[$start, $end ] = explode('#', $body['objectId']);
+			[$start, $end] = explode('#', $body['objectId']);
 			$startTime = time() + (int)$start;
 			$endTime = time() + (int)$end;
-			$body['objectId'] = ($startTime) . '#' . ($endTime);
+			$body['objectId'] = $startTime . '#' . $endTime;
 			self::$identifierToObjectId[$identifier] = $body['objectId'];
 		}
 
@@ -5365,23 +5367,15 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		self::$tokenToIdentifier[$response['token']] = $identifier;
 
 		$location = self::getRoomLocationForToken($identifier);
-		foreach (['LOCAL'] as $server) {
-			$this->usingServer($server);
 
-			$currentUser = $this->setCurrentUser('admin');
-			$this->sendRequest('POST', '/apps/spreedcheats/calendar', [
-				'location' => $location,
-				'start' => $startTime ?? (time() + 3600),
-				'end' => $endTime ?? (time() + 7200),
-			]);
+		$currentUser = $this->setCurrentUser('admin');
+		$this->sendRequest('POST', '/apps/spreedcheats/calendar', [
+			'location' => $location,
+			'start' => $startTime ?? (time() + 3600),
+			'end' => $endTime ?? (time() + 7200),
+		]);
 
-			$this->assertStatusCode($this->response, 200);
-			$this->setCurrentUser($currentUser);
-			if ($this->changedBruteforceSetting) {
-				$this->enableDisableBruteForceProtection('disable');
-			}
-		}
-
-		$this->usingServer('LOCAL');
+		$this->assertStatusCode($this->response, 200);
+		$this->setCurrentUser($currentUser);
 	}
 }

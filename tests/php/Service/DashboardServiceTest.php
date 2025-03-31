@@ -81,7 +81,7 @@ class DashboardServiceTest extends TestCase {
 		$this->participantService->expects($this->never())
 			->method('getParticipant');
 
-		$actual = $this->service->getEventRooms($this->userId);
+		$actual = $this->service->getEvents($this->userId);
 		$this->assertEmpty($actual);
 	}
 
@@ -103,7 +103,7 @@ class DashboardServiceTest extends TestCase {
 		$this->participantService->expects($this->never())
 			->method('getParticipant');
 
-		$actual = $this->service->getEventRooms($this->userId);
+		$actual = $this->service->getEvents($this->userId);
 		$this->assertEmpty($actual);
 	}
 
@@ -126,7 +126,7 @@ class DashboardServiceTest extends TestCase {
 		$this->participantService->expects($this->never())
 			->method('getParticipant');
 
-		$actual = $this->service->getEventRooms($this->userId);
+		$actual = $this->service->getEvents($this->userId);
 		$this->assertEmpty($actual);
 	}
 
@@ -149,7 +149,7 @@ class DashboardServiceTest extends TestCase {
 		$this->participantService->expects($this->never())
 			->method('getParticipant');
 
-		$actual = $this->service->getEventRooms($this->userId);
+		$actual = $this->service->getEvents($this->userId);
 		$this->assertEmpty($actual);
 	}
 
@@ -175,7 +175,7 @@ class DashboardServiceTest extends TestCase {
 		$this->participantService->expects($this->never())
 			->method('getParticipant');
 
-		$actual = $this->service->getEventRooms($this->userId);
+		$actual = $this->service->getEvents($this->userId);
 		$this->assertEmpty($actual);
 	}
 
@@ -205,7 +205,7 @@ class DashboardServiceTest extends TestCase {
 		$this->logger->expects($this->once())
 			->method('debug');
 
-		$actual = $this->service->getEventRooms($this->userId);
+		$actual = $this->service->getEvents($this->userId);
 		$this->assertEmpty($actual);
 	}
 
@@ -238,7 +238,7 @@ class DashboardServiceTest extends TestCase {
 		$this->logger->expects($this->never())
 			->method('debug');
 
-		$actual = $this->service->getEventRooms($this->userId);
+		$actual = $this->service->getEvents($this->userId);
 		$this->assertCount(1, $actual);
 	}
 
@@ -287,7 +287,7 @@ class DashboardServiceTest extends TestCase {
 		$this->logger->expects($this->never())
 			->method('debug');
 
-		$actual = $this->service->getEventRooms($this->userId);
+		$actual = $this->service->getEvents($this->userId);
 		$this->assertCount(2, $actual);
 		$this->assertEquals('0', $actual[0]->getRoom()->getObjectId());
 		$this->assertEquals('1', $actual[1]->getRoom()->getObjectId());

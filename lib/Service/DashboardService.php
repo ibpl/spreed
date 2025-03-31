@@ -33,7 +33,7 @@ class DashboardService {
 	 * @param string $userId
 	 * @return list<Participant>
 	 */
-	public function getEventRooms(string $userId): array {
+	public function getEvents(string $userId): array {
 		$calendars = $this->calendarManager->getCalendarsForPrincipal('principals/users/' . $userId);
 		if (count($calendars) === 0) {
 			return [];
@@ -70,20 +70,10 @@ class DashboardService {
 					continue;
 				}
 
-				// Check if room exists and check if user is part of room
-				$array = explode('/', $location);
-				$roomToken = end($array);
-				// Cut off any excess characters from the room token
-				if (str_contains($roomToken, '?')) {
-					$roomToken = substr($roomToken, 0, strpos($roomToken, '?'));
-				}
-				if (str_contains($roomToken, '#')) {
-					$roomToken = substr($roomToken, 0, strpos($roomToken, '#'));
-				}
 				try {
-					$room = $this->manager->getRoomForUserByToken($roomToken, $userId);
+					$room = $this->manager->getRoomByUrlForUser($location, $userId);
 				} catch (RoomNotFoundException) {
-					$this->logger->debug("Room $roomToken not found in dashboard service");
+					$this->logger->debug("Room for url $location not found in dashboard service");
 					continue;
 				}
 
@@ -98,7 +88,9 @@ class DashboardService {
 		}
 
 		usort($participants, static function (Participant $a, Participant $b) {
-			return (int)$a->getRoom()->getObjectId() - (int)$b->getRoom()->getObjectId();
+			$startA = explode('#', $a->getRoom()->getObjectId());
+			$startB = explode('#', $b->getRoom()->getObjectId());
+			return (int)$startA[0] - (int)$startB[0];
 		});
 		return array_slice($participants, 0, 10);
 	}

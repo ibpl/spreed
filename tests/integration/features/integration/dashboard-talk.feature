@@ -9,6 +9,8 @@ Feature: integration/dashboard-talk
       | objectId | 3600#7200 |
     Given user "participant1" creates conversation with event "room2" (v4)
       | roomType | 2 |
+    Given user "participant1" creates room "room3" (v4)
+      | roomType | 2 |
     Then user "participant1" sees the following entry when loading the dashboard conversations (v4)
       | name | objectType | objectId |
       | room | event      | OBJECT_ID(room) |
