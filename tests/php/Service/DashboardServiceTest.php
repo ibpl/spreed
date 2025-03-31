@@ -75,7 +75,7 @@ class DashboardServiceTest extends TestCase {
 		$this->timeFactory->expects($this->never())
 			->method('getDateTime');
 		$this->manager->expects($this->never())
-			->method('getRoomForUserByToken');
+			->method('getRoomByUrlForUser');
 		$this->logger->expects($this->never())
 			->method('debug');
 		$this->participantService->expects($this->never())
@@ -97,7 +97,7 @@ class DashboardServiceTest extends TestCase {
 			->method('search')
 			->willReturn([]);
 		$this->manager->expects($this->never())
-			->method('getRoomForUserByToken');
+			->method('getRoomByUrlForUser');
 		$this->logger->expects($this->never())
 			->method('debug');
 		$this->participantService->expects($this->never())
@@ -120,7 +120,7 @@ class DashboardServiceTest extends TestCase {
 			->method('getDateTime')
 			->willReturnOnConsecutiveCalls(new \DateTime(), new \DateTime());
 		$this->manager->expects($this->never())
-			->method('getRoomForUserByToken');
+			->method('getRoomByUrlForUser');
 		$this->logger->expects($this->never())
 			->method('debug');
 		$this->participantService->expects($this->never())
@@ -143,7 +143,7 @@ class DashboardServiceTest extends TestCase {
 			->method('getDateTime')
 			->willReturnOnConsecutiveCalls(new \DateTime(), new \DateTime());
 		$this->manager->expects($this->never())
-			->method('getRoomForUserByToken');
+			->method('getRoomByUrlForUser');
 		$this->logger->expects($this->never())
 			->method('debug');
 		$this->participantService->expects($this->never())
@@ -168,7 +168,7 @@ class DashboardServiceTest extends TestCase {
 			->method('search')
 			->willReturn($calData);
 		$this->manager->expects($this->once())
-			->method('getRoomForUserByToken')
+			->method('getRoomByUrlForUser')
 			->willThrowException(new RoomNotFoundException());
 		$this->logger->expects($this->once())
 			->method('debug');
@@ -197,7 +197,7 @@ class DashboardServiceTest extends TestCase {
 			->method('search')
 			->willReturn($calData);
 		$this->manager->expects($this->once())
-			->method('getRoomForUserByToken')
+			->method('getRoomByUrlForUser')
 			->willReturn($room);
 		$this->participantService->expects($this->once())
 			->method('getParticipant')
@@ -230,7 +230,7 @@ class DashboardServiceTest extends TestCase {
 			->method('search')
 			->willReturn($calData);
 		$this->manager->expects($this->once())
-			->method('getRoomForUserByToken')
+			->method('getRoomByUrlForUser')
 			->willReturn($room);
 		$this->participantService->expects($this->once())
 			->method('getParticipant')
@@ -279,7 +279,7 @@ class DashboardServiceTest extends TestCase {
 			->method('search')
 			->willReturn($calData);
 		$this->manager->expects($this->exactly(2))
-			->method('getRoomForUserByToken')
+			->method('getRoomByUrlForUser')
 			->willReturnOnConsecutiveCalls($room1, $room2);
 		$this->participantService->expects($this->exactly(2))
 			->method('getParticipant')
