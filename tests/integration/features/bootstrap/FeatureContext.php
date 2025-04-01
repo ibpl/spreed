@@ -438,7 +438,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		Assert::assertCount(count($formData->getHash()), $rooms, 'Room count does not match');
 
 		$expected = array_map(static function ($room) {
-			if (preg_match('/OBJECT_ID\(([^)]+)\)/', $room['objectId'], $matches)) {
+			if (isset($room['objectId']) && preg_match('/OBJECT_ID\(([^)]+)\)/', $room['objectId'], $matches)) {
 				$room['objectId'] = self::$identifierToObjectId[$matches[1]] ;
 			}
 			return $room;
