@@ -439,9 +439,8 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 
 		$expected = array_map(static function ($room) {
 			if (isset($room['objectId']) && preg_match('/OBJECT_ID\(([^)]+)\)/', $room['objectId'], $matches)) {
-				$room['objectId'] = self::$identifierToObjectId[$matches[1]] ;
+				$room['objectId'] = self::$identifierToObjectId[$room['name']] ;
 			}
-			var_dump($room);
 			return $room;
 		}, $formData->getHash());
 
