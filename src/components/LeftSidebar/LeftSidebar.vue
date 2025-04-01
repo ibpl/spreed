@@ -20,7 +20,7 @@
 				<TransitionWrapper name="radial-reveal">
 					<!-- Filters -->
 					<NcActions v-show="searchText === ''"
-						:type="filters.length !== 0 ? 'secondary' : 'tertiary'"
+						:type="isFiltered ? 'secondary' : 'tertiary'"
 						class="filters"
 						:class="{'hidden-visually': isSearching}">
 						<template #icon>
@@ -29,7 +29,6 @@
 						<NcActionButton close-after-click
 							type="checkbox"
 							:model-value="filters.includes('mentions')"
-							value="mentions"
 							@click="handleFilter('mentions')">
 							<template #icon>
 								<AtIcon :size="20" />
@@ -39,7 +38,6 @@
 
 						<NcActionButton close-after-click
 							type="checkbox"
-							value="unread"
 							:model-value="filters.includes('unread')"
 							@click="handleFilter('unread')">
 							<template #icon>
@@ -48,7 +46,7 @@
 							{{ t('spreed', 'Filter unread messages') }}
 						</NcActionButton>
 
-						<NcActionButton v-if="filters.length !== 0"
+						<NcActionButton v-if="isFiltered"
 							close-after-click
 							class="filter-actions__clearbutton"
 							@click="handleFilter(null)">
@@ -152,7 +150,7 @@
 						<MessageOutline v-else :size="64" />
 					</template>
 					<template #action>
-						<NcButton v-if="filters.length !== 0" @click="handleFilter(null)">
+						<NcButton v-if="isFiltered" @click="handleFilter(null)">
 							<template #icon>
 								<FilterRemoveIcon :size="20" />
 							</template>
@@ -459,7 +457,7 @@ export default {
 		const scroller = ref(null)
 
 		const showArchived = ref(false)
-		const filters = ref([])
+		const filters = ref(BrowserStorage.getItem('filterEnabled')?.split(',') ?? [])
 
 		const federationStore = useFederationStore()
 		const talkHashStore = useTalkHashStore()
@@ -543,7 +541,7 @@ export default {
 		},
 
 		emptyContentLabel() {
-			if (this.filters.length !== 0) {
+			if (this.isFiltered) {
 				return t('spreed', 'No matches found')
 			} else {
 				return t('spreed', 'No conversations found')
@@ -641,11 +639,15 @@ export default {
 		isCompact() {
 			return this.settingsStore.conversationsListStyle === CONVERSATION.LIST_STYLE.COMPACT
 		},
+
+		isFiltered() {
+			return this.filters.length !== 0
+		},
 	},
 
 	watch: {
 		token(value) {
-			if (value && this.filters.length !== 0) {
+			if (value && this.isFiltered) {
 				this.isNavigating = true
 			}
 		},
@@ -701,13 +703,6 @@ export default {
 		EventBus.on('should-refresh-conversations', this.handleShouldRefreshConversations)
 		EventBus.once('conversations-received', this.handleConversationsReceived)
 		EventBus.on('route-change', this.onRouteChange)
-		// Check filter status in previous sessions and apply if it exists
-		const filtersStored = BrowserStorage.getItem('filterEnabled')?.split(',')
-		if (filtersStored && filtersStored.length > 0) {
-			filtersStored.forEach(filter => {
-				this.handleFilter(filter)
-			})
-		}
 	},
 
 	beforeDestroy() {
@@ -751,17 +746,15 @@ export default {
 
 		handleFilter(filter) {
 			// Store the active filter
-			if (filter !== null && !this.filters.includes(filter)) {
-				this.filters = [...this.filters, filter]
-				BrowserStorage.setItem('filterEnabled', this.filters)
-			} else if (filter !== null) {
-				this.filters = this.filters.filter(f => f !== filter)
-				BrowserStorage.setItem('filterEnabled', this.filters)
-			} else {
+			if (filter === null) {
 				this.filters = []
 				BrowserStorage.removeItem('filterEnabled')
+			} else {
+				this.filters = this.filters.includes(filter)
+					? this.filters.filter(f => f !== filter)
+					: [...this.filters, filter]
+				BrowserStorage.setItem('filterEnabled', this.filters)
 			}
-
 			// Clear the search input once a filter is active
 			this.searchText = ''
 			// Initiate the navigation status
