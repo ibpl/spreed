@@ -434,14 +434,17 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 * @param array $rooms
 	 * @param TableNode $formData
 	 */
-	private function assertRooms(array $rooms, TableNode $formData, bool $shouldOrder = false) {
+	private function assertRooms(array $rooms, TableNode $formData, bool $shouldOrder = false, bool $matchObjectId = false) {
 		Assert::assertCount(count($formData->getHash()), $rooms, 'Room count does not match');
 
-		$expected = array_map(static function ($room) {
-			if (isset($room['objectId']) && preg_match('/OBJECT_ID\(([^)]+)\)/', $room['objectId'], $matches)) {
-				$room['objectId'] = self::$identifierToObjectId[$matches[1]] ;
-			}
-		}, $formData->getHash());
+		$expected = $formData->getHash();
+		if($matchObjectId) {
+			$expected = array_map(static function ($room) {
+				if (isset($room['objectId']) && preg_match('/OBJECT_ID\(([^)]+)\)/', $room['objectId'], $matches)) {
+					$room['objectId'] = self::$identifierToObjectId[$matches[1]] ;
+				}
+			}, $expected);
+		}
 
 		if ($shouldOrder) {
 			$sorter = static function (array $roomA, array $roomB): int {
@@ -2842,7 +2845,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			return;
 		}
 
-		$this->assertRooms($data, $formData);
+		$this->assertRooms($data, $formData, matchObjectId: true);
 	}
 
 	/**
