@@ -1040,7 +1040,7 @@ const actions = {
 	 * @param {number} [payload.listable] whether a conversation is opened to registered users
 	 * @param {Array} [payload.participants] list of participants
 	 * @param {object} [payload.avatar] avatar object: { emoji, color } | { file }
-	 * @return {import('../types/index.ts').Conversation} new conversation object
+	 * @return {object} new conversation object
 	 */
 	async createGroupConversation(context, {
 		roomName,
