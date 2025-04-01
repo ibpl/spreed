@@ -2838,6 +2838,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$this->assertStatusCode($this->response, 200);
 
 		$data = $this->getDataFromResponse($this->response);
+		Assert::assertCount(2, $data);
 		if (!$formData instanceof TableNode) {
 			Assert::assertEmpty($data);
 			return;
