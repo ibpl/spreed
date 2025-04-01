@@ -175,7 +175,7 @@ class DashboardServiceTest extends TestCase {
 		$calendar->expects($this->once())
 			->method('search')
 			->willReturn($calData);
-		$this->roomService->expects($this->never())
+		$this->roomService->expects($this->once())
 			->method('parseRoomTokenFromUrl');
 		$this->manager->expects($this->once())
 			->method('getRoomForUserByToken')
@@ -292,7 +292,7 @@ class DashboardServiceTest extends TestCase {
 		$calendar->expects($this->once())
 			->method('search')
 			->willReturn($calData);
-		$this->roomService->expects($this->once())
+		$this->roomService->expects($this->exactly(2))
 			->method('parseRoomTokenFromUrl');
 		$this->manager->expects($this->exactly(2))
 			->method('getRoomForUserByToken')
