@@ -130,8 +130,8 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		return self::$createdTeams[$server][$label] ?? self::$renamedTeams[$server][$label] ?? throw new \RuntimeException('Unknown team: ' . $label);
 	}
 
-	public static function getRoomLocationForToken(string $identifier) {
-		return getenv('TEST_SERVER_URL') . '/call/' . self::$identifierToToken[$identifier] ?? throw new \RuntimeException('Unknown token: ' . $id);
+	public static function getRoomLocationForToken(string $identifier): string {
+		return getenv('TEST_SERVER_URL') . '/call/' . self::$identifierToToken[$identifier] ?? throw new \RuntimeException('Unknown token: ' . $identifier);
 	}
 
 	public static function getMessageIdForText(string $text): int {
