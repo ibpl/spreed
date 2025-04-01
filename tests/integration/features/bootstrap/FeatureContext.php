@@ -5353,6 +5353,8 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 */
 	public function createCalendarEventConversation(string $user, string $identifier, string $apiVersion = 'v1', ?TableNode $formData = null): void {
 		$body = $formData->getRowsHash();
+		$startTime = time() + 3600;
+		$endTime = time() + 7200;
 		if (isset($body['objectId'])) {
 			[$start, $end] = explode('#', $body['objectId']);
 			$startTime = time() + (int)$start;
@@ -5372,15 +5374,12 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		self::$tokenToIdentifier[$response['token']] = $identifier;
 
 		$location = self::getRoomLocationForToken($identifier);
-
-		$currentUser = $this->setCurrentUser('admin');
 		$this->sendRequest('POST', '/apps/spreedcheats/calendar', [
 			'location' => $location,
-			'start' => $startTime ?? (time() + 3600),
-			'end' => $endTime ?? (time() + 7200),
+			'start' => $startTime,
+			'end' => $endTime,
 		]);
 
 		$this->assertStatusCode($this->response, 200);
-		$this->setCurrentUser($currentUser);
 	}
 }
