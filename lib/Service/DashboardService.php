@@ -24,6 +24,7 @@ class DashboardService {
 		private ITimeFactory $timeFactory,
 		private LoggerInterface $logger,
 		private ParticipantService $participantService,
+		private RoomService $roomService,
 	) {
 
 	}
@@ -70,7 +71,8 @@ class DashboardService {
 				}
 
 				try {
-					$room = $this->manager->getRoomByUrlForUser($location, $userId);
+					$token = $this->roomService->parseRoomTokenFromUrl($location);
+					$room = $this->manager->getRoomForUserByToken($token, $userId);
 				} catch (RoomNotFoundException) {
 					$this->logger->debug("Room for url $location not found in dashboard service");
 					continue;
