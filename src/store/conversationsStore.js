@@ -1001,7 +1001,7 @@ const actions = {
 	 * @param {object} context default store context
 	 * @param {object} payload action payload
 	 * @param {string} payload.token one-to-one conversation token
-	 * @param {Array<import('../types/index.ts').AutocompleteResult>} payload.newParticipants selected participants to be added
+	 * @param {Array} payload.newParticipants selected participants to be added
 	 */
 	async extendOneToOneConversation(context, { token, newParticipants }) {
 		try {
