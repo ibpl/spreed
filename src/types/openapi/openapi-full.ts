@@ -536,7 +536,7 @@ export type paths = {
             cookie?: never;
         };
         /**
-         * Get rooms that have events in the next 7 days sorted by their start timestamp ascending
+         * Get up to 10 rooms that have events in the next 7 days sorted by their start timestamp ascending
          * @description Required capability: `dashboard-event-rooms`
          */
         get: operations["dashboard-get-event-rooms"];

@@ -8554,7 +8554,7 @@
         "/ocs/v2.php/apps/spreed/api/{apiVersion}/dashboard/events": {
             "get": {
                 "operationId": "dashboard-get-event-rooms",
-                "summary": "Get rooms that have events in the next 7 days sorted by their start timestamp ascending",
+                "summary": "Get up to 10 rooms that have events in the next 7 days sorted by their start timestamp ascending",
                 "description": "Required capability: `dashboard-event-rooms`",
                 "tags": [
                     "dashboard"
