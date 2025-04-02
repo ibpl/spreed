@@ -108,6 +108,13 @@ class ApiController extends OCSController {
 			// Ignore
 		}
 
+		$delete = $this->db->getQueryBuilder();
+		$delete->delete('calendarobjects')->executeStatement();
+
+		$delete = $this->db->getQueryBuilder();
+		$delete->delete('calendarobjects_props')->executeStatement();
+
+
 		return new DataResponse();
 	}
 
