@@ -6,7 +6,7 @@ Feature: integration/dashboard-talk
     Given user "participant1" creates conversation with event "room" (v4)
       | roomType | 2 |
       | objectType | event |
-      | objectId | 3600#7200 |
+      | objectId | 36000#72000 |
     Given user "participant1" creates conversation with event "room2" (v4)
       | roomType | 2 |
     Given user "participant1" creates room "room3" (v4)

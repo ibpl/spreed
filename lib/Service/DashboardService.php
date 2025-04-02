@@ -38,6 +38,7 @@ class DashboardService {
 		if (count($calendars) === 0) {
 			return [];
 		}
+
 		$start = $this->timeFactory->getDateTime();
 		$end = $this->timeFactory->getDateTime()->add(\DateInterval::createFromDateString('1 week'));
 		$options = [

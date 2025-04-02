@@ -439,6 +439,12 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 
 		$expected = $formData->getHash();
 
+		$count = count($expected);
+		for ($i = 0; $i < $count; $i++) {
+			if (isset($expected[$i]['objectId']) && preg_match('/OBJECT_ID\(([^)]+)\)/', $expected[$i]['objectId'], $matches)) {
+				$expected[$i]['objectId'] = self::$identifierToObjectId[$matches[1]];
+			}
+		}
 		if ($shouldOrder) {
 			$sorter = static function (array $roomA, array $roomB): int {
 				if (str_starts_with($roomA['name'], '/')) {
@@ -614,10 +620,12 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			if (isset($expectedRoom['participants'])) {
 				throw new \Exception('participants key needs to be checked via participants endpoint');
 			}
-			if (isset($expectedRoom['objectId']) && preg_match('/OBJECT_ID\(([^)]+)\)/', $room['objectId'], $matches)) {
-				$expectedRoom['objectId'] = self::$identifierToObjectId[$matches[1]]; ;
+			if (isset($expectedRoom['objectId'])) {
+				$data['objectId'] = $room['objectId'];
 			}
-
+			if (isset($expectedRoom['objectType'])) {
+				$data['objectType'] = $room['objectType'];
+			}
 			return $data;
 		}, $rooms, $expected));
 	}
@@ -5351,8 +5359,9 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 */
 	public function createCalendarEventConversation(string $user, string $identifier, string $apiVersion = 'v1', ?TableNode $formData = null): void {
 		$body = $formData->getRowsHash();
-		$startTime = time() + 3600;
-		$endTime = time() + 7200;
+		$startTime = time() + 86400;
+		$endTime = time() +  90000;
+		$body['name'] = $identifier;
 		if (isset($body['objectId'])) {
 			[$start, $end] = explode('#', $body['objectId']);
 			$startTime = time() + (int)$start;
