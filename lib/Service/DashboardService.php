@@ -93,6 +93,6 @@ class DashboardService {
 		}
 
 		ksort($startDates);
-		return array_slice(array_merge(...$startDates),0, 10);
+		return array_slice(array_merge(...$startDates), 0, 10);
 	}
 }

@@ -5368,7 +5368,8 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			$body['objectId'] = $startTime . '#' . $endTime;
 			self::$identifierToObjectId[$identifier] = $body['objectId'];
 		}
-		$body['name'] = $identifier;
+
+		$body['roomName'] = $identifier;
 
 		$this->setCurrentUser($user);
 		$this->sendRequest('POST', '/apps/spreed/api/' . $apiVersion . '/room', $body);
