@@ -5361,7 +5361,6 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$body = $formData->getRowsHash();
 		$startTime = time() + 86400;
 		$endTime = time() +  90000;
-		$body['name'] = $identifier;
 		if (isset($body['objectId'])) {
 			[$start, $end] = explode('#', $body['objectId']);
 			$startTime = time() + (int)$start;
@@ -5369,6 +5368,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			$body['objectId'] = $startTime . '#' . $endTime;
 			self::$identifierToObjectId[$identifier] = $body['objectId'];
 		}
+		$body['name'] = $identifier;
 
 		$this->setCurrentUser($user);
 		$this->sendRequest('POST', '/apps/spreed/api/' . $apiVersion . '/room', $body);

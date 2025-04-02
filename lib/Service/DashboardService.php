@@ -89,11 +89,6 @@ class DashboardService {
 			}
 		}
 
-		usort($participants, static function (Participant $a, Participant $b) {
-			$startA = explode('#', $a->getRoom()->getObjectId());
-			$startB = explode('#', $b->getRoom()->getObjectId());
-			return (int)$startA[0] - (int)$startB[0];
-		});
 		return array_slice($participants, 0, 10);
 	}
 }
