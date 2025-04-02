@@ -51,6 +51,7 @@ class DashboardService {
 		$pattern = '/call/';
 		$searchProperties = ['LOCATION'];
 		$participants = [];
+		$startDates = [];
 		foreach ($calendars as $calendar) {
 			$searchResult = $calendar->search($pattern, $searchProperties, $options, 10);
 			foreach ($searchResult as $calendarEvent) {
@@ -67,7 +68,7 @@ class DashboardService {
 					}
 				}
 
-				if ($event === null || $location === null) {
+				if ($event === null || $location === null || !isset($startDate)) {
 					continue;
 				}
 
@@ -85,10 +86,13 @@ class DashboardService {
 					$this->logger->debug("Participant $userId not found in dashboard service");
 					continue;
 				}
-				$participants[$participant->getRoom()->getId()] = $participant;
+				// assign the participants (i. e. rooms) for each start date
+				// so we can sort by start date (in case two have the same start date)
+				$startDates[$startDate->getTimestamp()][$participant->getRoom()->getId()] = $participant;
 			}
 		}
 
-		return array_slice($participants, 0, 10);
+		ksort($startDates);
+		return array_slice(array_merge(...$startDates),0, 10);
 	}
 }
