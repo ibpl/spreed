@@ -12,6 +12,9 @@ import type {
 	editMessageResponse,
 	getMessageContextParams,
 	getMessageContextResponse,
+	listThreadsParams,
+	listThreadsResponse,
+	makeThreadResponse,
 	markUnreadResponse,
 	postNewMessageParams,
 	postNewMessageResponse,
@@ -235,12 +238,44 @@ const summarizeChat = async function(token: string, fromMessageId: summarizeChat
 	} as summarizeChatParams, options)
 }
 
+/**
+ * Fetch a list of threads for given conversation
+ *
+ * @param data the wrapping object
+ * @param data.token the conversation token
+ * @param [data.limit=25] Number of threads to return
+ * @param [data.offsetId=0] The last thread ID that was known, default 0 starts from the newest
+ * @param [options] Axios request options
+ */
+async function getThreadsForConversation({ token, limit, offsetId }: { token: string } & listThreadsParams, options?: AxiosRequestConfig): listThreadsResponse {
+	return axios.get(generateOcsUrl('apps/spreed/api/v1/chat/{token}/threads', { token }), {
+		...options,
+		params: {
+			limit,
+			offsetId,
+		},
+	})
+}
+
+/**
+ * Create a new thread for a conversation
+ *
+ * @param token The conversation token
+ * @param messageId The message id of any message belonging to the future thread
+ * @param [options] Axios request options
+ */
+async function makeThreadForConversation(token: string, messageId: number, options?: AxiosRequestConfig): makeThreadResponse {
+	return axios.post(generateOcsUrl('apps/spreed/api/v1/chat/{token}/threads/{messageId}', { token, messageId }), undefined, options)
+}
+
 export {
 	clearConversationHistory,
 	deleteMessage,
 	editMessage,
 	fetchMessages,
 	getMessageContext,
+	getThreadsForConversation,
+	makeThreadForConversation,
 	pollNewMessages,
 	postNewMessage,
 	postRichObjectToConversation,
