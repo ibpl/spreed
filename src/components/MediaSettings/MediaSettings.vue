@@ -4,12 +4,15 @@
 -->
 
 <template>
-	<NcModal v-if="modal"
-		size="large"
-		:label-id="dialogHeaderId"
+	<component :is="isDialog ? 'NcModal' : 'div'"
+		v-if="modal"
+		:size="isDialog ? 'large' : undefined"
+		:label-id="isDialog ? dialogHeaderId : undefined"
 		@close="closeModal">
 		<div class="media-settings">
-			<h2 :id="dialogHeaderId" class="media-settings__title nc-dialog-alike-header">
+			<h2 v-if="isDialog"
+				:id="dialogHeaderId"
+				class="media-settings__title nc-dialog-alike-header">
 				{{ t('spreed', 'Media settings') }}
 			</h2>
 			<div class="media-settings__content" :style="{ 'flex-direction': isMobile ? 'column' : 'row' }">
@@ -191,7 +194,7 @@
 				</NcButton>
 			</div>
 		</div>
-	</NcModal>
+	</component>
 </template>
 
 <script>
@@ -267,6 +270,11 @@ export default {
 			type: Boolean,
 			default: false,
 		},
+
+		isDialog: {
+			type: Boolean,
+			default: true,
+		},
 	},
 
 	emits: ['update:recordingConsentGiven'],
@@ -295,7 +303,7 @@ export default {
 			virtualBackground,
 		} = useDevices(video, false)
 
-		const isVirtualBackgroundAvailable = computed(() => virtualBackground.value.isAvailable())
+		const isVirtualBackgroundAvailable = computed(() => virtualBackground.value?.isAvailable())
 
 		const devicesTab = {
 			id: 'devices',
@@ -454,7 +462,7 @@ export default {
 		},
 
 		showUpdateChangesButton() {
-			return (this.isInTalkDashboard || this.isInCall)
+			return ((this.isDialog && !this.token) || this.isInCall)
 				&& (this.updatedBackground
 					|| this.audioDeviceStateChanged
 					|| this.videoDeviceStateChanged)
@@ -552,9 +560,19 @@ export default {
 		}
 	},
 
+	mounted() {
+		if (!this.isDialog) {
+			this.showModal()
+		}
+	},
+
 	beforeUnmount() {
 		unsubscribe('talk:media-settings:show', this.showModal)
 		unsubscribe('talk:media-settings:hide', this.closeModalAndApplySettings)
+
+		if (!this.isDialog) {
+			this.closeModal()
+		}
 	},
 
 	methods: {
