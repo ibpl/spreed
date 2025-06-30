@@ -5,10 +5,13 @@
 
 <template>
 	<div class="username-form">
+		<p v-if="compact">
+			{{ t('spreed', 'Display name (required)') }}
+		</p>
 		<!-- eslint-disable-next-line vue/no-v-html -->
-		<h3 v-html="displayNameLabel" />
+		<h3 v-else v-html="displayNameLabel" />
 
-		<NcButton v-if="!isEditingUsername"
+		<NcButton v-if="!isEditingUsername && !compact"
 			@click="handleEditUsername">
 			{{ t('spreed', 'Edit display name') }}
 			<template #icon>
@@ -21,6 +24,7 @@
 			v-model="guestUserName"
 			:placeholder="t('spreed', 'Guest')"
 			class="username-form__input"
+			label-outside
 			:show-trailing-button="!!guestUserName"
 			trailing-button-icon="arrowEnd"
 			:trailing-button-label="t('spreed', 'Save name')"
@@ -28,7 +32,7 @@
 			@keydown.enter="handleChooseUserName"
 			@keydown.esc="handleEditUsername" />
 
-		<div class="login-info">
+		<div v-if="!compact" class="login-info">
 			<span> {{ t('spreed', 'Do you already have an account?') }}</span>
 			<NcButton variant="secondary"
 				:href="getLoginUrl()">
@@ -57,6 +61,13 @@ export default {
 		NcButton,
 		NcTextField,
 		Pencil,
+	},
+
+	props: {
+		compact: {
+			type: Boolean,
+			default: false,
+		},
 	},
 
 	setup() {
