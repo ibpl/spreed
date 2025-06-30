@@ -15,13 +15,22 @@
 					<EmoticonOutline :size="20" />
 				</template>
 			</NcButton>
-			<NcButton v-if="canReply"
+			<NcButton v-if="canReply && !message.isThread"
 				variant="tertiary"
 				:aria-label="t('spreed', 'Reply')"
 				:title="t('spreed', 'Reply')"
 				@click="handleReply">
 				<template #icon>
 					<Reply :size="16" />
+				</template>
+			</NcButton>
+			<NcButton v-if="supportThreads"
+				variant="tertiary"
+				:aria-label="t('spreed', 'Reply in thread')"
+				:title="t('spreed', 'Reply in thread')"
+				@click="handleReply">
+				<template #icon>
+					<IconForumOutline :size="16" />
 				</template>
 			</NcButton>
 			<NcActions :force-menu="true"
@@ -139,6 +148,14 @@
 							{{ t('spreed', 'Download file') }}
 						</NcActionLink>
 					</template>
+					<NcActionSeparator />
+					<NcActionButton v-if="supportThreads"
+						@click="$router.push({ query: { threadId: message.threadId } })">
+						<template #icon>
+							<IconForumOutline :size="16" />
+						</template>
+						{{ t('spreed', 'See thread') }}
+					</NcActionButton>
 					<NcActionButton
 						v-if="canForwardMessage && !isInNoteToSelf"
 						key="forward-to-note"
@@ -318,6 +335,7 @@ import IconDownload from 'vue-material-design-icons/Download.vue'
 import EmoticonOutline from 'vue-material-design-icons/EmoticonOutline.vue'
 import EyeOffOutline from 'vue-material-design-icons/EyeOffOutline.vue'
 import File from 'vue-material-design-icons/File.vue'
+import IconForumOutline from 'vue-material-design-icons/ForumOutline.vue'
 import Note from 'vue-material-design-icons/NoteEditOutline.vue'
 import OpenInNewIcon from 'vue-material-design-icons/OpenInNew.vue'
 import Pencil from 'vue-material-design-icons/Pencil.vue'
@@ -354,6 +372,7 @@ export default {
 		AlarmIcon,
 		IconArrowLeft,
 		IconBellOff,
+		IconForumOutline,
 		CalendarClock,
 		CloseCircleOutline,
 		Check,
@@ -446,10 +465,12 @@ export default {
 			isConversationModifiable,
 		} = useMessageInfo(message)
 		const supportReminders = hasTalkFeature(message.value.token, 'remind-me-later')
+		const supportThreads = hasTalkFeature(message.value.token, 'threads-v1') || true
 
 		return {
 			messageActions,
 			supportReminders,
+			supportThreads,
 			reactionsStore,
 			isEditable,
 			isCurrentUserOwnMessage,

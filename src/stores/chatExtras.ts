@@ -48,6 +48,12 @@ export const useChatExtrasStore = defineStore('chatExtras', {
 	}),
 
 	getters: {
+		getThread: (state) => (token: string, threadId: number) => {
+			if (state.threads[token]?.[threadId]) {
+				return state.threads[token][threadId]
+			}
+		},
+
 		getParentIdToReply: (state) => (token: string) => {
 			if (state.parentToReply[token]) {
 				return state.parentToReply[token]

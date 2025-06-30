@@ -18,12 +18,14 @@
 			:disable-menu="false"
 			show-user-online-status
 			:hide-favorite="false"
-			:hide-call="false" />
+			:hide-call="false"
+			@click="$router.push({ query: {} })" />
 
 		<div class="top-bar__wrapper" :data-theme-dark="isInCall ? true : undefined">
 			<!-- conversation header -->
 			<a role="button"
 				class="conversation-header"
+				:class="{ 'conversation-header--thread-view': currentThread }"
 				@click="openConversationSettings">
 				<div class="conversation-header__text"
 					:class="{ 'conversation-header__text--offline': isOffline }">
@@ -55,58 +57,81 @@
 				</div>
 			</a>
 
-			<TasksCounter v-if="conversation.type === CONVERSATION.TYPE.NOTE_TO_SELF" />
+			<template v-if="currentThread">
+				<IconChevronRight class="bidirectional-icon" :size="20" />
 
-			<!-- Upcoming meetings -->
-			<CalendarEventsDialog v-if="showCalendarEvents" :token="token" />
+				<AvatarWrapper
+					:id="currentThread.first.actorId"
+					:token="token"
+					:name="currentThread.first.actorDisplayName"
+					:source="currentThread.first.actorType"
+					:size="AVATAR.SIZE.DEFAULT"
+					disable-menu
+					disable-tooltip />
+				<div class="conversation-header__text">
+					<p class="title">
+						{{ currentThread.first.actorDisplayName + ': ' + currentThread.first.message }}
+					</p>
+					<p v-if=" currentThread.last" class="description">
+						{{ currentThread.last.actorDisplayName + ': ' + currentThread.last.message }}
+					</p>
+				</div>
+			</template>
 
-			<!-- Call time -->
-			<CallTime v-if="isInCall"
-				:start="conversation.callStartTime" />
+			<template v-else>
+				<TasksCounter v-if="conversation.type === CONVERSATION.TYPE.NOTE_TO_SELF" />
 
-			<!-- Participants counter -->
-			<NcButton v-if="isInCall && isModeratorOrUser"
-				:title="participantsInCallAriaLabel"
-				:aria-label="participantsInCallAriaLabel"
-				variant="tertiary"
-				@click="openSidebar('participants')">
-				<template #icon>
-					<IconAccountMultiplePlus v-if="canExtendOneToOneConversation" :size="20" />
-					<IconAccountMultiple v-else :size="20" />
-				</template>
-				<template v-if="!canExtendOneToOneConversation" #default>
-					{{ participantsInCall }}
-				</template>
-			</NcButton>
-			<ExtendOneToOneDialog v-else-if="!isSidebar && canExtendOneToOneConversation"
-				:token="token" />
+				<!-- Upcoming meetings -->
+				<CalendarEventsDialog v-if="showCalendarEvents" :token="token" />
 
-			<!-- Reactions menu -->
-			<ReactionMenu v-if="isInCall && hasReactionSupport"
-				:token="token"
-				:supported-reactions="supportedReactions"
-				:local-call-participant-model="localCallParticipantModel" />
+				<!-- Call time -->
+				<CallTime v-if="isInCall"
+					:start="conversation.callStartTime" />
 
-			<!-- Local media controls -->
-			<TopBarMediaControls v-if="isInCall"
-				:token="token"
-				:model="localMediaModel"
-				:is-sidebar="isSidebar"
-				:local-call-participant-model="localCallParticipantModel" />
+				<!-- Participants counter -->
+				<NcButton v-if="isInCall && isModeratorOrUser"
+					:title="participantsInCallAriaLabel"
+					:aria-label="participantsInCallAriaLabel"
+					variant="tertiary"
+					@click="openSidebar('participants')">
+					<template #icon>
+						<IconAccountMultiplePlus v-if="canExtendOneToOneConversation" :size="20" />
+						<IconAccountMultiple v-else :size="20" />
+					</template>
+					<template v-if="!canExtendOneToOneConversation" #default>
+						{{ participantsInCall }}
+					</template>
+				</NcButton>
+				<ExtendOneToOneDialog v-else-if="!isSidebar && canExtendOneToOneConversation"
+					:token="token" />
 
-			<!-- TopBar menu -->
-			<TopBarMenu :token="token"
-				:show-actions="!isSidebar"
-				:is-sidebar="isSidebar"
-				:model="localMediaModel"
-				@open-breakout-rooms-editor="showBreakoutRoomsEditor = true" />
+				<!-- Reactions menu -->
+				<ReactionMenu v-if="isInCall && hasReactionSupport"
+					:token="token"
+					:supported-reactions="supportedReactions"
+					:local-call-participant-model="localCallParticipantModel" />
 
-			<CallButton shrink-on-mobile :hide-text="isSidebar" :is-screensharing="!!localMediaModel.attributes.localScreen" />
+				<!-- Local media controls -->
+				<TopBarMediaControls v-if="isInCall"
+					:token="token"
+					:model="localMediaModel"
+					:is-sidebar="isSidebar"
+					:local-call-participant-model="localCallParticipantModel" />
 
-			<!-- Breakout rooms editor -->
-			<BreakoutRoomsEditor v-if="showBreakoutRoomsEditor"
-				:token="token"
-				@close="showBreakoutRoomsEditor = false" />
+				<!-- TopBar menu -->
+				<TopBarMenu :token="token"
+					:show-actions="!isSidebar"
+					:is-sidebar="isSidebar"
+					:model="localMediaModel"
+					@open-breakout-rooms-editor="showBreakoutRoomsEditor = true" />
+
+				<CallButton shrink-on-mobile :hide-text="isSidebar" :is-screensharing="!!localMediaModel.attributes.localScreen" />
+
+				<!-- Breakout rooms editor -->
+				<BreakoutRoomsEditor v-if="showBreakoutRoomsEditor"
+					:token="token"
+					@close="showBreakoutRoomsEditor = false" />
+			</template>
 		</div>
 	</div>
 </template>
@@ -119,6 +144,8 @@ import NcPopover from '@nextcloud/vue/components/NcPopover'
 import NcRichText from '@nextcloud/vue/components/NcRichText'
 import IconAccountMultiple from 'vue-material-design-icons/AccountMultiple.vue'
 import IconAccountMultiplePlus from 'vue-material-design-icons/AccountMultiplePlus.vue'
+import IconChevronRight from 'vue-material-design-icons/ChevronRight.vue'
+import AvatarWrapper from '../AvatarWrapper/AvatarWrapper.vue'
 import BreakoutRoomsEditor from '../BreakoutRoomsEditor/BreakoutRoomsEditor.vue'
 import CalendarEventsDialog from '../CalendarEventsDialog.vue'
 import ConversationIcon from '../ConversationIcon.vue'
@@ -133,6 +160,7 @@ import { useGetToken } from '../../composables/useGetToken.ts'
 import { AVATAR, CONVERSATION } from '../../constants.ts'
 import { getTalkConfig, hasTalkFeature } from '../../services/CapabilitiesManager.ts'
 import { useActorStore } from '../../stores/actor.ts'
+import { useChatExtrasStore } from '../../stores/chatExtras.ts'
 import { useGroupwareStore } from '../../stores/groupware.ts'
 import { useSidebarStore } from '../../stores/sidebar.ts'
 import { getStatusMessage } from '../../utils/userStatus.ts'
@@ -146,6 +174,7 @@ export default {
 
 	components: {
 		// Components
+		AvatarWrapper,
 		BreakoutRoomsEditor,
 		CalendarEventsDialog,
 		CallButton,
@@ -162,6 +191,7 @@ export default {
 		// Icons
 		IconAccountMultiple,
 		IconAccountMultiplePlus,
+		IconChevronRight,
 	},
 
 	props: {
@@ -187,6 +217,7 @@ export default {
 			groupwareStore: useGroupwareStore(),
 			sidebarStore: useSidebarStore(),
 			actorStore: useActorStore(),
+			chatExtrasStore: useChatExtrasStore(),
 			CONVERSATION,
 			token: useGetToken(),
 		}
@@ -200,6 +231,13 @@ export default {
 	},
 
 	computed: {
+		currentThread() {
+			if (!this.$route.query.threadId) {
+				return null
+			}
+			return this.chatExtrasStore.getThread(this.token, +this.$route.query.threadId)
+		},
+
 		isOneToOneConversation() {
 			return this.conversation.type === CONVERSATION.TYPE.ONE_TO_ONE
 				|| this.conversation.type === CONVERSATION.TYPE.ONE_TO_ONE_FORMER
@@ -357,10 +395,16 @@ export default {
 .top-bar__wrapper {
 	flex: 1 0;
 	display: flex;
-	flex-wrap: wrap;
 	gap: 3px;
 	align-items: center;
 	justify-content: flex-end;
+}
+
+.thread-header {
+	display: flex;
+	align-items: center;
+	width: 100%;
+	gap: var(--default-grid-baseline);
 }
 
 .conversation-header {
@@ -398,6 +442,10 @@ export default {
 		&__in-chat {
 			color: var(--color-text-maxcontrast);
 		}
+	}
+
+	&--thread-view {
+		width: 25%;
 	}
 }
 
