@@ -126,7 +126,7 @@
 						</NcCheckboxRadioSwitch>
 					</template>
 					<!-- Guest display name setting-->
-					<SetGuestUsername v-if="!actorStore.userId && this.isDialog"
+					<SetGuestUsername v-if="isGuest && isDialog"
 						class="media-settings__guest"
 						:compact="true" />
 				</div>
@@ -233,7 +233,7 @@ import { useDevices } from '../../composables/useDevices.js'
 import { useGetToken } from '../../composables/useGetToken.ts'
 import { useId } from '../../composables/useId.ts'
 import { useIsInCall } from '../../composables/useIsInCall.js'
-import { AVATAR, CALL, CONFIG, PARTICIPANT, VIRTUAL_BACKGROUND } from '../../constants.ts'
+import { ATTENDEE, AVATAR, CALL, CONFIG, PARTICIPANT, VIRTUAL_BACKGROUND } from '../../constants.ts'
 import BrowserStorage from '../../services/BrowserStorage.js'
 import { getTalkConfig } from '../../services/CapabilitiesManager.ts'
 import { useActorStore } from '../../stores/actor.ts'
@@ -386,6 +386,10 @@ export default {
 			)
 		},
 
+		isGuest() {
+			return !this.userId && this.actorStore.actorType === ATTENDEE.ACTOR_TYPE.GUESTS
+		},
+
 		userId() {
 			return this.actorStore.userId
 		},
@@ -484,8 +488,12 @@ export default {
 
 		disabledCallButton() {
 			return (this.isRecordingConsentRequired && !this.recordingConsentGiven)
-				|| (!this.actorStore.userId && !this.actorStore.displayName.length)
-		}
+				|| (this.isGuest && !this.actorStore.displayName.length)
+		},
+
+		forceShowMediaSettings() {
+			return this.isGuest && this.hasCall && this.isDialog
+		},
 	},
 
 	watch: {
@@ -551,6 +559,15 @@ export default {
 				// Reset the flag for the next call
 				this.skipBlurVirtualBackground = false
 			}
+		},
+
+		forceShowMediaSettings: {
+			intermediate: true,
+			handler(value) {
+				if (value) {
+					this.showModal()
+				}
+			},
 		},
 
 		connectionFailed(value) {
