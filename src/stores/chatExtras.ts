@@ -6,16 +6,22 @@
 import type {
 	ChatMessage,
 	ChatTask,
+	ThreadInfo,
 } from '../types/index.ts'
 
 import { t } from '@nextcloud/l10n'
 import { defineStore } from 'pinia'
 import BrowserStorage from '../services/BrowserStorage.js'
 import { EventBus } from '../services/EventBus.ts'
-import { summarizeChat } from '../services/messagesService.ts'
+import {
+	getThreadsForConversation,
+	summarizeChat,
+} from '../services/messagesService.ts'
 import { parseMentions, parseSpecialSymbols } from '../utils/textParse.ts'
 
 type State = {
+	threads: Record<string, Record<number, ThreadInfo>>
+	threadsOffset: Record<string, number | undefined>
 	parentToReply: Record<string, number>
 	chatInput: Record<string, string>
 	messageIdToEdit: Record<string, number>
@@ -30,6 +36,8 @@ type State = {
  */
 export const useChatExtrasStore = defineStore('chatExtras', {
 	state: (): State => ({
+		threads: {},
+		threadsOffset: {},
 		parentToReply: {},
 		chatInput: {},
 		messageIdToEdit: {},
@@ -69,6 +77,27 @@ export const useChatExtrasStore = defineStore('chatExtras', {
 	},
 
 	actions: {
+		async getThreadsForConversation(token: string) {
+			try {
+				if (!this.threads[token]) {
+					this.threads[token] = {}
+					this.threadsOffset[token] = undefined
+				}
+
+				const response = await getThreadsForConversation({ token, offsetId: this.threadsOffset[token] })
+
+				const threadIds: number[] = []
+				response.data.ocs.data.forEach((threadInfo) => {
+					this.threads[token][threadInfo.thread.id] = threadInfo
+					threadIds.push(threadInfo.thread.id)
+				})
+
+				this.threadsOffset[token] = Math.min(...threadIds, this.threadsOffset[token] ?? Infinity)
+			} catch (error) {
+				console.error('Error fetching threads:', error)
+			}
+		},
+
 		/**
 		 * Get chat input for current conversation (from store or BrowserStorage)
 		 *
