@@ -13,11 +13,13 @@
 
 import { useActorStore } from '../../stores/actor.ts'
 import pinia from '../../stores/pinia.ts'
+import { useSignalingStateStore } from '../../stores/signalingState.ts'
 import { useTokenStore } from '../../stores/token.ts'
 export default class SpeakingStatusHandler {
 	// Constants, properties
 	#store
 	#actorStore
+	#signalingStateStore
 	#tokenStore
 	#localMediaModel
 	#localCallParticipantModel
@@ -33,6 +35,7 @@ export default class SpeakingStatusHandler {
 	constructor(store, localMediaModel, localCallParticipantModel, callParticipantCollection) {
 		this.#store = store
 		this.#actorStore = useActorStore(pinia)
+		this.#signalingStateStore = useSignalingStateStore(pinia)
 		this.#tokenStore = useTokenStore(pinia)
 		this.#localMediaModel = localMediaModel
 		this.#localCallParticipantModel = localCallParticipantModel
@@ -70,7 +73,7 @@ export default class SpeakingStatusHandler {
 			callParticipantModel.off('change:stoppedSpeaking', this.#handleSpeakingBound)
 		})
 
-		this.#store.dispatch('purgeSpeakingStore')
+		this.#signalingStateStore.purgeSpeakingState()
 	}
 
 	/**
@@ -99,12 +102,12 @@ export default class SpeakingStatusHandler {
 	 * Dispatch speaking status of local participant to the store
 	 *
 	 * @param {object} localMediaModel the local media model
-	 * @param {boolean} speaking whether the participant is speaking or not
+	 * @param {boolean} isSpeaking whether the participant is speaking or not
 	 */
-	#handleLocalSpeaking(localMediaModel, speaking) {
-		this.#store.dispatch('setSpeaking', {
+	#handleLocalSpeaking(localMediaModel, isSpeaking) {
+		this.#signalingStateStore.setSpeaking({
 			attendeeId: this.#actorStore.attendeeId,
-			speaking,
+			isSpeaking,
 		})
 	}
 
@@ -113,9 +116,9 @@ export default class SpeakingStatusHandler {
 	 * changes.
 	 */
 	#handleLocalPeerId() {
-		this.#store.dispatch('setSpeaking', {
+		this.#signalingStateStore.setSpeaking({
 			attendeeId: this.#actorStore.attendeeId,
-			speaking: this.#localMediaModel.attributes.speaking,
+			isSpeaking: this.#localMediaModel.attributes.speaking,
 		})
 	}
 
@@ -123,9 +126,9 @@ export default class SpeakingStatusHandler {
 	 * Dispatch speaking status of participant to the store
 	 *
 	 * @param {object} callParticipantModel the participant model
-	 * @param {boolean} speaking whether the participant is speaking or not
+	 * @param {boolean} isSpeaking whether the participant is speaking or not
 	 */
-	#handleSpeaking(callParticipantModel, speaking) {
+	#handleSpeaking(callParticipantModel, isSpeaking) {
 		const attendeeId = this.#store.getters.findParticipant(
 			this.#tokenStore.token,
 			{ sessionId: callParticipantModel.attributes.nextcloudSessionId },
@@ -135,9 +138,9 @@ export default class SpeakingStatusHandler {
 			return
 		}
 
-		this.#store.dispatch('setSpeaking', {
+		this.#signalingStateStore.setSpeaking({
 			attendeeId,
-			speaking,
+			isSpeaking,
 		})
 	}
 }
