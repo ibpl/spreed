@@ -34,6 +34,7 @@ import SessionStorage from '../services/SessionStorage.js'
 import { useActorStore } from '../stores/actor.ts'
 import { useGuestNameStore } from '../stores/guestName.ts'
 import { useSessionStore } from '../stores/session.ts'
+import { useSignalingStateStore } from '../stores/signalingState.ts'
 import { useTokenStore } from '../stores/token.ts'
 import { generateOCSErrorResponse, generateOCSResponse } from '../test-helpers.js'
 import participantsStore from './participantsStore.js'
@@ -85,12 +86,14 @@ describe('participantsStore', () => {
 	let guestNameStore = null
 	let actorStore
 	let tokenStore
+	let signalingStateStore
 
 	beforeEach(() => {
 		setActivePinia(createPinia())
 		guestNameStore = useGuestNameStore()
 		actorStore = useActorStore()
 		tokenStore = useTokenStore()
+		signalingStateStore = useSignalingStateStore()
 
 		testStoreConfig = cloneDeep(participantsStore)
 		store = createStore(testStoreConfig)
@@ -734,41 +737,41 @@ describe('participantsStore', () => {
 
 		describe('raised hand', () => {
 			test('get whether participants raised hands with single session id', () => {
-				store.dispatch('setParticipantHandRaised', {
+				signalingStateStore.setParticipantHandRaised({
 					sessionId: 'session-id-1',
 					raisedHand: { state: true, timestamp: 1 },
 				})
-				store.dispatch('setParticipantHandRaised', {
+				signalingStateStore.setParticipantHandRaised({
 					sessionId: 'session-id-2',
 					raisedHand: { state: true, timestamp: 2 },
 				})
 
-				expect(store.getters.getParticipantRaisedHand(['session-id-1']))
+				expect(signalingStateStore.getParticipantRaisedHand(['session-id-1']))
 					.toStrictEqual({ state: true, timestamp: 1 })
 
-				expect(store.getters.getParticipantRaisedHand(['session-id-2']))
+				expect(signalingStateStore.getParticipantRaisedHand(['session-id-2']))
 					.toStrictEqual({ state: true, timestamp: 2 })
 
-				expect(store.getters.getParticipantRaisedHand(['session-id-another']))
+				expect(signalingStateStore.getParticipantRaisedHand(['session-id-another']))
 					.toStrictEqual({ state: false, timestamp: null })
 			})
 
 			test('get raised hands after lowering', () => {
-				store.dispatch('setParticipantHandRaised', {
+				signalingStateStore.setParticipantHandRaised({
 					sessionId: 'session-id-2',
 					raisedHand: { state: true, timestamp: 1 },
 				})
-				store.dispatch('setParticipantHandRaised', {
+				signalingStateStore.setParticipantHandRaised({
 					sessionId: 'session-id-2',
 					raisedHand: { state: false, timestamp: 3 },
 				})
 
-				expect(store.getters.getParticipantRaisedHand(['session-id-2']))
+				expect(signalingStateStore.getParticipantRaisedHand(['session-id-2']))
 					.toStrictEqual({ state: false, timestamp: null })
 			})
 
 			test('clears raised hands state after leaving call', async () => {
-				store.dispatch('setParticipantHandRaised', {
+				signalingStateStore.setParticipantHandRaised({
 					sessionId: 'session-id-2',
 					raisedHand: { state: true, timestamp: 1 },
 				})
@@ -780,21 +783,21 @@ describe('participantsStore', () => {
 					},
 				})
 
-				expect(store.getters.getParticipantRaisedHand(['session-id-2']))
+				expect(signalingStateStore.getParticipantRaisedHand(['session-id-2']))
 					.toStrictEqual({ state: false, timestamp: null })
 			})
 
 			test('get raised hands with multiple session ids only returns first found', () => {
-				store.dispatch('setParticipantHandRaised', {
+				signalingStateStore.setParticipantHandRaised({
 					sessionId: 'session-id-2',
 					raisedHand: { state: true, timestamp: 1 },
 				})
-				store.dispatch('setParticipantHandRaised', {
+				signalingStateStore.setParticipantHandRaised({
 					sessionId: 'session-id-3',
 					raisedHand: { state: true, timestamp: 1 },
 				})
 
-				expect(store.getters.getParticipantRaisedHand(['session-id-1', 'session-id-2', 'session-id-3']))
+				expect(signalingStateStore.getParticipantRaisedHand(['session-id-1', 'session-id-2', 'session-id-3']))
 					.toStrictEqual({ state: true, timestamp: 1 })
 			})
 		})
