@@ -4,7 +4,7 @@
  */
 
 import { defineStore } from 'pinia'
-import { reactive } from 'vue'
+import { onScopeDispose, reactive } from 'vue'
 import { useActorStore } from './actor.ts'
 
 type TypingState = {
@@ -38,6 +38,11 @@ export const useSignalingStateStore = defineStore('signalingState', () => {
 	let speakingInterval: ReturnType<typeof setInterval> | null = null
 
 	const actorStore = useActorStore()
+
+	onScopeDispose(() => {
+		purgeSpeakingState()
+		purgeRaisedHandsState()
+	})
 
 	/**
 	 * Get the array of external session ids for a conversation (excluding current user)
@@ -162,6 +167,13 @@ export const useSignalingStateStore = defineStore('signalingState', () => {
 
 		if (!speakingInterval && isSpeaking) {
 			speakingInterval = setInterval(updateIntervalTimeSpeaking, 1000)
+		}
+
+		// Stop interval ticks if nobody is speaking
+		if (!isSpeaking && speakingInterval
+			&& Object.values(speaking).every((attendee) => !attendee.isSpeaking)) {
+			clearInterval(speakingInterval)
+			speakingInterval = null
 		}
 	}
 
