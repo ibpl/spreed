@@ -23,6 +23,54 @@ describe('signalingStateStore', () => {
 		vi.useRealTimers()
 	})
 
+	describe('typing', () => {
+		const TOKEN = 'XXTOKENXX'
+
+		it('adds typing signal for participant', () => {
+			signalingStateStore.setTyping({ token: TOKEN, sessionId: 'session-id-1', isTyping: true })
+
+			expect(signalingStateStore.externalTypingSignals(TOKEN)).toEqual(['session-id-1'])
+		})
+
+		it('removes typing signal when participant stops typing', () => {
+			signalingStateStore.setTyping({ token: TOKEN, sessionId: 'session-id-1', isTyping: true })
+			signalingStateStore.setTyping({ token: TOKEN, sessionId: 'session-id-1', isTyping: false })
+
+			expect(signalingStateStore.externalTypingSignals(TOKEN)).toEqual([])
+		})
+
+		it('excludes current actor session from external typing signals', () => {
+			actorStore.setCurrentParticipant({ sessionId: 'local-session-id', attendeeId: 1 })
+
+			signalingStateStore.setTyping({ token: TOKEN, sessionId: 'local-session-id', isTyping: true })
+			signalingStateStore.setTyping({ token: TOKEN, sessionId: 'remote-session-id', isTyping: true })
+
+			expect(signalingStateStore.externalTypingSignals(TOKEN)).toEqual(['remote-session-id'])
+		})
+
+		it('detects self typing via isSelfActorTyping', () => {
+			actorStore.setCurrentParticipant({ sessionId: 'local-session-id', attendeeId: 1 })
+
+			expect(signalingStateStore.isSelfActorTyping(TOKEN)).toBe(false)
+
+			signalingStateStore.setTyping({ token: TOKEN, sessionId: 'local-session-id', isTyping: true })
+
+			expect(signalingStateStore.isSelfActorTyping(TOKEN)).toBe(true)
+		})
+
+		it('automatically expires typing signal after 15 seconds', () => {
+			vi.useFakeTimers()
+
+			signalingStateStore.setTyping({ token: TOKEN, sessionId: 'session-id-1', isTyping: true })
+			expect(signalingStateStore.externalTypingSignals(TOKEN)).toEqual(['session-id-1'])
+
+			vi.advanceTimersByTime(15_000)
+			expect(signalingStateStore.externalTypingSignals(TOKEN)).toEqual([])
+		})
+
+		/* Additional test cases located in src/utils/SignalingTypingHandler.spec.js */
+	})
+
 	describe('raised hand', () => {
 		it('returns raised hand state for single session id', () => {
 			signalingStateStore.setParticipantHandRaised({
