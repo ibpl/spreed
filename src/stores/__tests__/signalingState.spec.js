@@ -146,4 +146,96 @@ describe('signalingStateStore', () => {
 				.toThrow('Missing or empty sessionId argument in call to setParticipantHandRaised')
 		})
 	})
+
+	describe('speaking', () => {
+		it('creates speaking entry on first setSpeaking call', () => {
+			signalingStateStore.setSpeaking({ attendeeId: 1, isSpeaking: true })
+
+			expect(signalingStateStore.getParticipantSpeakingInformation(1)).toMatchObject({
+				isSpeaking: true,
+				totalCountedTime: 0,
+			})
+		})
+
+		it('returns undefined for unknown attendeeId', () => {
+			expect(signalingStateStore.getParticipantSpeakingInformation(999)).toBeUndefined()
+		})
+
+		it('does not accumulate time on false to false transition', () => {
+			vi.useFakeTimers()
+
+			signalingStateStore.setSpeaking({ attendeeId: 1, isSpeaking: false })
+			vi.advanceTimersByTime(5_000)
+			signalingStateStore.setSpeaking({ attendeeId: 1, isSpeaking: false })
+
+			expect(signalingStateStore.getParticipantSpeakingInformation(1).totalCountedTime).toBe(0)
+		})
+
+		it('accumulates time on interval ticks while speaking', () => {
+			vi.useFakeTimers()
+
+			signalingStateStore.setSpeaking({ attendeeId: 1, isSpeaking: true })
+			expect(signalingStateStore.getParticipantSpeakingInformation(1).totalCountedTime).toBe(0)
+
+			vi.advanceTimersByTime(1_000)
+			expect(signalingStateStore.getParticipantSpeakingInformation(1).totalCountedTime).toBe(1000)
+
+			vi.advanceTimersByTime(1_000)
+			expect(signalingStateStore.getParticipantSpeakingInformation(1).totalCountedTime).toBe(2000)
+		})
+
+		it('accumulates time when participant stops speaking', () => {
+			vi.useFakeTimers()
+
+			signalingStateStore.setSpeaking({ attendeeId: 1, isSpeaking: true })
+			vi.advanceTimersByTime(3_000)
+			signalingStateStore.setSpeaking({ attendeeId: 1, isSpeaking: false })
+
+			expect(signalingStateStore.getParticipantSpeakingInformation(1).totalCountedTime).toBe(3000)
+			expect(signalingStateStore.getParticipantSpeakingInformation(1).isSpeaking).toBe(false)
+		})
+
+		it('stops interval when last participant stops speaking', () => {
+			vi.useFakeTimers()
+
+			signalingStateStore.setSpeaking({ attendeeId: 1, isSpeaking: true })
+			vi.advanceTimersByTime(1_000)
+			signalingStateStore.setSpeaking({ attendeeId: 1, isSpeaking: false })
+
+			const totalAfterStop = signalingStateStore.getParticipantSpeakingInformation(1).totalCountedTime
+
+			vi.advanceTimersByTime(5_000)
+
+			expect(signalingStateStore.getParticipantSpeakingInformation(1).totalCountedTime).toBe(totalAfterStop)
+		})
+
+		it('keeps interval running when one of multiple participants stops speaking', () => {
+			vi.useFakeTimers()
+
+			signalingStateStore.setSpeaking({ attendeeId: 1, isSpeaking: true })
+			signalingStateStore.setSpeaking({ attendeeId: 2, isSpeaking: true })
+
+			vi.advanceTimersByTime(1_000)
+			signalingStateStore.setSpeaking({ attendeeId: 1, isSpeaking: false })
+
+			vi.advanceTimersByTime(1_000)
+
+			expect(signalingStateStore.getParticipantSpeakingInformation(2).totalCountedTime).toBeGreaterThan(1000)
+		})
+
+		it('purges all speaking entries and stops interval', () => {
+			vi.useFakeTimers()
+
+			signalingStateStore.setSpeaking({ attendeeId: 1, isSpeaking: true })
+			signalingStateStore.setSpeaking({ attendeeId: 2, isSpeaking: true })
+			signalingStateStore.purgeSpeakingState()
+
+			expect(signalingStateStore.getParticipantSpeakingInformation(1)).toBeUndefined()
+			expect(signalingStateStore.getParticipantSpeakingInformation(2)).toBeUndefined()
+
+			// Advance time to confirm the interval was stopped and creates no new entries
+			vi.advanceTimersByTime(5_000)
+			expect(signalingStateStore.getParticipantSpeakingInformation(1)).toBeUndefined()
+		})
+	})
 })
