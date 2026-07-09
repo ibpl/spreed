@@ -165,7 +165,7 @@
 import { loadState } from '@nextcloud/initial-state'
 import { t } from '@nextcloud/l10n'
 import debounce from 'debounce'
-import { computed, inject, ref } from 'vue'
+import { computed, inject, ref, toRef } from 'vue'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import IconChevronDown from 'vue-material-design-icons/ChevronDown.vue'
 import IconChevronLeft from 'vue-material-design-icons/ChevronLeft.vue'
@@ -302,9 +302,9 @@ export default {
 		const gridDimensions = useGridDimensions({
 			wrapper: gridWrapper,
 			grid,
-			isStripe: () => props.isStripe,
-			isSidebar: () => props.isSidebar,
-			isRecording: () => props.isRecording,
+			isStripe: toRef(() => props.isStripe),
+			isSidebar: toRef(() => props.isSidebar),
+			isRecording: toRef(() => props.isRecording),
 			videoCount: layoutVideoCount,
 			stripeOpen,
 		})
