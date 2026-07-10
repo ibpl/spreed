@@ -165,7 +165,7 @@
 import { loadState } from '@nextcloud/initial-state'
 import { t } from '@nextcloud/l10n'
 import debounce from 'debounce'
-import { computed, inject, ref, toRef } from 'vue'
+import { computed, inject, ref, toRef, useTemplateRef } from 'vue'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import IconChevronDown from 'vue-material-design-icons/ChevronDown.vue'
 import IconChevronLeft from 'vue-material-design-icons/ChevronLeft.vue'
@@ -288,13 +288,13 @@ export default {
 		const callViewStore = useCallViewStore()
 
 		// Template refs for the elements measured by the grid layout
-		const gridWrapper = ref(null)
-		const grid = ref(null)
+		const gridWrapper = useTemplateRef(null)
+		const grid = useTemplateRef(null)
 
 		const stripeOpen = computed(() => callViewStore.isStripeOpen && !props.isRecording)
 
 		// Number of tiles to lay out (clamped to `videosCap`, `0` means no cap)
-		const layoutVideoCount = computed(() => {
+		const cappedVideosCount = computed(() => {
 			const count = devMode.value ? dummies.value : props.callParticipantModels.length
 			return videosCap ? Math.min(videosCap, count) : count
 		})
@@ -305,7 +305,7 @@ export default {
 			isStripe: toRef(() => props.isStripe),
 			isSidebar: toRef(() => props.isSidebar),
 			isRecording: toRef(() => props.isRecording),
-			videoCount: layoutVideoCount,
+			videoCount: cappedVideosCount,
 			stripeOpen,
 		})
 
@@ -374,6 +374,10 @@ export default {
 
 		// Array of videos that are being displayed in the grid at any given
 		// moment
+		// TODO: properly handle resizes when not on first page:
+		// currently if the user is not on the 'first page', upon resize the
+		// current position in the videos array is lost (`slots` changes, so
+		// `currentPage * slots` points at a different window of the videos)
 		displayedVideos() {
 			if (!this.slots) {
 				return []

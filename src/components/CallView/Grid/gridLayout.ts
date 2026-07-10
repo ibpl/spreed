@@ -99,7 +99,7 @@ function computeColumnsMax(gridWidth: number, minWidth: number, currentColumns: 
 	// minimal gridWidth for the current amount of columns.
 	const columnsMax = approxColumnsMax === currentColumns ? approxColumnsMax : hypotheticalColumnsMax
 	// Return at least 1 column
-	return columnsMax <= 1 ? 1 : columnsMax
+	return Math.max(columnsMax, 1)
 }
 
 /**
@@ -112,7 +112,7 @@ function computeColumnsMax(gridWidth: number, minWidth: number, currentColumns: 
 function computeRowsMax(gridHeight: number, minHeight: number, currentRows: number): number {
 	const rowsMax = Math.floor((gridHeight - GRID_GAP * (currentRows - 1)) / minHeight)
 	// Return at least 1 row
-	return rowsMax < 1 ? 1 : rowsMax
+	return Math.max(rowsMax, 1)
 }
 
 /**
@@ -147,6 +147,11 @@ export function computeGridDimensions({
 	currentColumns = 0,
 	currentRows = 0,
 }: GridDimensionsOptions): { columns: number, rows: number } {
+	// TODO: rebuild the grid to have optimal for last page:
+	// Exception for when navigating in and away from the last page of the grid
+	// The last grid page is very likely not to have the same number of elements
+	// as the previous pages so the grid needs to be tweaked accordingly
+
 	// Nothing to lay out. Note that a zero-size grid (not measured yet, hidden
 	// or mid-transition) still falls back to a 1x1 layout below while tiles are
 	// present, so the downstream slot math never goes negative.
